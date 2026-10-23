@@ -31,9 +31,10 @@ below, **stop and say so** rather than designing around it.
 - **D12** The roster is open-ended and append-only, see `app/src/shared/roster.ts`: Word 0,
   Sudoku 1, Chess 2, Globe 3, Mini 4, Connections 5, Code 6, Angle 7 today. A gameId is never reused or
   moved once a game is live; the D5 bitmaps cap the roster at 64.
-- **D13** `DailyScores` detail is `{score: u32, solved: bool}`; `score` is per-game and
-  **minimised** (guesses, attempts, seconds, mistakes); `solved` means finished. No game
-  has a loss state.
+- **D13** `DailyScores` detail is `{score: u32, solved: bool}`; `score` is the game's own
+  natural number, and each game says whether **lower or higher is better** (roster
+  `better`): guesses, attempts, seconds and mistakes are lower-better; points (Daily
+  Color) are higher-better. `solved` means finished. No game has a loss state.
 - **D14** **One chain write per game-day, at completion. Never per guess.**
 - **D15** In-progress ("Started") state is `localStorage` only.
 - **D16** Daily Word (gameId 0, route `#/g/word`) is one 6-letter word a day with no guess
@@ -63,10 +64,16 @@ below, **stop and say so** rather than designing around it.
 - **D23** Daily Angle (gameId 7, `#/g/angle`): an angle of 1°–359°, procedural; each
   guess gets So close (≤5°) / Hot (≤15°) / Warm (≤30°) / Cold and an up/down arrow; no
   cap (D13, unlike Angledle's six); `score` = guesses.
+- **D24** Daily Color (gameId 8, `#/g/color`): five procedural colours a day, each shown
+  5 s then rebuilt with hue/saturation/brightness sliders; 10 × (1 − ΔE00/40) per colour;
+  `score` = total in tenths of a point (0–500), higher better.
 - **D20** `DailyScores` keeps a per-`(game_id, day)` histogram of **on-time** finishers,
-  bucketed by an owner-set kind (Count 1..31+, Seconds in 15 s steps to 30 min+). "Top N%"
-  = rank share with ties in the player's favour; the day percentile is the mean of the
-  game percentiles. See `PLAN.md` D20.
+  bucketed by an owner-set, set-once, per-game **bucket spec** `{min, max, buckets ≤ 128}`:
+  linear buckets over `[min, max)`, below `min` in the first, at or above `max` in the
+  last. The contract never knows the direction. "Top N%" = rank share counted from the
+  game's better end, ties in the player's favour; the distribution is drawn as a smooth
+  curve; the day percentile is the mean of the game percentiles. Parity vectors:
+  `shared/bucket-test-vectors.json`. See `PLAN.md` D20, `plans/wp-40-bucket-specs.md`.
 
 ## Working loop
 

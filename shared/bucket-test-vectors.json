@@ -1,0 +1,167 @@
+{
+  "_comment": "Bucket parity vectors (D20, WP40): contracts/logic and app/src/shared/percentile.ts must both map each score to this bucket. bucket = 0 below min, buckets-1 at or above max, else floor((score-min)*buckets/(max-min)). u64 arithmetic.",
+  "specs": {
+    "count": {
+      "min": 1,
+      "max": 32,
+      "buckets": 31
+    },
+    "seconds": {
+      "min": 0,
+      "max": 1815,
+      "buckets": 121
+    },
+    "points": {
+      "min": 0,
+      "max": 500,
+      "buckets": 100
+    }
+  },
+  "vectors": [
+    {
+      "spec": "count",
+      "score": 0,
+      "bucket": 0
+    },
+    {
+      "spec": "count",
+      "score": 1,
+      "bucket": 0
+    },
+    {
+      "spec": "count",
+      "score": 2,
+      "bucket": 1
+    },
+    {
+      "spec": "count",
+      "score": 15,
+      "bucket": 14
+    },
+    {
+      "spec": "count",
+      "score": 30,
+      "bucket": 29
+    },
+    {
+      "spec": "count",
+      "score": 31,
+      "bucket": 30
+    },
+    {
+      "spec": "count",
+      "score": 32,
+      "bucket": 30
+    },
+    {
+      "spec": "count",
+      "score": 40,
+      "bucket": 30
+    },
+    {
+      "spec": "count",
+      "score": 4294967295,
+      "bucket": 30
+    },
+    {
+      "spec": "seconds",
+      "score": 0,
+      "bucket": 0
+    },
+    {
+      "spec": "seconds",
+      "score": 14,
+      "bucket": 0
+    },
+    {
+      "spec": "seconds",
+      "score": 15,
+      "bucket": 1
+    },
+    {
+      "spec": "seconds",
+      "score": 29,
+      "bucket": 1
+    },
+    {
+      "spec": "seconds",
+      "score": 30,
+      "bucket": 2
+    },
+    {
+      "spec": "seconds",
+      "score": 1799,
+      "bucket": 119
+    },
+    {
+      "spec": "seconds",
+      "score": 1800,
+      "bucket": 120
+    },
+    {
+      "spec": "seconds",
+      "score": 1814,
+      "bucket": 120
+    },
+    {
+      "spec": "seconds",
+      "score": 1815,
+      "bucket": 120
+    },
+    {
+      "spec": "seconds",
+      "score": 5000,
+      "bucket": 120
+    },
+    {
+      "spec": "points",
+      "score": 0,
+      "bucket": 0
+    },
+    {
+      "spec": "points",
+      "score": 4,
+      "bucket": 0
+    },
+    {
+      "spec": "points",
+      "score": 5,
+      "bucket": 1
+    },
+    {
+      "spec": "points",
+      "score": 9,
+      "bucket": 1
+    },
+    {
+      "spec": "points",
+      "score": 250,
+      "bucket": 50
+    },
+    {
+      "spec": "points",
+      "score": 494,
+      "bucket": 98
+    },
+    {
+      "spec": "points",
+      "score": 495,
+      "bucket": 99
+    },
+    {
+      "spec": "points",
+      "score": 499,
+      "bucket": 99
+    },
+    {
+      "spec": "points",
+      "score": 500,
+      "bucket": 99
+    },
+    {
+      "spec": "points",
+      "score": 501,
+      "bucket": 99
+    }
+  ]
+}

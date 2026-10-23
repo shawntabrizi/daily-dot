@@ -100,6 +100,11 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     Angle, "+" and `count-<n>-of-<k>` up to 8 (existing PNGs left as committed).
     `pnpm smoke` picks the six originals and adds an all-eight "+" step. Not verified
     on a device.
+- **WP40 (bucket specs, score direction, Daily Color), in progress 2026-10-23:** D13 and
+  D20 amended, D24 added (Shawn: "we shouldn't force that every game aims to zero");
+  brief `plans/wp-40-bucket-specs.md`; parity vectors `shared/bucket-test-vectors.json`.
+  Run by subagents: A contract, B app, then C Daily Color. Needs Shawn: `DailyScores`
+  redeploy and `set-bucket-specs`.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 
