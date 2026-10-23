@@ -32,6 +32,7 @@ export const HOOKS: Record<GameSlug, string> = {
   code: "Crack the four-digit code",
   angle: "Name the angle",
   color: "Five colours from memory",
+  sound: "Five tones by ear",
 };
 
 /** Simple geometric glyphs on a 24-unit grid; the tile colours them. */
@@ -63,6 +64,11 @@ const GLYPHS: Record<GameSlug, string> = {
     '<rect x="4.5" y="3" width="3" height="18" rx="1.5" opacity="0.55"/><rect x="10.5" y="3" width="3" height="18" rx="1.5" opacity="0.55"/>'
     + '<rect x="16.5" y="3" width="3" height="18" rx="1.5" opacity="0.55"/>'
     + '<circle cx="6" cy="9" r="3"/><circle cx="12" cy="15" r="3"/><circle cx="18" cy="7" r="3"/>',
+  // A speaker cone and two sound waves.
+  sound:
+    '<path d="M3 9h4l5-4.5v15L7 15H3z"/>'
+    + '<path d="M15 8.5a5 5 0 0 1 0 7l-1.4-1.4a3 3 0 0 0 0-4.2z" opacity="0.8"/>'
+    + '<path d="M17.8 5.7a9 9 0 0 1 0 12.6l-1.4-1.4a7 7 0 0 0 0-9.8z" opacity="0.55"/>',
 };
 
 export function gameGlyph(game: Game): string {

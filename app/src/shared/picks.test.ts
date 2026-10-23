@@ -26,7 +26,7 @@ describe("picks", () => {
     expect(STARTER_PICKS).toEqual([0, 4, 5, 6]);
     expect(currentPicks()).toEqual([0, 4, 5, 6]);
     expect(pickedGames().map((game) => game.id)).toEqual(["word", "mini", "connections", "code"]);
-    expect(unpickedGames().map((game) => game.id)).toEqual(["sudoku", "chess", "globe", "angle", "color"]);
+    expect(unpickedGames().map((game) => game.id)).toEqual(["sudoku", "chess", "globe", "angle", "color", "sound"]);
     expect(picksMask()).toBe(0b1110001n);
   });
 

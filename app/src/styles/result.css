@@ -81,6 +81,12 @@
   --accent-ink: var(--accent-color-ink);
 }
 
+.result[data-game="sound"],
+.result-primary[data-game="sound"] {
+  --accent: var(--accent-sound);
+  --accent-ink: var(--accent-sound-ink);
+}
+
 .result--loading {
   padding: 18px 0 0;
 }
@@ -347,8 +353,8 @@
   overflow: visible;
 }
 
-.page.page--result :is(.mini-shell, .sudoku-shell, .chess-shell, .globe-shell, .code-shell, .angle-shell, .color-shell),
-.page.page--result :is(.mini-stage, .sudoku-stage, .chess-stage, .globe-stage, .code-stage, .angle-stage, .color-stage) {
+.page.page--result :is(.mini-shell, .sudoku-shell, .chess-shell, .globe-shell, .code-shell, .angle-shell, .color-shell, .sound-shell),
+.page.page--result :is(.mini-stage, .sudoku-stage, .chess-stage, .globe-stage, .code-stage, .angle-stage, .color-stage, .sound-stage) {
   height: auto;
   min-height: 0;
   max-height: none;
@@ -356,12 +362,12 @@
   overflow: visible;
 }
 
-.page.page--result :is(.mini-shell, .sudoku-shell, .chess-shell, .globe-shell, .code-shell, .angle-shell, .color-shell) {
+.page.page--result :is(.mini-shell, .sudoku-shell, .chess-shell, .globe-shell, .code-shell, .angle-shell, .color-shell, .sound-shell) {
   padding: 0;
   background: none;
 }
 
-.page.page--result :is(.mini-toolbar, .sudoku-toolbar, .chess-toolbar, .mini-status, .sudoku-status, .chess-status, .mini-cluebar, .globe-zoom, .globe-meta, .globe-result, .code-meta, .code-result, .angle-result, .color-result) {
+.page.page--result :is(.mini-toolbar, .sudoku-toolbar, .chess-toolbar, .mini-status, .sudoku-status, .chess-status, .mini-cluebar, .globe-zoom, .globe-meta, .globe-result, .code-meta, .code-result, .angle-result, .color-result, .sound-result) {
   display: none;
 }
 

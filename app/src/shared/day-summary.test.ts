@@ -134,11 +134,11 @@ describe("renderDaySummary", () => {
     const summary = await loadDaySummary(
       sourceWith({
         histograms: async (_day, ids) => ids.map(() => ({ total: 10, buckets: [{ bucket: 1, count: 10 }] })),
-        // Every game in the one bucket (2 guesses = bucket 1; Color's 0.7
-        // points = bucket 1 of its half-point steps) except Sudoku at 45 s
+        // Every game in the one bucket (2 guesses = bucket 1; Color's and
+        // Sound's 0.7 points = bucket 1 of their half-point steps) except Sudoku at 45 s
         // (bucket 3), behind all ten finishers.
         details: async (_day, ids) =>
-          ids.map((id) => ({ score: id === 1 ? 45 : id === 8 ? 7 : id === 10 ? 30 : 2, solved: true })),
+          ids.map((id) => ({ score: id === 1 ? 45 : id === 8 || id === 9 ? 7 : id === 10 ? 30 : 2, solved: true })),
       }),
       100,
       FULL,

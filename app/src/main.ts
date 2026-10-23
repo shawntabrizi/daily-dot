@@ -11,6 +11,7 @@ import { renderColor } from "./games/color/view";
 import { renderConnections } from "./games/connections/view";
 import { renderGlobe } from "./games/globe/view";
 import { renderMini } from "./games/mini/view";
+import { renderSound } from "./games/sound/view";
 import { renderSudoku } from "./games/sudoku/view";
 import { renderWord } from "./games/word/view";
 import { renderHistory } from "./history";
@@ -162,6 +163,8 @@ export function startApp(
       currentView = renderAngle(source, parseDay(url.searchParams.get("day")));
     } else if (url.pathname === "/g/color") {
       currentView = renderColor(source, parseDay(url.searchParams.get("day")));
+    } else if (url.pathname === "/g/sound") {
+      currentView = renderSound(source, parseDay(url.searchParams.get("day")));
     } else if (url.pathname === "/g/connections") {
       currentView = renderConnections(
         source,

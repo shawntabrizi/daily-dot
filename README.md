@@ -50,6 +50,7 @@ one source of ids, slugs and score kinds.
 | 6 | Daily Code | guesses | procedural, frozen `v1` generator |
 | 7 | Daily Angle | guesses | procedural, frozen `v1` generator |
 | 8 | Daily Color | points in tenths, higher better (0–500) | procedural, frozen `v1` generator: five colours a day, each scored 10 × max(0, 1 − ΔE00/40) |
+| 9 | Daily Sound | points in tenths, higher better (0–500) | procedural, frozen `v1` generator: five tones a day (110–880 Hz), each scored 10 × max(0, 1 − ΔERB/0.5) |
 
 Third-party content: Daily Word's answers are the six-letter words with a
 wordfreq Zipf frequency ≥ 4.0 (wordfreq 3.1.1, data CC BY-SA 4.0 crediting

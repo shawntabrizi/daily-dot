@@ -10,6 +10,8 @@ import {
 import { colorAnswer } from "../games/color/generate";
 import { applyColorGuess, createColorProgress, saveColorProgress } from "../games/color/progress";
 import { GLOBE_COUNTRIES, globeAnswer } from "../games/globe/generate";
+import { soundAnswer } from "../games/sound/generate";
+import { applySoundGuess, createSoundProgress, saveSoundProgress } from "../games/sound/progress";
 import {
   applyGlobeGuess,
   createGlobeProgress,
@@ -190,6 +192,11 @@ describe("progressLine", () => {
     saveColorProgress(color, storage);
     expect(progressLine(game("color"), 42, storage)).toBe("2 of 5 colours");
     expect(hasStarted(8, 42, storage)).toBe(true);
+
+    const sound = applySoundGuess(applySoundGuess(createSoundProgress(42, soundAnswer(42, "v1")), 220), 330);
+    saveSoundProgress(sound, storage);
+    expect(progressLine(game("sound"), 42, storage)).toBe("2 of 5 tones");
+    expect(hasStarted(9, 42, storage)).toBe(true);
   });
 
   it("says 'started' when the stored shape tells nothing more", () => {

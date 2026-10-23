@@ -150,6 +150,12 @@
   --accent-ink: var(--accent-color-ink);
 }
 
+.launcher-row[data-launcher-game="sound"],
+.launcher[data-launcher-selected="sound"] .launcher__play {
+  --accent: var(--accent-sound);
+  --accent-ink: var(--accent-sound-ink);
+}
+
 .launcher-row__icon {
   display: inline-grid;
   flex: 0 0 auto;

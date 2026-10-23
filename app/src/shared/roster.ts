@@ -7,7 +7,8 @@ export type GameSlug =
   | "connections"
   | "code"
   | "angle"
-  | "color";
+  | "color"
+  | "sound";
 
 /**
  * Player-facing names follow the "Daily X" pattern; `short` is the X, for
@@ -153,6 +154,17 @@ export const GAME_ROSTER: readonly Game[] = [
     gameId: 8,
     startDay: 0,
     route: "#/g/color",
+    kind: "points",
+    better: "higher",
+    buckets: POINTS_BUCKETS,
+  },
+  {
+    id: "sound",
+    name: "Daily Sound",
+    short: "Sound",
+    gameId: 9,
+    startDay: 0,
+    route: "#/g/sound",
     kind: "points",
     better: "higher",
     buckets: POINTS_BUCKETS,

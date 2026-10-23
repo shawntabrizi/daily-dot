@@ -50,6 +50,7 @@ const ACCENT: Record<GameSlug, { fill: string; ink: string }> = {
   code: { fill: "#e5534b", ink: "#2a0a08" },
   angle: { fill: "#b5c934", ink: "#22270a" },
   color: { fill: "#2fb1e4", ink: "#06202b" },
+  sound: { fill: "#7f6df2", ink: "#120d33" },
 };
 /** The idle tile and the ring around it. */
 const IDLE = { fill: "#202427", ink: "#8d9396", ring: "#2e3336" };
@@ -64,6 +65,7 @@ const LABEL: Record<GameSlug, string> = {
   code: "CODE",
   angle: "ANGLE",
   color: "COLOR",
+  sound: "SOUND",
 };
 const WHITE = "#ffffff";
 const COUNT_MUTED = "#8d9396";
@@ -102,6 +104,9 @@ const GLYPH: Record<GameSlug, (ink: string) => string> = {
   // Three slider columns, thumbs at different heights.
   color: (ink) =>
     `<path d="M6 3v20M13 3v20M20 3v20" stroke="${ink}" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/><circle cx="6" cy="9" r="3.2" fill="${ink}"/><circle cx="13" cy="17" r="3.2" fill="${ink}"/><circle cx="20" cy="7" r="3.2" fill="${ink}"/>`,
+  // A speaker and two sound waves.
+  sound: (ink) =>
+    `<path d="M3 10h4.5L13 5v16l-5.5-5H3z" fill="${ink}"/><path d="M16.5 9.5a5 5 0 0 1 0 7M19.6 6.4a9.4 9.4 0 0 1 0 13.2" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/>`,
 };
 
 function svg(width: number, height: number, body: string): string {

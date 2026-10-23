@@ -138,6 +138,32 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     Checked in Chromium at 360×780 and 1440×900 (look, sliders, reveal: no page scroll;
     final result scrolls as the result page does). Not verified: on a device or in the
     host; the read-only state was checked by unit test only, not in the browser.
+- **WP41 done (Daily Sound, gameId 9, `#/g/sound`, D25), 2026-10-23:** `games/sound`
+  engine (ERB-rate `21.4·log10(1 + 0.00437 f)`, per tone `10 × max(0, 1 − ΔERB/0.5)`
+  shown to hundredths; recorded score = the five shown hundredths summed, then rounded
+  half up to tenths, 0–500), seeded v1 generator (own salt; log-uniform 110–880 Hz to
+  the hundredth), progress (tones done as Hz; the round in hand is not stored, so a
+  reload restarts that tone's one listen), `audio.ts` (the only Web Audio code: context
+  made on the first tap and resumed when suspended; 2 s sine with 40 ms fades; a live
+  tone for drag and keys), view (Listen plays the target once; the whole black board is
+  a `role="slider"` pitch control, aria-valuetext "220.00 Hz", log-scale vertical, tone
+  live while held; arrows ±1 cent, Shift ±50; Submit; dialed.gg-style reveal: "n / 5",
+  score to two decimals, verdict, TARGET and YOURS in Hz, arrow to go on; total / 50 with
+  the five tones; the one write fires on leaving the fifth reveal, or on load if the day
+  is complete and unsaved; a recorded-elsewhere day lists the five targets read-only;
+  a message instead of the board when Web Audio is missing or blocked). Roster `points`,
+  `higher`, `POINTS_BUCKETS`; not a starter pick. Accent indigo `#7f6df2` (text
+  `#988af5` dark / `#5243c4` light), both theme blocks, glyphs, hook "Five tones by ear",
+  "n of 5 tones", route, home/launcher/result rules, card tiles and `count-<n>-of-10`
+  (existing PNGs restored). Tests: ERB and score at known points (173.83 vs 190.36 Hz →
+  2.52), clamp and exact match, rounding, cents/log mapping, frozen v1 days and range
+  over 2000 days, progress, view with the audio module mocked. Roster-size tests now
+  count ten games. Checked in Chromium (real Web Audio, headless) at 360×780 and
+  1440×900: listen, find (drag + keys), reveal: no page scroll; the final result
+  scrolls as every result page does. Not verified: actual audible output (headless has
+  no speakers), a real device or the host, iOS's silent switch; read-only state by unit
+  test only. Logged, not fixed: the 0.5 ERB tolerance is the brief's round choice
+  (dialed.gg's looks nearer 0.515) — tune before first play.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

@@ -40,7 +40,7 @@ it("offers a retry when the initial archive read fails", async () => {
   document.body.append(view.element);
   // Every game has a chip even before the read resolves.
   const chips = [...view.element.querySelectorAll("[data-game-chip]")].map((chip) => chip.textContent);
-  expect(chips).toEqual(["All", "Word", "Sudoku", "Chess", "Globe", "Mini", "Connections", "Code", "Angle", "Color"]);
+  expect(chips).toEqual(["All", "Word", "Sudoku", "Chess", "Globe", "Mini", "Connections", "Code", "Angle", "Color", "Sound"]);
   await vi.waitFor(() => {
     expect(view.element.textContent).toContain(
       "Calendar data could not be loaded.",

@@ -230,8 +230,8 @@ describe("home", () => {
       // Days 0..10: all games on time every day.
       dayBitsRange: async (_from, count) => Array.from({ length: count }, () => FULL),
       histograms,
-      // Color (gameId 8) scores points, higher better: 0.7 points is its bucket 1.
-      details: async (_day, ids) => ids.map((id) => ({ score: id === 8 ? 7 : 2, solved: true })),
+      // Color and Sound (gameIds 8, 9) score points, higher better: 0.7 points is their bucket 1.
+      details: async (_day, ids) => ids.map((id) => ({ score: id === 8 || id === 9 ? 7 : 2, solved: true })),
     });
     const announced: unknown[] = [];
     const onSummary = (event: Event): void => {
@@ -255,9 +255,9 @@ describe("home", () => {
     expect(rowIds(view.element, "data-open-games")).toEqual([]);
     expect(rowIds(view.element, "data-done-games")).toEqual(GAME_ROSTER.map((game) => game.id));
     expect(view.element.textContent).not.toContain("Play");
-    // Count games score 2 (bucket 1), tied with all five: 20%, and so does Color's
-    // 0.7 points. Seconds games at 2 s sit in bucket 0, ahead of all five: 17%.
-    // Mean of seven 20s and two 17s.
+    // Count games score 2 (bucket 1), tied with all five: 20%, and so do Color's and
+    // Sound's 0.7 points. Seconds games at 2 s sit in bucket 0, ahead of all five: 17%.
+    // Mean of eight 20s and two 17s.
     expect(view.element.querySelector("[data-day-rank]")?.textContent).toBe("Top 19% today");
     expect(histograms).toHaveBeenCalledTimes(1);
     expect(announced).toEqual([
@@ -282,11 +282,11 @@ describe("home with picks (D21)", () => {
     });
 
     expect(rowIds(view.element, "data-open-games")).toEqual(["word", "mini", "connections", "code"]);
-    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "globe", "angle", "color"]);
+    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "globe", "angle", "color", "sound"]);
     expect(view.element.querySelector<HTMLElement>("[data-home-more]")?.hidden).toBe(false);
     expect(moreToggle(view.element).getAttribute("aria-expanded")).toBe("false");
     expect(moreRows(view.element).hidden).toBe(true);
-    expect(view.element.querySelector("[data-more-count]")?.textContent).toBe("5");
+    expect(view.element.querySelector("[data-more-count]")?.textContent).toBe("6");
     // The bar has a segment per pick only.
     expect(
       [...view.element.querySelectorAll("[data-day-bar] [data-segment]")].map((segment) =>
@@ -319,7 +319,7 @@ describe("home with picks (D21)", () => {
     savePicks(GAME_ROSTER.map((game) => game.gameId));
     const view = renderHome(stubSource());
     await vi.waitFor(() => {
-      expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("Nine to play.");
+      expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("Ten to play.");
     });
     expect(view.element.querySelector<HTMLElement>("[data-home-more]")?.hidden).toBe(true);
     view.dispose();
@@ -335,7 +335,7 @@ describe("home with picks (D21)", () => {
     });
     expect(rowIds(view.element, "data-open-games")).toEqual(["mini"]);
     expect(rowIds(view.element, "data-done-games")).toEqual(["word", "globe"]);
-    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "connections", "code", "angle", "color"]);
+    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "connections", "code", "angle", "color", "sound"]);
     expect(view.element.querySelector("[data-day-bar]")?.getAttribute("aria-label")).toBe("Today: 1 of 2 done");
     view.dispose();
   });
@@ -354,7 +354,7 @@ describe("home with picks (D21)", () => {
       expect(view.element.querySelector("[data-day-summary]")).not.toBeNull();
     });
     expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("Both done.");
-    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "globe", "connections", "code", "angle", "color"]);
+    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "globe", "connections", "code", "angle", "color", "sound"]);
     view.dispose();
   });
 });
