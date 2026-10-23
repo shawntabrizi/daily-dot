@@ -7,6 +7,8 @@ import {
   createChessProgress,
   saveChessProgress,
 } from "../games/chess/progress";
+import { colorAnswer } from "../games/color/generate";
+import { applyColorGuess, createColorProgress, saveColorProgress } from "../games/color/progress";
 import { GLOBE_COUNTRIES, globeAnswer } from "../games/globe/generate";
 import {
   applyGlobeGuess,
@@ -182,6 +184,12 @@ describe("progressLine", () => {
 
     stored(storage, "connections", { found: [0, 2] });
     expect(progressLine(game("connections"), 42, storage)).toBe("2 of 4 found");
+
+    const pick = { hue: 10, saturation: 50, brightness: 50 };
+    const color = applyColorGuess(applyColorGuess(createColorProgress(42, colorAnswer(42, "v1")), pick), pick);
+    saveColorProgress(color, storage);
+    expect(progressLine(game("color"), 42, storage)).toBe("2 of 5 colours");
+    expect(hasStarted(8, 42, storage)).toBe(true);
   });
 
   it("says 'started' when the stored shape tells nothing more", () => {

@@ -2,6 +2,7 @@ import type { LetterScore } from "../games/word/engine";
 import { hasStartedAngle } from "../games/angle/progress";
 import { hasStartedChess } from "../games/chess/progress";
 import { hasStartedCode } from "../games/code/progress";
+import { hasStartedColor } from "../games/color/progress";
 import { hasStartedConnections } from "../games/connections/progress";
 import { hasStartedGlobe } from "../games/globe/progress";
 import { hasStartedMini } from "../games/mini/progress";
@@ -137,7 +138,7 @@ function plural(count: number, one: string, many: string): string {
 /**
  * The hub's progress phrase for a game in progress, read from the game's
  * stored day without its puzzle: "2 guesses in", "41 cells left", "3:10 in",
- * "2 attempts", "3 guesses", "9 of 21 squares", "2 of 4 found". "started"
+ * "2 attempts", "3 guesses", "9 of 21 squares", "2 of 4 found", "2 of 5 colours". "started"
  * when the stored shape says nothing more.
  */
 export function progressLine(
@@ -205,6 +206,10 @@ export function progressLine(
       const guesses = count(stored.guesses);
       return guesses ? plural(guesses, "guess", "guesses") : "started";
     }
+    case "color": {
+      const done = count(stored.guesses);
+      return done === null ? "started" : `${done} of 5 colours`;
+    }
   }
 }
 
@@ -220,6 +225,7 @@ const STARTED_BY_SLUG: Record<GameSlug, (day: number, storage: StorageLike) => b
   connections: hasStartedConnections,
   code: hasStartedCode,
   angle: hasStartedAngle,
+  color: hasStartedColor,
 };
 
 export function hasStarted(

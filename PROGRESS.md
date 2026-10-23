@@ -121,6 +121,23 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     writing; not run). 0-based buckets throughout. All app/pocket checks green.
     Cosmetic, logged not fixed: on count games the hump sits in the left fifth of the
     curve because the axis spans 1–31+.
+  - **C done (Daily Color, gameId 8, `#/g/color`):** `games/color` engine (HSB→sRGB,
+    sRGB→CIELAB D65, CIEDE2000, `scoreForDelta` 10 × max(0, 1 − ΔE00/40) in tenths),
+    seeded v1 generator (own salt; hue 0–359, S 25–100, B 30–100), progress (rounds
+    done + guesses; the round in hand is not stored, so a reload restarts its 5 s look),
+    view (5 s full-board look with a countdown; three `role="slider"` columns with
+    aria-valuetext, drag by pointer capture, arrows/PageUp/PageDown/Home/End; reveal
+    beside the guess with x / 10; total / 50 with the five pairs; the one write fires on
+    "See your total", or on load if the day is complete and unsaved). Roster `points`,
+    `higher`, `{0, 500, 100}`; not a starter pick. Accent sky `#2fb1e4` (both theme
+    blocks), glyphs, hook, "n of 5 colours", route, home/launcher/result rules, card
+    tiles and `count-<n>-of-9` (existing PNGs restored). Tests: all 34 Sharma pairs,
+    Lab/HSB values, score rounding and clamp, frozen v1 days, ranges, progress, view with
+    fake timers. Roster-size tests updated (chips, More games, picks, headline Nine,
+    day-summary means, card tiles). README game table now lists Code, Angle and Color.
+    Checked in Chromium at 360×780 and 1440×900 (look, sliders, reveal: no page scroll;
+    final result scrolls as the result page does). Not verified: on a device or in the
+    host; the read-only state was checked by unit test only, not in the browser.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

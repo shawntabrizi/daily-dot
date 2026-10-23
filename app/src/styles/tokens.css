@@ -74,6 +74,8 @@
   --accent-code-ink: #2a0a08;
   --accent-angle: #b5c934;
   --accent-angle-ink: #22270a;
+  --accent-color: #2fb1e4;
+  --accent-color-ink: #06202b;
   /* The accent as 14 px text on the game's tinted done surface: the accent itself, except
      Connections, the one under 4.5:1 there, lightened. */
   --accent-word-text: #55b725;
@@ -84,6 +86,7 @@
   --accent-connections-text: #ab74d4;
   --accent-code-text: #e5534b;
   --accent-angle-text: #b5c934;
+  --accent-color-text: #2fb1e4;
   /* The boards' tinted done surfaces: word, chess and mini as drawn; the rest 8% accent on --bg. */
   --surface-word: #16211a;
   --surface-sudoku: #132120;
@@ -93,6 +96,7 @@
   --surface-connections: #1d1a23;
   --surface-code: #241817;
   --surface-angle: #1e2117;
+  --surface-color: #15232a;
 }
 
 /* `followHostTheme` (shared/host-theme.ts) sets data-theme from the host; dark is the default. */
@@ -133,6 +137,8 @@
   --accent-code-ink: #2a0a08;
   --accent-angle: #b5c934;
   --accent-angle-ink: #22270a;
+  --accent-color: #2fb1e4;
+  --accent-color-ink: #06202b;
   /* Darkened to clear 4.5:1 on the light tints. */
   --accent-word-text: #387918;
   --accent-sudoku-text: #167868;
@@ -142,6 +148,7 @@
   --accent-connections-text: #8a4fb3;
   --accent-code-text: #b2332c;
   --accent-angle-text: #5f6c12;
+  --accent-color-text: #1a6f91;
   --surface-word: #e7f1e2;
   --surface-sudoku: #e2efed;
   --surface-chess: #f1ebe3;
@@ -150,4 +157,5 @@
   --surface-connections: #ece8f1;
   --surface-code: #f4e6e5;
   --surface-angle: #eef0e2;
+  --surface-color: #e3eff4;
 }

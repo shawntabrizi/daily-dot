@@ -65,6 +65,7 @@
 .day-bar-segment[data-done="true"][data-segment="connections"] { background: var(--accent-connections); }
 .day-bar-segment[data-done="true"][data-segment="code"] { background: var(--accent-code); }
 .day-bar-segment[data-done="true"][data-segment="angle"] { background: var(--accent-angle); }
+.day-bar-segment[data-done="true"][data-segment="color"] { background: var(--accent-color); }
 
 .game-rows {
   display: flex;
@@ -82,6 +83,7 @@
 .game-row[data-game-row="connections"] { --accent: var(--accent-connections); --accent-ink: var(--accent-connections-ink); --accent-text: var(--accent-connections-text); --surface-tint: var(--surface-connections); }
 .game-row[data-game-row="code"] { --accent: var(--accent-code); --accent-ink: var(--accent-code-ink); --accent-text: var(--accent-code-text); --surface-tint: var(--surface-code); }
 .game-row[data-game-row="angle"] { --accent: var(--accent-angle); --accent-ink: var(--accent-angle-ink); --accent-text: var(--accent-angle-text); --surface-tint: var(--surface-angle); }
+.game-row[data-game-row="color"] { --accent: var(--accent-color); --accent-ink: var(--accent-color-ink); --accent-text: var(--accent-color-text); --surface-tint: var(--surface-color); }
 
 /* The whole row is the link: 72 px tall, radius 18, on the surface. */
 .game-row {

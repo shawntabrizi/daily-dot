@@ -264,10 +264,10 @@ describe("cardTiles (D21)", () => {
   });
 
   it("fills six from the finished picks when fewer than six are unfinished", () => {
-    // Eight picks, four done: the four open ones, then the first two done.
-    expect(names(cardTiles(bits(0, 1, 2, 3), GAME_ROSTER))).toEqual(["mini", "connections", "code", "angle", "word", "sudoku"]);
+    // Nine picks, five done: the four open ones, then the first two done.
+    expect(names(cardTiles(bits(0, 1, 2, 3, 4), GAME_ROSTER))).toEqual(["connections", "code", "angle", "color", "word", "sudoku"]);
     // Exactly six open: no "+".
-    expect(names(cardTiles(bits(0, 1), GAME_ROSTER))).toEqual(["chess", "globe", "mini", "connections", "code", "angle"]);
+    expect(names(cardTiles(bits(0, 1, 2), GAME_ROSTER))).toEqual(["globe", "mini", "connections", "code", "angle", "color"]);
   });
 
   it("shows five unfinished picks and a + when more than six are unfinished", () => {
@@ -275,7 +275,7 @@ describe("cardTiles (D21)", () => {
     expect(names(cardTiles(bits(0), GAME_ROSTER))).toEqual(["sudoku", "chess", "globe", "mini", "connections", "+"]);
     const paths = imagePathsIn(dailyFace(EMPTY_BITS, {}, {}, noon, GAME_ROSTER));
     expect(paths).toContain("tiles/tile-more.png");
-    expect(paths).toContain("tiles/count-0-of-8.png");
+    expect(paths).toContain("tiles/count-0-of-9.png");
     expect(paths.filter((path) => path.startsWith("tiles/tile-"))).toHaveLength(6);
   });
 });

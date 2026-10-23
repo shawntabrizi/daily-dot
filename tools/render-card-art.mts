@@ -49,6 +49,7 @@ const ACCENT: Record<GameSlug, { fill: string; ink: string }> = {
   connections: { fill: "#9b59c9", ink: "#ffffff" },
   code: { fill: "#e5534b", ink: "#2a0a08" },
   angle: { fill: "#b5c934", ink: "#22270a" },
+  color: { fill: "#2fb1e4", ink: "#06202b" },
 };
 /** The idle tile and the ring around it. */
 const IDLE = { fill: "#202427", ink: "#8d9396", ring: "#2e3336" };
@@ -62,6 +63,7 @@ const LABEL: Record<GameSlug, string> = {
   connections: "CONNECTIONS",
   code: "CODE",
   angle: "ANGLE",
+  color: "COLOR",
 };
 const WHITE = "#ffffff";
 const COUNT_MUTED = "#8d9396";
@@ -97,6 +99,9 @@ const GLYPH: Record<GameSlug, (ink: string) => string> = {
     `<rect x="4" y="11" width="18" height="13" rx="2.5" fill="${ink}"/><path d="M8 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="${ink}" stroke-width="2.4"/>`,
   angle: (ink) =>
     `<path d="M3 23h20M3 23L16 5" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/><path d="M11 23a8 8 0 0 0-3.2-6.4" fill="none" stroke="${ink}" stroke-width="2"/>`,
+  // Three slider columns, thumbs at different heights.
+  color: (ink) =>
+    `<path d="M6 3v20M13 3v20M20 3v20" stroke="${ink}" stroke-width="2.4" stroke-linecap="round" opacity="0.55"/><circle cx="6" cy="9" r="3.2" fill="${ink}"/><circle cx="13" cy="17" r="3.2" fill="${ink}"/><circle cx="20" cy="7" r="3.2" fill="${ink}"/>`,
 };
 
 function svg(width: number, height: number, body: string): string {

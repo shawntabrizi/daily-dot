@@ -144,6 +144,12 @@
   --accent-ink: var(--accent-angle-ink);
 }
 
+.launcher-row[data-launcher-game="color"],
+.launcher[data-launcher-selected="color"] .launcher__play {
+  --accent: var(--accent-color);
+  --accent-ink: var(--accent-color-ink);
+}
+
 .launcher-row__icon {
   display: inline-grid;
   flex: 0 0 auto;

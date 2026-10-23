@@ -1,0 +1,312 @@
+/* Daily Color (D24): the colour fills the board for its look, then three slim
+   slider columns sit on the left with the pick filling the rest (dialed.gg).
+   The board takes whatever height is left, so the screen never scrolls (D18). */
+
+.page.color-page {
+  display: flex;
+  height: calc(100dvh - 64px);
+  min-height: 0;
+  padding-top: 18px;
+  padding-bottom: 12px;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.color-page .game-heading {
+  flex: none;
+  margin-bottom: 12px;
+}
+
+.color-shell {
+  display: flex;
+  width: min(100%, 520px);
+  min-height: 0;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.color-shell .game-loading,
+.color-shell .game-error {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.color-stage {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.color-meta {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.color-board {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%);
+  overflow: hidden;
+  --board-ink: #ffffff;
+  --board-ink-soft: rgb(255 255 255 / 78%);
+}
+
+.color-board[data-ink="dark"],
+.color-half[data-ink="dark"] {
+  --board-ink: #111314;
+  --board-ink-soft: rgb(17 19 20 / 72%);
+}
+
+/* The look: the colour alone, a countdown in the middle. */
+.color-board--look {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--board-ink);
+}
+
+.color-countdown {
+  font-family: var(--display);
+  font-size: 96px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.color-board-note {
+  color: var(--board-ink-soft);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* The pick: three columns on the left, each drawn around the current pick. */
+.color-board--pick {
+  padding: 14px;
+}
+
+.color-sliders {
+  display: flex;
+  height: 100%;
+  gap: 10px;
+}
+
+.color-slider {
+  --thumb: 32px;
+  position: relative;
+  width: 44px;
+  height: 100%;
+  flex: none;
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 22%), 0 0 0 1px rgb(0 0 0 / 18%);
+  cursor: grab;
+  outline: 0;
+  touch-action: none;
+}
+
+.color-slider:active {
+  cursor: grabbing;
+}
+
+.color-slider-thumb {
+  position: absolute;
+  bottom: calc(var(--at, 0) * (100% - var(--thumb) - 12px) + 6px);
+  left: 50%;
+  width: var(--thumb);
+  height: var(--thumb);
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 18%);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 45%), inset 0 0 0 1px rgb(0 0 0 / 15%);
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.color-slider:focus-visible .color-slider-thumb {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--present), 0 1px 4px rgb(0 0 0 / 45%);
+}
+
+.color-submit,
+.color-next {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.color-submit {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 35%);
+  color: #111314;
+}
+
+.color-submit:focus-visible,
+.color-next:focus-visible {
+  outline: 3px solid var(--present);
+  outline-offset: 2px;
+}
+
+/* The reveal: the colour beside yours, the score over the seam. */
+.color-board--reveal {
+  flex-direction: row;
+}
+
+.color-half {
+  display: flex;
+  min-width: 0;
+  padding: 14px;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--board-ink);
+}
+
+.color-half strong {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.color-half span {
+  color: var(--board-ink-soft);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.color-reveal-score {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  margin: 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--bg);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 35%);
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 700;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.color-reveal-score strong {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.color-next {
+  flex: none;
+  background: var(--accent-color);
+  color: var(--accent-color-ink);
+}
+
+/* The end: the total and the five pairs. */
+.color-summary {
+  display: flex;
+  min-height: 0;
+  padding: 14px;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.color-final {
+  margin: 0;
+  color: var(--muted);
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.color-final strong {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.color-pairs {
+  display: flex;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 6px;
+  list-style: none;
+}
+
+.color-pair {
+  display: grid;
+  min-height: 44px;
+  grid-template-columns: minmax(0, 1fr) 52px;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-pair-swatches {
+  display: flex;
+  height: 40px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.color-pair-swatch {
+  flex: 1;
+}
+
+.color-pair-score {
+  font-family: var(--display);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+
+.color-result {
+  min-height: 44px;
+  margin: 0;
+  padding: 9px 12px;
+  flex: none;
+  border-radius: 7px;
+  background: var(--surface-color);
+  box-shadow: inset 0 0 0 2px var(--accent-color);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.color-stage--done .color-summary {
+  flex: 0 1 auto;
+}

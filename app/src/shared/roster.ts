@@ -6,7 +6,8 @@ export type GameSlug =
   | "mini"
   | "connections"
   | "code"
-  | "angle";
+  | "angle"
+  | "color";
 
 /**
  * Player-facing names follow the "Daily X" pattern; `short` is the X, for
@@ -41,6 +42,8 @@ export interface BucketSpec {
 export const COUNT_BUCKETS: BucketSpec = { min: 1, max: 32, buckets: 31 };
 /** 15-second steps from 0:00, then 30:00+. */
 export const SECONDS_BUCKETS: BucketSpec = { min: 0, max: 1815, buckets: 121 };
+/** Half-point steps over 0–50 points (scores in tenths). */
+export const POINTS_BUCKETS: BucketSpec = { min: 0, max: 500, buckets: 100 };
 
 export interface Game {
   id: GameSlug;
@@ -142,6 +145,17 @@ export const GAME_ROSTER: readonly Game[] = [
     kind: "count",
     better: "lower",
     buckets: COUNT_BUCKETS,
+  },
+  {
+    id: "color",
+    name: "Daily Color",
+    short: "Color",
+    gameId: 8,
+    startDay: 0,
+    route: "#/g/color",
+    kind: "points",
+    better: "higher",
+    buckets: POINTS_BUCKETS,
   },
 ];
 

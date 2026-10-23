@@ -42,6 +42,11 @@ const GLYPHS: Record<GameSlug, string> = {
   // Two rays and the arc between them.
   angle:
     '<path d="M4 19.5h16M4 19.5l10-13"/><path d="M10 19.5a6 6 0 0 0-2.4-4.8"/>',
+  // Three slider columns, thumbs at different heights.
+  color:
+    '<path d="M6 4v16M12 4v16M18 4v16"/>'
+    + '<circle cx="6" cy="9" r="2.2" fill="%f" stroke="none"/><circle cx="12" cy="15" r="2.2" fill="%f" stroke="none"/>'
+    + '<circle cx="18" cy="7" r="2.2" fill="%f" stroke="none"/>',
 };
 
 export function gameGlyph(id: GameSlug, options: GlyphOptions = {}): string {
