@@ -105,6 +105,14 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   brief `plans/wp-40-bucket-specs.md`; parity vectors `shared/bucket-test-vectors.json`.
   Run by subagents: A contract, B app, then C Daily Color. Needs Shawn: `DailyScores`
   redeploy and `set-bucket-specs`.
+  - **A done (`dc3376f`):** `contracts/logic` `BucketSpec` (private fields, `new` validates
+    1–128 buckets and max > min, `DEFAULT` {1, 32, 31}, `bucket`), `GameKind` gone;
+    `DailyScores` `setBucketSpec` (owner, set-once) / `bucketSpec` view, 0-based buckets.
+    62 host tests incl. the parity file; `cargo pvm-contract build` succeeds with
+    nightly-2026-02-01 (28,698 bytes). No runtime test harness for the contract: owner,
+    set-once and the 0-based histogram read are checked by review only. Left for later:
+    `logic::better_count` / `top_percent` still assume lower-better (unused by the
+    contract; the app ranks).
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 
