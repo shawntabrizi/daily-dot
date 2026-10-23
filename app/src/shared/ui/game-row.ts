@@ -29,6 +29,8 @@ export const HOOKS: Record<GameSlug, string> = {
   globe: "Name the country",
   mini: "Five by five",
   connections: "Four groups of four",
+  code: "Crack the four-digit code",
+  angle: "Name the angle",
 };
 
 /** Simple geometric glyphs on a 24-unit grid; the tile colours them. */
@@ -50,6 +52,12 @@ const GLYPHS: Record<GameSlug, string> = {
   connections:
     '<circle cx="7.5" cy="7.5" r="3.5"/><circle cx="16.5" cy="7.5" r="3.5"/>'
     + '<circle cx="7.5" cy="16.5" r="3.5"/><circle cx="16.5" cy="16.5" r="3.5"/>',
+  code:
+    '<rect x="4" y="10" width="16" height="11" rx="2"/>'
+    + '<path d="M7.5 10V7a4.5 4.5 0 0 1 9 0v3" fill="none" stroke="currentColor" stroke-width="2"/>',
+  angle:
+    '<path d="M3 20h18v2H3z"/><path d="M3.6 21.2l11-14.5 1.6 1.2-11 14.5z"/>'
+    + '<path d="M10 20a7 7 0 0 0-2.8-5.6l1.2-1.6A9 9 0 0 1 12 20z" opacity="0.55"/>',
 };
 
 export function gameGlyph(game: Game): string {

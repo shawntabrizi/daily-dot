@@ -86,6 +86,15 @@ any single context window. `PLAN.md` is the design; this is where things actuall
 - **WP39 (Daily Code, Daily Angle, card overflow), in progress 2026-10-23:** D12/D21
   amended, D22/D23 added (Shawn); brief `plans/wp-39-code-and-angle.md`. Angle ships
   without Angledle's six-guess cap (D13: no loss state) unless Shawn changes D13.
+  - **Games done:** `games/code` (engine with multiplicity-correct pegs, seeded v1
+    generator via the new `shared/seeded.ts`, progress, view with a number pad and
+    physical keys) and `games/angle` (hints at 5/15/30°, v1 generator with a daily
+    rotation, SVG drawing with the reflex arc the long way, `noValidate` form so the
+    game's message shows instead of the webview bubble). Roster entries, accents
+    (Code coral `#e5534b`, Angle lime `#b5c934`, both theme blocks), glyphs, hub hooks,
+    progress lines, routes, result-page rules; starter picks now include Code;
+    `COUNT_WORDS` to Twelve. Test helper `pickSixGames` (was `pickAllGames`). Checked
+    in Chromium at 360×780 and 1440×900 with 7–8 guesses: no page scroll.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

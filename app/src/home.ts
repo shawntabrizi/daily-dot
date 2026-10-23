@@ -69,7 +69,7 @@ function rememberMoreOpen(open: boolean): void {
 const HEADLINE_LOADING = "Loading…";
 
 /** The headline states the day: "Six to play." / "Three to go." / "All six done." */
-export function headlineFor(done: number, total = GAME_ROSTER.length): string {
+export function headlineFor(done: number, total: number): string {
   if (done === 0) {
     return `${WORDS[total]} to play.`;
   }

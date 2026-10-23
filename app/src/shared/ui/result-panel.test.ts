@@ -13,11 +13,11 @@ import {
   renderResultPanel,
   syncResultChrome,
 } from "./result-panel";
-import { pickAllGames } from "../../test/picks";
+import { pickSixGames } from "../../test/picks";
 
-// Every game picked, except where a test picks its own (D21).
+// The six original games picked, except where a test picks its own (D21).
 beforeEach(() => {
-  pickAllGames();
+  pickSixGames();
 });
 
 afterEach(() => {
@@ -223,7 +223,7 @@ describe("nextGame", () => {
     const next = nextGame(gameById("chess")!, bit("word") | bit("globe"));
     expect(next.game?.id).toBe("mini");
     expect(next.done).toBe(3);
-    expect(next.total).toBe(GAME_ROSTER.length);
+    expect(next.total).toBe(6);
   });
 
   it("wraps from the last game to the first unplayed one", () => {

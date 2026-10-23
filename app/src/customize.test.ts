@@ -17,7 +17,7 @@ describe("customize", () => {
   it("lists every roster game with the picks ticked", () => {
     const view = renderCustomize();
     expect(boxes(view.element)).toHaveLength(GAME_ROSTER.length);
-    expect(boxes(view.element).filter((entry) => entry.checked).map((entry) => Number(entry.value))).toEqual([0, 4, 5]);
+    expect(boxes(view.element).filter((entry) => entry.checked).map((entry) => Number(entry.value))).toEqual([0, 4, 5, 6]);
     expect(view.element.querySelector('[data-customize-game="mini"]')?.classList.contains("is-picked")).toBe(true);
     expect(view.element.querySelector('[data-customize-game="globe"]')?.classList.contains("is-picked")).toBe(false);
   });
@@ -26,10 +26,10 @@ describe("customize", () => {
     const view = renderCustomize();
     document.body.append(view.element);
     box(view.element, 3).click();
-    expect(currentPicks()).toEqual([0, 3, 4, 5]);
+    expect(currentPicks()).toEqual([0, 3, 4, 5, 6]);
     box(view.element, 0).click();
-    expect(currentPicks()).toEqual([3, 4, 5]);
-    expect(view.element.querySelector("[data-customize-note]")?.textContent).toBe("3 games picked.");
+    expect(currentPicks()).toEqual([3, 4, 5, 6]);
+    expect(view.element.querySelector("[data-customize-note]")?.textContent).toBe("4 games picked.");
   });
 
   it("never lets the last pick go", () => {

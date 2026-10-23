@@ -132,6 +132,18 @@
   --accent-ink: var(--accent-connections-ink);
 }
 
+.launcher-row[data-launcher-game="code"],
+.launcher[data-launcher-selected="code"] .launcher__play {
+  --accent: var(--accent-code);
+  --accent-ink: var(--accent-code-ink);
+}
+
+.launcher-row[data-launcher-game="angle"],
+.launcher[data-launcher-selected="angle"] .launcher__play {
+  --accent: var(--accent-angle);
+  --accent-ink: var(--accent-angle-ink);
+}
+
 .launcher-row__icon {
   display: inline-grid;
   flex: 0 0 auto;

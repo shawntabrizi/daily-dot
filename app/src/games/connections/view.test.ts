@@ -11,11 +11,11 @@ import {
   toggleConnectionsWord,
 } from "./progress";
 import { renderConnections } from "./view";
-import { pickAllGames } from "../../test/picks";
+import { pickSixGames } from "../../test/picks";
 
-// Every game picked: the share text counts all six (D21).
+// The six original games picked: the share text counts all six (D21).
 beforeEach(() => {
-  pickAllGames();
+  pickSixGames();
 });
 
 function sourceFor(

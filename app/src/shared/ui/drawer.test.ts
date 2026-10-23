@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DataSource, DayBits } from "../data-source";
 import { savePicks } from "../picks";
-import { pickAllGames } from "../../test/picks";
+import { pickSixGames } from "../../test/picks";
 import { createDrawer } from "./drawer";
 
 beforeEach(() => {
-  pickAllGames();
+  pickSixGames();
 });
 
 afterEach(() => {

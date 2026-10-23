@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { applyGuess, submitResultOnce } from "../games/word/session";
 import { MemoryStorage } from "../test/memory-storage";
-import { pickAllGames } from "../test/picks";
+import { pickSixGames } from "../test/picks";
 import { savePicks } from "./picks";
 import type { DataSource } from "./data-source";
 import { HostSignerUnavailableError } from "./host-signer";
@@ -52,9 +52,9 @@ function scriptedPrompt(answer: "save" | "later") {
   };
 }
 
-// Every game picked, except where a test picks its own (D21).
+// The six original games picked, except where a test picks its own (D21).
 beforeEach(() => {
-  pickAllGames();
+  pickSixGames();
 });
 
 afterEach(() => {

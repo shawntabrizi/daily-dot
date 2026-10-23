@@ -35,9 +35,12 @@ import { CARD_STATE_KEY, type CardSummary } from "./shared/card-state";
 import { dayIndexFromTimestamp } from "./shared/day";
 import { OPEN_INTENT_KEY, parseOpenIntent } from "./shared/open-intent";
 import { PICKS_KEY, serialisePicks } from "./shared/picks";
-import { pickAllGames } from "./test/picks";
+import { pickSixGames } from "./test/picks";
 import { createWordProgress, saveWordProgress } from "./shared/progress";
 import { GAME_ROSTER, gameIdOf } from "./shared/roster";
+
+/** The picks these tests run with: the six original games. */
+const PICKED = GAME_ROSTER.slice(0, 6);
 
 const today = () => dayIndexFromTimestamp(Date.now() / 1_000);
 
@@ -69,11 +72,11 @@ const playLabel = (root: HTMLElement) =>
   root.querySelector("[data-launcher-play]")?.textContent;
 const settled = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-// Every game picked, in the host's copy and this device's mirror, except
-// where a test sets its own (D21).
+// The six original games picked, in the host's copy and this device's
+// mirror, except where a test sets its own (D21).
 beforeEach(() => {
-  host.values.set(PICKS_KEY, serialisePicks(GAME_ROSTER.map((game) => game.gameId)));
-  pickAllGames();
+  host.values.set(PICKS_KEY, serialisePicks([0, 1, 2, 3, 4, 5]));
+  pickSixGames();
 });
 
 afterEach(() => {
@@ -121,51 +124,51 @@ describe("card launcher", () => {
     window.localStorage.removeItem(PICKS_KEY);
     const fresh = mount();
     await settled();
-    expect(rows(fresh.root).map((row) => row.dataset.launcherGame)).toEqual(["word", "mini", "connections"]);
+    expect(rows(fresh.root).map((row) => row.dataset.launcherGame)).toEqual(["word", "mini", "connections", "code"]);
     fresh.dispose();
   });
 
 
   it("lists every roster game in order with today's ticks from the KV record", async () => {
-    const [first, , third] = GAME_ROSTER;
+    const [first, , third] = PICKED;
     seedChecklist(today(), [first.gameId, third.gameId]);
     const { root, dispose } = mount();
 
     expect(rows(root).map((row) => row.dataset.launcherGame)).toEqual(
-      GAME_ROSTER.map((game) => game.id),
+      PICKED.map((game) => game.id),
     );
     expect(rows(root).map((row) => row.textContent?.trim())).toEqual(
-      GAME_ROSTER.map((game) => expect.stringContaining(game.short)),
+      PICKED.map((game) => expect.stringContaining(game.short)),
     );
     await vi.waitFor(() => {
       expect(root.querySelector("[data-launcher-count]")?.textContent).toBe(
-        `2/${GAME_ROSTER.length} done`,
+        `2/${PICKED.length} done`,
       );
     });
     const played = rows(root).filter((row) => row.classList.contains("is-played"));
     expect(played.map((row) => row.dataset.launcherGame)).toEqual([first.id, third.id]);
     // The first unplayed game starts selected, and the Play button names it.
     const selected = rows(root).filter((row) => row.classList.contains("is-selected"));
-    expect(selected.map((row) => row.dataset.launcherGame)).toEqual([GAME_ROSTER[1].id]);
+    expect(selected.map((row) => row.dataset.launcherGame)).toEqual([PICKED[1].id]);
     expect(root.querySelector("[data-launcher-play]")?.textContent).toBe(
-      `Play ${GAME_ROSTER[1].name}`,
+      `Play ${PICKED[1].name}`,
     );
     // The Play button fills in the selected game's accent; the title is the product's.
-    expect(root.querySelector<HTMLElement>("[data-launcher]")?.dataset.launcherSelected).toBe(GAME_ROSTER[1].id);
+    expect(root.querySelector<HTMLElement>("[data-launcher]")?.dataset.launcherSelected).toBe(PICKED[1].id);
     expect(root.querySelector(".launcher__title strong")?.textContent).toBe("Daily on Dot");
     expect(root.querySelector(".game-grid")).toBeNull();
     dispose();
   });
 
   it("shows yesterday's record as all unplayed", async () => {
-    seedChecklist(today() - 1, GAME_ROSTER.map((game) => game.gameId));
+    seedChecklist(today() - 1, PICKED.map((game) => game.gameId));
     const { root, dispose } = mount();
     await vi.waitFor(() => {
       expect(host.storage.readString).toHaveBeenCalledWith(CARD_STATE_KEY);
     });
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(root.querySelector("[data-launcher-count]")?.textContent).toBe(
-      `0/${GAME_ROSTER.length} done`,
+      `0/${PICKED.length} done`,
     );
     expect(rows(root).filter((row) => row.classList.contains("is-played"))).toHaveLength(0);
     expect(rows(root)[0].classList.contains("is-selected")).toBe(true);
@@ -174,23 +177,23 @@ describe("card launcher", () => {
 
   it("does not count a bit outside the roster toward the day's total", async () => {
     // A set bit with no roster entry must not add a tick or a row.
-    const [first] = GAME_ROSTER;
-    seedChecklist(today(), [first.gameId, GAME_ROSTER.length]);
+    const [first] = PICKED;
+    seedChecklist(today(), [first.gameId, PICKED.length]);
     const { root, dispose } = mount();
 
     await vi.waitFor(() => {
       expect(root.querySelector("[data-launcher-count]")?.textContent).toBe(
-        `1/${GAME_ROSTER.length} done`,
+        `1/${PICKED.length} done`,
       );
     });
-    expect(rows(root)).toHaveLength(GAME_ROSTER.length);
+    expect(rows(root)).toHaveLength(PICKED.length);
     const played = rows(root).filter((row) => row.classList.contains("is-played"));
     expect(played.map((row) => row.dataset.launcherGame)).toEqual([first.id]);
     dispose();
   });
 
   it("a tap on a row only selects it; the half sheet must not jump into a game", async () => {
-    const last = GAME_ROSTER.length - 1;
+    const last = PICKED.length - 1;
     const { root, dispose } = mount();
 
     rows(root)[last].click();
@@ -199,22 +202,22 @@ describe("card launcher", () => {
     expect(host.navigateTo).not.toHaveBeenCalled();
     expect(window.localStorage.getItem(OPEN_INTENT_KEY)).toBeNull();
     const selected = rows(root).filter((row) => row.classList.contains("is-selected"));
-    expect(selected.map((row) => row.dataset.launcherGame)).toEqual([GAME_ROSTER[last].id]);
+    expect(selected.map((row) => row.dataset.launcherGame)).toEqual([PICKED[last].id]);
     expect(rows(root)[last].getAttribute("aria-pressed")).toBe("true");
     expect(rows(root)[0].getAttribute("aria-pressed")).toBe("false");
     expect(root.querySelector("[data-launcher-play]")?.textContent).toBe(
-      `Play ${GAME_ROSTER[last].name}`,
+      `Play ${PICKED[last].name}`,
     );
     dispose();
   });
 
   it("a played game's row offers to open it again, and a tick refresh keeps the user's pick", async () => {
-    const [first] = GAME_ROSTER;
+    const [first] = PICKED;
     seedChecklist(today(), [first.gameId]);
     const { root, dispose } = mount();
     await vi.waitFor(() => {
       expect(root.querySelector("[data-launcher-count]")?.textContent).toBe(
-        `1/${GAME_ROSTER.length} done`,
+        `1/${PICKED.length} done`,
       );
     });
     rows(root)[0].click();
@@ -228,8 +231,8 @@ describe("card launcher", () => {
   });
 
   it("Play writes the selected game's intent to both stores, then asks the host for the routed product URL", async () => {
-    const last = GAME_ROSTER.length - 1;
-    const game = GAME_ROSTER[last];
+    const last = PICKED.length - 1;
+    const game = PICKED[last];
     const { root, dispose } = mount();
     const before = Date.now();
 
@@ -259,7 +262,7 @@ describe("card launcher", () => {
         ? { ok: true as const }
         : ({ ok: false, error: { message: `refused ${url}` } } as never),
     );
-    const game = GAME_ROSTER[0];
+    const game = PICKED[0];
     const { root, dispose } = mount();
 
     root.querySelector<HTMLButtonElement>("[data-launcher-play]")!.click();
@@ -297,7 +300,7 @@ describe("card launcher", () => {
 
     await vi.waitFor(() => {
       expect(root.querySelector("[data-launcher-count]")?.textContent).toBe(
-        `1/${GAME_ROSTER.length} done`,
+        `1/${PICKED.length} done`,
       );
     });
     expect(stateWords(root)).toEqual(["Done", "Play", "Resume", "Play", "Play", "Play"]);
@@ -325,7 +328,7 @@ describe("card launcher", () => {
     const { root, dispose } = mount();
     await vi.waitFor(() => {
       expect(root.querySelector("[data-launcher-count]")?.textContent).toBe(
-        `1/${GAME_ROSTER.length} done`,
+        `1/${PICKED.length} done`,
       );
     });
 

@@ -5,13 +5,13 @@ import type { DataSource, DayBits } from "./shared/data-source";
 import { savePicks } from "./shared/picks";
 import { GAME_ROSTER } from "./shared/roster";
 import { rosterMask } from "./shared/streaks";
-import { pickAllGames } from "./test/picks";
+import { pickSixGames } from "./test/picks";
 
 const MASK = rosterMask(GAME_ROSTER.map((game) => game.gameId));
 
-// Every game picked, except where a test picks its own (D21).
+// The six original games picked, except where a test picks its own (D21).
 beforeEach(() => {
-  pickAllGames();
+  pickSixGames();
 });
 
 afterEach(() => {
@@ -40,7 +40,7 @@ it("offers a retry when the initial archive read fails", async () => {
   document.body.append(view.element);
   // Every game has a chip even before the read resolves.
   const chips = [...view.element.querySelectorAll("[data-game-chip]")].map((chip) => chip.textContent);
-  expect(chips).toEqual(["All", "Word", "Sudoku", "Chess", "Globe", "Mini", "Connections"]);
+  expect(chips).toEqual(["All", "Word", "Sudoku", "Chess", "Globe", "Mini", "Connections", "Code", "Angle"]);
   await vi.waitFor(() => {
     expect(view.element.textContent).toContain(
       "Calendar data could not be loaded.",

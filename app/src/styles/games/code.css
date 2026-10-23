@@ -1,0 +1,253 @@
+/* Daily Code (D22): the guess history scrolls inside the board; the entry slots and the
+   number pad stay put, so the screen never scrolls (D18). Neutral while playing; the
+   accent only marks a finished board. */
+
+.page.code-page {
+  display: flex;
+  height: calc(100dvh - 64px);
+  min-height: 0;
+  padding-top: 18px;
+  padding-bottom: 12px;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.code-page .game-heading {
+  flex: none;
+  margin-bottom: 12px;
+}
+
+.code-shell {
+  display: flex;
+  width: min(100%, 460px);
+  min-height: 0;
+  margin: 0 auto;
+  padding: 14px;
+  flex: 1;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.code-shell .game-loading,
+.code-shell .game-error {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.code-stage {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.code-meta {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+
+.code-meta span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.code-meta strong {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.code-list {
+  display: flex;
+  min-height: 0;
+  margin: 0;
+  padding: 0 3px 0 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  list-style: none;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--neutral) var(--tile-empty);
+  scrollbar-width: thin;
+}
+
+.code-list:focus-visible {
+  outline: 2px solid var(--present);
+  outline-offset: 2px;
+}
+
+.code-empty {
+  display: grid;
+  height: 100%;
+  min-height: 60px;
+  place-items: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.code-row {
+  display: flex;
+  min-height: 44px;
+  padding: 4px 10px;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  background: var(--surface-raised);
+}
+
+.code-row-digits {
+  display: flex;
+  gap: 6px;
+}
+
+.code-digit {
+  display: grid;
+  width: 32px;
+  height: 36px;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--tile-empty);
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Two by two, as Mastermind pegs sit: ● right place, ○ wrong place, an empty ring for neither. */
+.code-pegs {
+  display: grid;
+  grid-template-columns: repeat(2, 12px);
+  gap: 4px;
+}
+
+.code-peg {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--neutral);
+}
+
+.code-peg--exact {
+  background: var(--correct);
+  box-shadow: none;
+}
+
+.code-peg--near {
+  background: transparent;
+  box-shadow: inset 0 0 0 3px var(--present);
+}
+
+.code-entry {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  gap: 8px;
+}
+
+.code-slot {
+  display: grid;
+  width: 52px;
+  height: 56px;
+  place-items: center;
+  border: 2px solid var(--neutral);
+  border-radius: 8px;
+  background: var(--tile-empty);
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.code-slot--filled {
+  border-color: var(--text);
+}
+
+.code-message {
+  min-height: 16px;
+  margin: 0;
+  flex: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+.code-pad {
+  display: grid;
+  width: min(100%, 300px);
+  margin: 0 auto;
+  flex: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.code-key {
+  height: 48px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--neutral);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.code-key--enter {
+  background: var(--text);
+  color: var(--bg);
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.code-key:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.code-key:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.code-result {
+  min-height: 44px;
+  margin: 0;
+  padding: 9px 12px;
+  flex: none;
+  border-radius: 7px;
+  background: var(--surface-code);
+  box-shadow: inset 0 0 0 2px var(--accent-code);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.code-stage--done .code-list {
+  flex: 0 1 auto;
+}
+
+/* Short phones: the pad and the slots shrink before anything scrolls. */
+@media (max-height: 700px) {
+  .code-key {
+    height: 42px;
+  }
+
+  .code-slot {
+    height: 48px;
+  }
+}

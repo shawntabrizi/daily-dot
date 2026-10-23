@@ -22,12 +22,12 @@ afterEach(() => {
 });
 
 describe("picks", () => {
-  it("starts a new player on Word, Mini and Connections", () => {
-    expect(STARTER_PICKS).toEqual([0, 4, 5]);
-    expect(currentPicks()).toEqual([0, 4, 5]);
-    expect(pickedGames().map((game) => game.id)).toEqual(["word", "mini", "connections"]);
-    expect(unpickedGames().map((game) => game.id)).toEqual(["sudoku", "chess", "globe"]);
-    expect(picksMask()).toBe(0b110001n);
+  it("starts a new player on Word, Mini, Connections and Code", () => {
+    expect(STARTER_PICKS).toEqual([0, 4, 5, 6]);
+    expect(currentPicks()).toEqual([0, 4, 5, 6]);
+    expect(pickedGames().map((game) => game.id)).toEqual(["word", "mini", "connections", "code"]);
+    expect(unpickedGames().map((game) => game.id)).toEqual(["sudoku", "chess", "globe", "angle"]);
+    expect(picksMask()).toBe(0b1110001n);
   });
 
   it("stores roster gameIds in roster order and never an empty pick", () => {

@@ -3,7 +3,7 @@ import { renderDayPage } from "./day-page";
 import type { DataSource } from "./shared/data-source";
 import { dateFromDayIndex } from "./shared/day";
 import { GAME_ROSTER, gameById } from "./shared/roster";
-import { pickAllGames } from "./test/picks";
+import { pickSixGames } from "./test/picks";
 
 vi.mock("./shared/day-summary", () => ({
   dayComplete: () => false,
@@ -24,7 +24,7 @@ function sourceOn(today = TODAY): DataSource {
 
 describe("day page (a past day's hub)", () => {
   beforeEach(() => {
-    pickAllGames();
+    pickSixGames();
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date(dateFromDayIndex(TODAY).getTime() + 12 * 3_600_000));
   });

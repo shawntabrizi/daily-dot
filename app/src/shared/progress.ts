@@ -1,5 +1,7 @@
 import type { LetterScore } from "../games/word/engine";
+import { hasStartedAngle } from "../games/angle/progress";
 import { hasStartedChess } from "../games/chess/progress";
+import { hasStartedCode } from "../games/code/progress";
 import { hasStartedConnections } from "../games/connections/progress";
 import { hasStartedGlobe } from "../games/globe/progress";
 import { hasStartedMini } from "../games/mini/progress";
@@ -198,6 +200,11 @@ export function progressLine(
       const found = count(stored.found);
       return found === null ? "started" : `${found} of 4 found`;
     }
+    case "code":
+    case "angle": {
+      const guesses = count(stored.guesses);
+      return guesses ? plural(guesses, "guess", "guesses") : "started";
+    }
   }
 }
 
@@ -211,6 +218,8 @@ const STARTED_BY_SLUG: Record<GameSlug, (day: number, storage: StorageLike) => b
   globe: hasStartedGlobe,
   mini: hasStartedMini,
   connections: hasStartedConnections,
+  code: hasStartedCode,
+  angle: hasStartedAngle,
 };
 
 export function hasStarted(

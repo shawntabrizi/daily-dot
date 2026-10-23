@@ -4,11 +4,11 @@ import { globeAnswer } from "../games/globe/generate";
 import { InMemoryDataSource } from "./data-source";
 import { GAME_ROSTER } from "./roster";
 import { connectionsRows, shareText, type ShareGame } from "./share";
-import { pickAllGames } from "../test/picks";
+import { pickSixGames } from "../test/picks";
 
-// Every game picked, except where a test passes its own picks (D21).
+// The six original games picked, except where a test passes its own (D21).
 beforeEach(() => {
-  pickAllGames();
+  pickSixGames();
 });
 
 afterEach(() => {

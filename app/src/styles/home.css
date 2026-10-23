@@ -63,6 +63,8 @@
 .day-bar-segment[data-done="true"][data-segment="globe"] { background: var(--accent-globe); }
 .day-bar-segment[data-done="true"][data-segment="mini"] { background: var(--accent-mini); }
 .day-bar-segment[data-done="true"][data-segment="connections"] { background: var(--accent-connections); }
+.day-bar-segment[data-done="true"][data-segment="code"] { background: var(--accent-code); }
+.day-bar-segment[data-done="true"][data-segment="angle"] { background: var(--accent-angle); }
 
 .game-rows {
   display: flex;
@@ -78,6 +80,8 @@
 .game-row[data-game-row="globe"] { --accent: var(--accent-globe); --accent-ink: var(--accent-globe-ink); --accent-text: var(--accent-globe-text); --surface-tint: var(--surface-globe); }
 .game-row[data-game-row="mini"] { --accent: var(--accent-mini); --accent-ink: var(--accent-mini-ink); --accent-text: var(--accent-mini-text); --surface-tint: var(--surface-mini); }
 .game-row[data-game-row="connections"] { --accent: var(--accent-connections); --accent-ink: var(--accent-connections-ink); --accent-text: var(--accent-connections-text); --surface-tint: var(--surface-connections); }
+.game-row[data-game-row="code"] { --accent: var(--accent-code); --accent-ink: var(--accent-code-ink); --accent-text: var(--accent-code-text); --surface-tint: var(--surface-code); }
+.game-row[data-game-row="angle"] { --accent: var(--accent-angle); --accent-ink: var(--accent-angle-ink); --accent-text: var(--accent-angle-text); --surface-tint: var(--surface-angle); }
 
 /* The whole row is the link: 72 px tall, radius 18, on the surface. */
 .game-row {

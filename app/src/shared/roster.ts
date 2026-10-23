@@ -1,4 +1,12 @@
-export type GameSlug = "word" | "sudoku" | "chess" | "globe" | "mini" | "connections";
+export type GameSlug =
+  | "word"
+  | "sudoku"
+  | "chess"
+  | "globe"
+  | "mini"
+  | "connections"
+  | "code"
+  | "angle";
 
 /**
  * Player-facing names follow the "Daily X" pattern; `short` is the X, for
@@ -79,10 +87,42 @@ export const GAME_ROSTER: readonly Game[] = [
     route: "#/g/connections",
     kind: "count",
   },
+  {
+    id: "code",
+    name: "Daily Code",
+    short: "Code",
+    gameId: 6,
+    startDay: 0,
+    route: "#/g/code",
+    kind: "count",
+  },
+  {
+    id: "angle",
+    name: "Daily Angle",
+    short: "Angle",
+    gameId: 7,
+    startDay: 0,
+    route: "#/g/angle",
+    kind: "count",
+  },
 ];
 
 /** Count words for headlines, index = count: the hub and the save overlay share them. */
-export const COUNT_WORDS = ["", "One", "Two", "Three", "Four", "Five", "Six"] as const;
+export const COUNT_WORDS = [
+  "",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+  "Seven",
+  "Eight",
+  "Nine",
+  "Ten",
+  "Eleven",
+  "Twelve",
+] as const;
 
 export function gameById(id: string): Game | undefined {
   return GAME_ROSTER.find((game) => game.id === id);

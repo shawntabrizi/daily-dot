@@ -10,6 +10,8 @@
 @import "./games/connections.css";
 @import "./games/sudoku.css";
 @import "./games/chess.css";
+@import "./games/code.css";
+@import "./games/angle.css";
 @import "./launcher.css";
 @import "./result.css";
 @import "./save.css";

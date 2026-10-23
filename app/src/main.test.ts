@@ -47,7 +47,7 @@ it("boots the complete stub roster in test mode without opening a chain", () => 
   expect(drawer?.hidden).toBe(false);
   // A fresh device: the starter picks, then Customize.
   expect([...root.querySelectorAll(".drawer-nav a")].map((link) => link.getAttribute("href")))
-    .toEqual(["#/", "#/history", "#/streaks", "#/card", "#/g/word", "#/g/mini", "#/g/connections", "#/customize"]);
+    .toEqual(["#/", "#/history", "#/streaks", "#/card", "#/g/word", "#/g/mini", "#/g/connections", "#/g/code", "#/customize"]);
   root.querySelector<HTMLButtonElement>(".drawer-backdrop")?.click();
   expect(drawer?.hidden).toBe(true);
   dispose();
@@ -63,7 +63,7 @@ it("beneath the Pocket card (?card=daily) renders the launcher, not the hub, and
   const dispose = bootApp(root);
 
   // The starter picks, as the card draws them.
-  expect(root.querySelectorAll("[data-launcher-game]")).toHaveLength(3);
+  expect(root.querySelectorAll("[data-launcher-game]")).toHaveLength(4);
   expect(root.querySelector("[data-launcher-open]")?.textContent).toBe("Open Daily on Dot");
   expect(root.querySelector("[data-game-row]")).toBeNull();
   expect(root.querySelector("main")).toBeNull();
@@ -161,17 +161,17 @@ it("routes #/customize, where a tick picks a game and the hub leads with it", as
   expect(root.querySelector(".site-title")?.textContent).toBe("Customize");
   const boxes = [...root.querySelectorAll<HTMLInputElement>(".customize-check")];
   expect(boxes).toHaveLength(GAME_ROSTER.length);
-  expect(boxes.filter((box) => box.checked).map((box) => Number(box.value))).toEqual([0, 4, 5]);
+  expect(boxes.filter((box) => box.checked).map((box) => Number(box.value))).toEqual([0, 4, 5, 6]);
 
   const globe = boxes.find((box) => box.value === "3")!;
   globe.click();
-  expect(parsePicks(window.localStorage.getItem(PICKS_KEY))).toEqual([0, 3, 4, 5]);
+  expect(parsePicks(window.localStorage.getItem(PICKS_KEY))).toEqual([0, 3, 4, 5, 6]);
 
   window.location.hash = "#/";
   await vi.waitFor(() => {
     expect(
       [...root.querySelectorAll("[data-open-games] [data-game-row]")].map((row) => row.getAttribute("data-game-row")),
-    ).toEqual(["word", "globe", "mini", "connections"]);
+    ).toEqual(["word", "globe", "mini", "connections", "code"]);
   });
   dispose();
 });

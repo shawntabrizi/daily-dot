@@ -4,11 +4,11 @@ import type { DataSource, DayBits } from "./shared/data-source";
 import { GAME_ROSTER } from "./shared/roster";
 import { rosterMask } from "./shared/streaks";
 import { monthLine, renderStreaks } from "./streaks";
-import { pickAllGames } from "./test/picks";
+import { pickSixGames } from "./test/picks";
 
-// Every game picked: blue here means all six (D17c, D21).
+// The six original games picked: blue here means all six (D17c, D21).
 beforeEach(() => {
-  pickAllGames();
+  pickSixGames();
 });
 
 afterEach(() => {

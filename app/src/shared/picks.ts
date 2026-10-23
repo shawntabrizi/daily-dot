@@ -22,8 +22,8 @@ export interface PicksChange {
   games: readonly number[];
 }
 
-/** A new player's games: Word, Mini, Connections. */
-export const STARTER_PICKS: readonly number[] = [0, 4, 5];
+/** A new player's games: Word, Mini, Connections, Code. */
+export const STARTER_PICKS: readonly number[] = [0, 4, 5, 6];
 
 interface StoredPicks {
   version: 1;

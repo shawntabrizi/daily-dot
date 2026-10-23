@@ -5,6 +5,8 @@ import { renderCardPage } from "./card-page";
 import { renderCustomize } from "./customize";
 import { renderDayPage } from "./day-page";
 import { renderChess } from "./games/chess/view";
+import { renderAngle } from "./games/angle/view";
+import { renderCode } from "./games/code/view";
 import { renderConnections } from "./games/connections/view";
 import { renderGlobe } from "./games/globe/view";
 import { renderMini } from "./games/mini/view";
@@ -153,6 +155,10 @@ export function startApp(
       currentView = renderGlobe(source, parseDay(url.searchParams.get("day")));
     } else if (url.pathname === "/g/mini") {
       currentView = renderMini(source, parseDay(url.searchParams.get("day")));
+    } else if (url.pathname === "/g/code") {
+      currentView = renderCode(source, parseDay(url.searchParams.get("day")));
+    } else if (url.pathname === "/g/angle") {
+      currentView = renderAngle(source, parseDay(url.searchParams.get("day")));
     } else if (url.pathname === "/g/connections") {
       currentView = renderConnections(
         source,
