@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const host = vi.hoisted(() => {
   const values = new Map<string, string>();
@@ -34,6 +34,8 @@ import { applyGuess } from "./games/word/session";
 import { CARD_STATE_KEY, type CardSummary } from "./shared/card-state";
 import { dayIndexFromTimestamp } from "./shared/day";
 import { OPEN_INTENT_KEY, parseOpenIntent } from "./shared/open-intent";
+import { PICKS_KEY, serialisePicks } from "./shared/picks";
+import { pickAllGames } from "./test/picks";
 import { createWordProgress, saveWordProgress } from "./shared/progress";
 import { GAME_ROSTER, gameIdOf } from "./shared/roster";
 
@@ -67,6 +69,13 @@ const playLabel = (root: HTMLElement) =>
   root.querySelector("[data-launcher-play]")?.textContent;
 const settled = () => new Promise((resolve) => setTimeout(resolve, 0));
 
+// Every game picked, in the host's copy and this device's mirror, except
+// where a test sets its own (D21).
+beforeEach(() => {
+  host.values.set(PICKS_KEY, serialisePicks(GAME_ROSTER.map((game) => game.gameId)));
+  pickAllGames();
+});
+
 afterEach(() => {
   document.body.replaceChildren();
   window.localStorage.clear();
@@ -85,6 +94,38 @@ describe("fromCard", () => {
 });
 
 describe("card launcher", () => {
+  it("lists only the picks the card draws, from the host's copy, and counts them alone", async () => {
+    host.values.set(PICKS_KEY, serialisePicks([0, 4, 5]));
+    // Globe (3) is done but not picked: no row, no count.
+    seedChecklist(today(), [0, 3]);
+    const { root, dispose } = mount();
+    await vi.waitFor(() => {
+      expect(rows(root).map((row) => row.dataset.launcherGame)).toEqual(["word", "mini", "connections"]);
+    });
+    await vi.waitFor(() => {
+      expect(root.querySelector("[data-launcher-count]")?.textContent).toBe("1/3 done");
+    });
+    expect(playLabel(root)).toBe("Play Daily Mini");
+    dispose();
+  });
+
+  it("falls back to this device's picks, then to the starter set", async () => {
+    host.values.delete(PICKS_KEY);
+    window.localStorage.clear();
+    window.localStorage.setItem(PICKS_KEY, serialisePicks([2]));
+    const local = mount();
+    await settled();
+    expect(rows(local.root).map((row) => row.dataset.launcherGame)).toEqual(["chess"]);
+    local.dispose();
+
+    window.localStorage.removeItem(PICKS_KEY);
+    const fresh = mount();
+    await settled();
+    expect(rows(fresh.root).map((row) => row.dataset.launcherGame)).toEqual(["word", "mini", "connections"]);
+    fresh.dispose();
+  });
+
+
   it("lists every roster game in order with today's ticks from the KV record", async () => {
     const [first, , third] = GAME_ROSTER;
     seedChecklist(today(), [first.gameId, third.gameId]);

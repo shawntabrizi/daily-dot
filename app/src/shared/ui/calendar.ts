@@ -2,15 +2,15 @@ import type { DayBits } from "../data-source";
 
 /**
  * Per-game calendars use played / archive / started; the all-games calendar
- * (D17b, D17c) uses all (every roster game on time, blue), any (at least one
- * on time, gold) and backfill (played later only, gold with a grey tick).
+ * uses complete (every picked game finished, blue, D17c), any (a game
+ * finished on the day, gold, D17b) and backfill (played later only, a tick).
  */
 export type CalendarCellState =
   | "played"
   | "archive"
   | "started"
   | "empty"
-  | "all"
+  | "complete"
   | "any"
   | "backfill";
 
@@ -19,7 +19,7 @@ const STATE_LABELS: Record<CalendarCellState, string> = {
   archive: "from archive",
   started: "started",
   empty: "no activity",
-  all: "every game finished on the day",
+  complete: "every game you play finished",
   any: "a game finished on the day",
   backfill: "played later",
 };
@@ -28,18 +28,19 @@ const STATE_LABELS: Record<CalendarCellState, string> = {
 const WEEKDAYS = ["M", "T", "W", "T", "F", "S", "S"] as const;
 
 /**
- * The all-games cell: blue when every roster game was finished on the day,
- * gold when at least one was, a grey tick when the day was only played
- * later, else empty.
+ * The all-games cell: blue when every picked game was finished, on time or
+ * later (D17c, measured against today's picks); gold when any roster game was
+ * finished on the day itself (D17b); a tick when the day was only played
+ * later; else empty.
  */
-export function hubCellState(bits: DayBits, mask: bigint): CalendarCellState {
-  if ((bits.ontime & mask) === mask) {
-    return "all";
+export function hubCellState(bits: DayBits, picks: bigint, roster: bigint): CalendarCellState {
+  if ((bits.played & picks) === picks) {
+    return "complete";
   }
-  if ((bits.ontime & mask) !== 0n) {
+  if ((bits.ontime & roster) !== 0n) {
     return "any";
   }
-  if ((bits.played & mask) !== 0n) {
+  if ((bits.played & roster) !== 0n) {
     return "backfill";
   }
   return "empty";

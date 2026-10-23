@@ -1,5 +1,6 @@
 import type { DataSource, DayBits } from "../data-source";
 import { dateFromDayIndex } from "../day";
+import { pickedGames, picksMask } from "../picks";
 import { GAME_ROSTER } from "../roster";
 import { hasGameBit, rosterMask } from "../streaks";
 import { icon } from "./icons";
@@ -11,7 +12,7 @@ interface ActivityDay {
   day: number;
   date: Date;
   played: boolean;
-  // Blue on the archive's rule (D17c): every game finished on the day itself.
+  // Blue on the archive's rule (D17c): every picked game finished.
   complete: boolean;
 }
 
@@ -38,14 +39,15 @@ function activityDays(
   bits: readonly DayBits[],
   rangeStart: number,
   today: number,
+  picks: bigint,
 ): ActivityDay[] {
   const selected: ActivityDay[] = [];
   let consecutiveUnplayed = 0;
 
   for (let day = today; day >= rangeStart && selected.length < 30; day -= 1) {
     const dayBits = bits[day - rangeStart] ?? EMPTY_BITS;
-    const played = dayBits.played !== 0n;
-    const complete = (dayBits.ontime & ROSTER_MASK) === ROSTER_MASK;
+    const played = (dayBits.played & ROSTER_MASK) !== 0n;
+    const complete = (dayBits.played & picks) === picks;
     selected.push({ day, date: dateFromDayIndex(day), played, complete });
     consecutiveUnplayed = played ? 0 : consecutiveUnplayed + 1;
 
@@ -95,7 +97,7 @@ function renderActivityTrack(days: readonly ActivityDay[]): HTMLElement {
         month: "long",
         day: "numeric",
         timeZone: "UTC",
-      })}, ${day.complete ? "every game finished" : day.played ? "played" : "not played"}`,
+      })}, ${day.complete ? "all your games finished" : day.played ? "played" : "not played"}`,
     );
     track.append(circle);
   });
@@ -105,8 +107,9 @@ function renderActivityTrack(days: readonly ActivityDay[]): HTMLElement {
 
 /**
  * The drawer behind the hub's hamburger: Today, Archive, Streaks, the Pocket
- * card and the six games with today's ticks, then the activity strip. It
- * closes on the backdrop, the close button and any navigation.
+ * card, the picked games with today's ticks and the Customize link, then the
+ * activity strip. It closes on the backdrop, the close button and any
+ * navigation.
  */
 export function createDrawer(
   source: DataSource,
@@ -142,25 +145,33 @@ export function createDrawer(
     <a href="#/history">Archive</a>
     <a href="#/streaks">Streaks</a>
     <a href="#/card">Pocket card</a>
-    <span class="drawer-label">Games</span>
+    <span class="drawer-label">Your games</span>
+    <div class="drawer-games" data-drawer-games></div>
+    <a class="drawer-customize" href="#/customize">Customize games</a>
   `;
-  for (const game of GAME_ROSTER) {
-    const link = document.createElement("a");
-    link.className = "drawer-game-link";
-    link.href = game.route;
+  const gameList = nav.querySelector<HTMLElement>("[data-drawer-games]")!;
+  // Drawn on every open: the picks may have changed since the last one.
+  const renderGames = (): void => {
+    gameList.replaceChildren(
+      ...pickedGames().map((game) => {
+        const link = document.createElement("a");
+        link.className = "drawer-game-link";
+        link.href = game.route;
 
-    const name = document.createElement("span");
-    name.textContent = game.name;
-    const check = document.createElement("span");
-    check.className = "drawer-completion-check";
-    check.dataset.drawerGameCheck = game.id;
-    check.setAttribute("aria-label", `${game.name} completed`);
-    check.textContent = "✓";
-    check.hidden = true;
+        const name = document.createElement("span");
+        name.textContent = game.name;
+        const check = document.createElement("span");
+        check.className = "drawer-completion-check";
+        check.dataset.drawerGameCheck = game.id;
+        check.setAttribute("aria-label", `${game.name} completed`);
+        check.textContent = "✓";
+        check.hidden = true;
 
-    link.append(name, check);
-    nav.append(link);
-  }
+        link.append(name, check);
+        return link;
+      }),
+    );
+  };
 
   const activity = document.createElement("section");
   activity.className = "drawer-activity";
@@ -200,7 +211,7 @@ export function createDrawer(
       }
 
       const todayBits = bits[today - rangeStart] ?? EMPTY_BITS;
-      for (const game of GAME_ROSTER) {
+      for (const game of pickedGames()) {
         const check = nav.querySelector<HTMLElement>(
           `[data-drawer-game-check="${game.id}"]`,
         );
@@ -216,7 +227,7 @@ export function createDrawer(
       });
       activityLabel.textContent = `${month.toUpperCase()} ACTIVITY`;
       activityStrip.replaceChildren(
-        renderActivityTrack(activityDays(bits, rangeStart, today)),
+        renderActivityTrack(activityDays(bits, rangeStart, today, picksMask())),
       );
       activityStrip.scrollLeft = activityStrip.scrollWidth;
     } catch {
@@ -242,6 +253,7 @@ export function createDrawer(
     onStateChange?.(false);
   };
   const open = (): void => {
+    renderGames();
     shell.hidden = false;
     requestAnimationFrame(() => shell.classList.add("is-open"));
     onStateChange?.(true);

@@ -191,22 +191,22 @@ a.calendar-day:hover {
   background: var(--text);
 }
 
-/* All-games calendar (D17b, D17c, decision 7): the whole cell is blue for
-   every game on the day, gold for at least one, grey with a tick for a day
-   only played later. Gold and blue are the same in both theme blocks, so the
+/* All-games calendar (D17b, D17c, decision 7): the whole cell is blue when
+   every picked game is done, gold when a game was finished on the day, grey
+   with a tick for a day only played later. Gold and blue are the same in both theme blocks, so the
    ink on them is fixed. */
-.calendar-day--all,
+.calendar-day--complete,
 .calendar-day--any,
 .calendar-day--backfill {
   justify-content: center;
 }
 
-.calendar-day--all,
+.calendar-day--complete,
 .calendar-day--any {
   color: var(--streak-ink);
 }
 
-.calendar-day--all {
+.calendar-day--complete {
   background: var(--streak-blue);
 }
 
@@ -214,12 +214,12 @@ a.calendar-day:hover {
   background: var(--streak-gold);
 }
 
-.calendar-day--all .calendar-day-dot,
+.calendar-day--complete .calendar-day-dot,
 .calendar-day--any .calendar-day-dot {
   display: none;
 }
 
-.calendar-day--all .calendar-day-number,
+.calendar-day--complete .calendar-day-number,
 .calendar-day--any .calendar-day-number {
   font-weight: 700;
 }
@@ -299,7 +299,7 @@ a.calendar-day:hover {
   background: var(--text);
 }
 
-.legend-dot--all {
+.legend-dot--complete {
   border-color: var(--streak-blue);
   background: var(--streak-blue);
 }
@@ -530,8 +530,8 @@ a.calendar-day:hover {
   line-height: 1;
 }
 
-/* All six: solid blue, inside a bar too. */
-.streak-month .calendar-day--all {
+/* Complete: solid blue, inside a bar too. */
+.streak-month .calendar-day--complete {
   background: var(--streak-blue);
   color: var(--streak-blue-ink);
 }
@@ -555,7 +555,7 @@ a.calendar-day:hover {
   box-shadow: 0 0 0 2px var(--text);
 }
 
-/* A perfect week: the row is one gold bar; the all-six days stay blue. */
+/* A perfect week: the row is one gold bar; complete days stay blue. */
 .calendar-week--perfect {
   display: grid;
   grid-column: 1 / -1;
@@ -610,7 +610,7 @@ a.calendar-day:hover {
   box-shadow: inset 0 0 0 1px var(--streak-gold);
 }
 
-.streak-swatch--all {
+.streak-swatch--complete {
   background: var(--streak-blue);
 }
 

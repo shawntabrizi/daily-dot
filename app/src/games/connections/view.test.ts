@@ -1,5 +1,5 @@
 import { headerTitle } from "../../shared/ui/header";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { DataSource } from "../../shared/data-source";
 import { PUZZLE } from "./engine.test";
@@ -11,6 +11,12 @@ import {
   toggleConnectionsWord,
 } from "./progress";
 import { renderConnections } from "./view";
+import { pickAllGames } from "../../test/picks";
+
+// Every game picked: the share text counts all six (D21).
+beforeEach(() => {
+  pickAllGames();
+});
 
 function sourceFor(
   day: number,

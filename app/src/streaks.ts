@@ -2,6 +2,7 @@ import type { ViewHandle } from "./home";
 import type { DataSource, DayBits } from "./shared/data-source";
 import { EPOCH_SECONDS, dateFromDayIndex, dayIndexFromTimestamp } from "./shared/day";
 import { readDays } from "./shared/day-summary";
+import { picksMask } from "./shared/picks";
 import { GAME_ROSTER } from "./shared/roster";
 import { deriveHubStreaks, nextMilestone, perfectWeeks, rosterMask } from "./shared/streaks";
 import { createCalendar, hubCellState, type CalendarEntry } from "./shared/ui/calendar";
@@ -71,7 +72,7 @@ export function renderStreaks(source: DataSource): ViewHandle {
       <div class="streak-month-foot">
         <div class="streak-legend" aria-label="Calendar legend">
           <span><i class="streak-swatch streak-swatch--played"></i>Played</span>
-          <span><i class="streak-swatch streak-swatch--all"></i>Complete</span>
+          <span><i class="streak-swatch streak-swatch--complete"></i>Complete</span>
           <span><i class="streak-swatch streak-swatch--week"></i>Perfect week</span>
         </div>
         <div class="streak-month-nav">
@@ -143,6 +144,7 @@ export function renderStreaks(source: DataSource): ViewHandle {
       visibleYear === todayDate.getUTCFullYear() ? MONTH_FORMAT : MONTH_YEAR_FORMAT
     ).format(firstDate);
     const count = daysInMonth(visibleYear, visibleMonth);
+    const picks = picksMask();
     const entries: CalendarEntry[] = [];
     const monthDays: DayBits[] = [];
     for (let offset = 0; offset < count; offset += 1) {
@@ -159,7 +161,7 @@ export function renderStreaks(source: DataSource): ViewHandle {
       entries.push({
         date,
         dayIndex: day,
-        state: day === null ? "empty" : hubCellState(bits, MASK),
+        state: day === null ? "empty" : hubCellState(bits, picks, MASK),
         disabled: day === null,
         href: day !== null && (bits.played & MASK) !== 0n ? `#/day?day=${day}` : undefined,
         today: day === today,

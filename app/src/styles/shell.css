@@ -342,6 +342,15 @@ h1 {
   text-transform: uppercase;
 }
 
+.drawer-games {
+  display: contents;
+}
+
+.drawer-nav a.drawer-customize {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .drawer-completion-check {
   display: inline-grid;
   flex: 0 0 22px;

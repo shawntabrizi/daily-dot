@@ -1,7 +1,9 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { applyGuess, submitResultOnce } from "../games/word/session";
 import { MemoryStorage } from "../test/memory-storage";
+import { pickAllGames } from "../test/picks";
+import { savePicks } from "./picks";
 import type { DataSource } from "./data-source";
 import { HostSignerUnavailableError } from "./host-signer";
 import { createWordProgress, finishedGamesReader, saveWordProgress } from "./progress";
@@ -50,8 +52,14 @@ function scriptedPrompt(answer: "save" | "later") {
   };
 }
 
+// Every game picked, except where a test picks its own (D21).
+beforeEach(() => {
+  pickAllGames();
+});
+
 afterEach(() => {
   document.body.replaceChildren();
+  window.localStorage.clear();
 });
 
 describe("save consent", () => {
@@ -257,9 +265,11 @@ describe("save prompt", () => {
 
   // Why: "First one done!" on the fifth game of the day is false.
   it("counts the day's finished games and lights one square each in its accent", () => {
-    expect(overlayHeadline(1)).toBe("First one done!");
-    expect(overlayHeadline(5)).toBe("Five done!");
-    expect(overlayHeadline(6)).toBe("All six done!");
+    expect(overlayHeadline(1, 6)).toBe("First one done!");
+    expect(overlayHeadline(5, 6)).toBe("Five done!");
+    expect(overlayHeadline(6, 6)).toBe("All six done!");
+    expect(overlayHeadline(3, 3)).toBe("All three done!");
+    expect(overlayHeadline(2, 2)).toBe("Both done!");
     const ui = createSavePromptUi(document.body);
     const game = { id: "mini", short: "Mini", gameId: 4 } as SaveRequest["game"];
     const prompt = ui.open({ game, day: 294, first: true, ask: "approve", finished: ["word", "sudoku", "chess", "globe", "mini"] });
@@ -268,6 +278,18 @@ describe("save prompt", () => {
     const lit = [...dialog.querySelectorAll<HTMLElement>(".save-tile--lit")];
     expect(lit).toHaveLength(5);
     expect(lit[0]!.style.getPropertyValue("--tile-accent")).toBe("var(--accent-word)");
+    prompt.close();
+  });
+
+  it("draws a tile per pick plus any other game finished, and counts the picks", () => {
+    savePicks([0, 4, 5]);
+    const ui = createSavePromptUi(document.body);
+    const game = { id: "globe", short: "Globe", gameId: 3 } as SaveRequest["game"];
+    const prompt = ui.open({ game, day: 294, first: true, ask: "approve", finished: ["word", "mini", "globe"] });
+    const dialog = document.querySelector<HTMLElement>("[role=dialog]")!;
+    expect(dialog.querySelectorAll(".save-tile")).toHaveLength(4);
+    expect(dialog.querySelectorAll(".save-tile--lit")).toHaveLength(3);
+    expect(dialog.textContent).toContain("Two done!");
     prompt.close();
   });
 

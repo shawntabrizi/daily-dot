@@ -2,6 +2,7 @@ import { getTruApi } from "@parity/product-sdk-host";
 
 import { fromCard, renderCardLauncher } from "./card-launcher";
 import { renderCardPage } from "./card-page";
+import { renderCustomize } from "./customize";
 import { renderDayPage } from "./day-page";
 import { renderChess } from "./games/chess/view";
 import { renderConnections } from "./games/connections/view";
@@ -22,6 +23,14 @@ import { InMemoryDataSource, type DataSource } from "./shared/data-source";
 import { dayComplete, loadDaySummary, loadHubStreaks } from "./shared/day-summary";
 import { followHostTheme } from "./shared/host-theme";
 import { followOpenIntent } from "./shared/open-intent";
+import {
+  PICKS_EVENT,
+  detectPicksStore,
+  pickedGames,
+  serialisePicks,
+  syncPicksWithHost,
+  type PicksChange,
+} from "./shared/picks";
 import { offerPocketCard } from "./shared/pocket-prompt";
 import { withSaveConsent } from "./shared/save-consent";
 import { finishedGamesReader } from "./shared/progress";
@@ -129,6 +138,9 @@ export function startApp(
       header.setTitle("Streaks");
     } else if (url.pathname === "/card") {
       currentView = renderCardPage();
+    } else if (url.pathname === "/customize") {
+      currentView = renderCustomize();
+      header.setTitle("Customize");
     } else if (url.pathname === "/day") {
       currentView = renderDayPage(source, parseDay(url.searchParams.get("day")));
     } else if (url.pathname === "/g/word") {
@@ -157,9 +169,20 @@ export function startApp(
   window.addEventListener("hashchange", route);
   route();
 
+  // Picks adopted from the host (another surface changed them) redraw a hub
+  // in place; a game in play is never torn down for it.
+  const onPicks = (event: Event): void => {
+    const path = (window.location.hash.slice(1) || "/").split("?")[0];
+    if ((event as CustomEvent<PicksChange>).detail.from === "host" && (path === "/" || path === "/day")) {
+      route();
+    }
+  };
+  window.addEventListener(PICKS_EVENT, onPicks);
+
   return () => {
     currentView?.dispose();
     window.removeEventListener("hashchange", route);
+    window.removeEventListener(PICKS_EVENT, onPicks);
     window.removeEventListener("daily-toast", onToast);
     window.removeEventListener("daily-day-summary", onStreaks);
     window.clearTimeout(toastTimer);
@@ -253,10 +276,25 @@ export function bootApp(root: HTMLElement): () => void {
     });
   };
   window.addEventListener("daily-day-summary", onSummary);
+  // The picks (D21) live in the host KV store, where the card reads them:
+  // adopt the host's copy on boot and mirror every change the player makes.
+  const picksStore = detectPicksStore();
+  void picksStore
+    .then((store) => syncPicksWithHost(store))
+    .catch((error: unknown) => console.warn("[daily-on-dot] picks sync failed", error));
+  const onPicks = (event: Event): void => {
+    const change = (event as CustomEvent<PicksChange>).detail;
+    if (change.from !== "player") return;
+    void picksStore
+      .then((store) => store.write(serialisePicks(change.games)))
+      .catch((error: unknown) => console.warn("[daily-on-dot] picks write failed", error));
+  };
+  window.addEventListener(PICKS_EVENT, onPicks);
   // The host's light or dark theme selects the token block (WP36 A6).
   const stopTheme = followHostTheme();
   const stopFollowing = (): void => {
     stopTheme();
+    window.removeEventListener(PICKS_EVENT, onPicks);
     document.removeEventListener("visibilitychange", onVisible);
     window.removeEventListener("pageshow", onVisible);
     window.removeEventListener("daily-day-summary", onSummary);
@@ -273,7 +311,7 @@ export function bootApp(root: HTMLElement): () => void {
     const summary: CardSummary = { streakAny: streaks.any };
     if (recordedDay === today) {
       const bits = await source.dayBits(today);
-      if (dayComplete(bits)) {
+      if (dayComplete(bits, pickedGames())) {
         const daySummary = await loadDaySummary(source, today, bits);
         if (daySummary.dayPercentile !== null) {
           summary.dayPercentile = daySummary.dayPercentile;

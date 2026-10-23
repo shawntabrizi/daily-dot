@@ -1,10 +1,12 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { applyGuess } from "./games/word/session";
 import type { DataSource, DayBits } from "./shared/data-source";
+import { PICKS_KEY, savePicks } from "./shared/picks";
 import { createWordProgress, saveWordProgress } from "./shared/progress";
 import { GAME_ROSTER } from "./shared/roster";
 import { rosterMask } from "./shared/streaks";
-import { greetingFor, headlineFor, renderHome } from "./home";
+import { greetingFor, headlineFor, MORE_OPEN_KEY, renderHome } from "./home";
+import { pickAllGames } from "./test/picks";
 
 const MASK = rosterMask(GAME_ROSTER.map((game) => game.gameId));
 const FULL: DayBits = { played: MASK, solved: MASK, ontime: MASK };
@@ -41,6 +43,11 @@ function actions(root: Element): string[] {
     (action) => action.textContent?.trim() ?? "",
   );
 }
+
+// Every game picked, except in "home with picks": these tests are about the rows.
+beforeEach(() => {
+  pickAllGames();
+});
 
 afterEach(() => {
   window.localStorage.clear();
@@ -133,6 +140,10 @@ describe("home", () => {
     expect(headlineFor(3)).toBe("Three to go.");
     expect(headlineFor(5)).toBe("One to go.");
     expect(headlineFor(6)).toBe("All six done.");
+    expect(headlineFor(3, 3)).toBe("All three done.");
+    expect(headlineFor(2, 2)).toBe("Both done.");
+    expect(headlineFor(1, 1)).toBe("All done.");
+    expect(headlineFor(0, 1)).toBe("One to play.");
   });
 
   it("greets by the local clock: 05–12 morning, 12–18 afternoon, else evening", () => {
@@ -251,6 +262,95 @@ describe("home", () => {
       { day: DAY, dayPercentile: 19 },
     ]);
     window.removeEventListener("daily-day-summary", onSummary);
+    view.dispose();
+  });
+});
+
+describe("home with picks (D21)", () => {
+  const bit = (gameId: number): bigint => 1n << BigInt(gameId);
+  const moreToggle = (root: Element) => root.querySelector<HTMLButtonElement>("[data-more-toggle]")!;
+  const moreRows = (root: Element) => root.querySelector<HTMLElement>("[data-more-games]")!;
+
+  it("leads a fresh device with the starter games and keeps the rest under a closed More games", async () => {
+    window.localStorage.removeItem(PICKS_KEY);
+    const view = renderHome(stubSource());
+    await vi.waitFor(() => {
+      expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("Three to play.");
+    });
+
+    expect(rowIds(view.element, "data-open-games")).toEqual(["word", "mini", "connections"]);
+    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "globe"]);
+    expect(view.element.querySelector<HTMLElement>("[data-home-more]")?.hidden).toBe(false);
+    expect(moreToggle(view.element).getAttribute("aria-expanded")).toBe("false");
+    expect(moreRows(view.element).hidden).toBe(true);
+    expect(view.element.querySelector("[data-more-count]")?.textContent).toBe("3");
+    // The bar has a segment per pick only.
+    expect(
+      [...view.element.querySelectorAll("[data-day-bar] [data-segment]")].map((segment) =>
+        segment.getAttribute("data-segment"),
+      ),
+    ).toEqual(["word", "mini", "connections"]);
+    // The unpicked games stay playable from the hub.
+    expect(view.element.querySelector('[data-more-games] [data-game-row="globe"]')?.getAttribute("href")).toBe("#/g/globe");
+    view.dispose();
+  });
+
+  it("opens More games on a tap and remembers it on this device", async () => {
+    savePicks([0]);
+    const view = renderHome(stubSource());
+    moreToggle(view.element).click();
+    expect(moreRows(view.element).hidden).toBe(false);
+    expect(moreToggle(view.element).getAttribute("aria-expanded")).toBe("true");
+    expect(window.localStorage.getItem(MORE_OPEN_KEY)).toBe("1");
+    view.dispose();
+
+    const again = renderHome(stubSource());
+    expect(moreRows(again.element).hidden).toBe(false);
+    moreToggle(again.element).click();
+    expect(moreRows(again.element).hidden).toBe(true);
+    expect(window.localStorage.getItem(MORE_OPEN_KEY)).toBeNull();
+    again.dispose();
+  });
+
+  it("has no More games when every game is picked", async () => {
+    const view = renderHome(stubSource());
+    await vi.waitFor(() => {
+      expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("Six to play.");
+    });
+    expect(view.element.querySelector<HTMLElement>("[data-home-more]")?.hidden).toBe(true);
+    view.dispose();
+  });
+
+  it("moves a finished unpicked game to Done without counting it toward the picks", async () => {
+    savePicks([0, 4]);
+    const view = renderHome(stubSource({
+      dayBits: async () => ({ played: bit(0) | bit(3), solved: bit(0) | bit(3), ontime: bit(0) | bit(3) }),
+    }));
+    await vi.waitFor(() => {
+      expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("One to go.");
+    });
+    expect(rowIds(view.element, "data-open-games")).toEqual(["mini"]);
+    expect(rowIds(view.element, "data-done-games")).toEqual(["word", "globe"]);
+    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "connections"]);
+    expect(view.element.querySelector("[data-day-bar]")?.getAttribute("aria-label")).toBe("Today: 1 of 2 done");
+    view.dispose();
+  });
+
+  it("calls the day done once every pick is in, with other games still open", async () => {
+    savePicks([0, 4]);
+    const both = bit(0) | bit(4);
+    const view = renderHome(stubSource({
+      dayBits: async () => ({ played: both, solved: both, ontime: both }),
+      dayBitsRange: async (_from, count) =>
+        Array.from({ length: count }, () => ({ played: both, solved: both, ontime: both })),
+      histograms: async (_day, ids) => ids.map(() => ({ total: 5, buckets: [{ bucket: 2, count: 5 }] })),
+      details: async (_day, ids) => ids.map(() => ({ score: 2, solved: true })),
+    }));
+    await vi.waitFor(() => {
+      expect(view.element.querySelector("[data-day-summary]")).not.toBeNull();
+    });
+    expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("Both done.");
+    expect(rowIds(view.element, "data-more-games")).toEqual(["sudoku", "chess", "globe", "connections"]);
     view.dispose();
   });
 });

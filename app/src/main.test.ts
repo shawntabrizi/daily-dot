@@ -7,6 +7,7 @@ import { bootApp, renderBootFailure } from "./main";
 import { NETWORKS } from "./networks";
 import { GenesisMismatchError } from "./shared/genesis";
 import { OPEN_INTENT_KEY } from "./shared/open-intent";
+import { PICKS_KEY, parsePicks } from "./shared/picks";
 import { GAME_ROSTER } from "./shared/roster";
 
 afterEach(() => {
@@ -44,8 +45,9 @@ it("boots the complete stub roster in test mode without opening a chain", () => 
   expect(drawer?.hidden).toBe(true);
   root.querySelector<HTMLButtonElement>('[aria-label="Menu"]')?.click();
   expect(drawer?.hidden).toBe(false);
+  // A fresh device: the starter picks, then Customize.
   expect([...root.querySelectorAll(".drawer-nav a")].map((link) => link.getAttribute("href")))
-    .toEqual(["#/", "#/history", "#/streaks", "#/card", ...GAME_ROSTER.map((game) => game.route)]);
+    .toEqual(["#/", "#/history", "#/streaks", "#/card", "#/g/word", "#/g/mini", "#/g/connections", "#/customize"]);
   root.querySelector<HTMLButtonElement>(".drawer-backdrop")?.click();
   expect(drawer?.hidden).toBe(true);
   dispose();
@@ -60,7 +62,8 @@ it("beneath the Pocket card (?card=daily) renders the launcher, not the hub, and
 
   const dispose = bootApp(root);
 
-  expect(root.querySelectorAll("[data-launcher-game]")).toHaveLength(GAME_ROSTER.length);
+  // The starter picks, as the card draws them.
+  expect(root.querySelectorAll("[data-launcher-game]")).toHaveLength(3);
   expect(root.querySelector("[data-launcher-open]")?.textContent).toBe("Open Daily on Dot");
   expect(root.querySelector("[data-game-row]")).toBeNull();
   expect(root.querySelector("main")).toBeNull();
@@ -144,6 +147,32 @@ it("routes #/streaks to the streaks page behind the header pill", async () => {
     expect(root.querySelector(".streaks-page .calendar-grid")).not.toBeNull();
   });
   expect(root.querySelector("[data-tile-any] [data-streak-any]")?.textContent).toMatch(/^\d+$/);
+  dispose();
+});
+
+it("routes #/customize, where a tick picks a game and the hub leads with it", async () => {
+  window.location.hash = "#/customize";
+  vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+  const root = document.createElement("div");
+  root.id = "app";
+  document.body.append(root);
+
+  const dispose = bootApp(root);
+  expect(root.querySelector(".site-title")?.textContent).toBe("Customize");
+  const boxes = [...root.querySelectorAll<HTMLInputElement>(".customize-check")];
+  expect(boxes).toHaveLength(GAME_ROSTER.length);
+  expect(boxes.filter((box) => box.checked).map((box) => Number(box.value))).toEqual([0, 4, 5]);
+
+  const globe = boxes.find((box) => box.value === "3")!;
+  globe.click();
+  expect(parsePicks(window.localStorage.getItem(PICKS_KEY))).toEqual([0, 3, 4, 5]);
+
+  window.location.hash = "#/";
+  await vi.waitFor(() => {
+    expect(
+      [...root.querySelectorAll("[data-open-games] [data-game-row]")].map((row) => row.getAttribute("data-game-row")),
+    ).toEqual(["word", "globe", "mini", "connections"]);
+  });
   dispose();
 });
 

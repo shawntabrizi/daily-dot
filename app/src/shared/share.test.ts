@@ -1,9 +1,19 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { globeAnswer } from "../games/globe/generate";
 import { InMemoryDataSource } from "./data-source";
 import { GAME_ROSTER } from "./roster";
 import { connectionsRows, shareText, type ShareGame } from "./share";
+import { pickAllGames } from "../test/picks";
+
+// Every game picked, except where a test passes its own picks (D21).
+beforeEach(() => {
+  pickAllGames();
+});
+
+afterEach(() => {
+  window.localStorage.clear();
+});
 
 const DAY = 208;
 
@@ -32,6 +42,36 @@ const ALL_PLAYED: ShareGame[] = [
 ];
 
 describe("shareText", () => {
+  it("slots and counts the picks, with a line for an unpicked game that was finished too", () => {
+    const picks = ["word", "mini", "connections"].map((id) => GAME_ROSTER.find((entry) => entry.id === id)!);
+    const text = shareText(
+      {
+        day: DAY,
+        games: [game("word", { score: 4 }), game("globe", { score: 3, percentile: 44 })],
+        streaks: { any: 3 },
+        dayPercentile: 31,
+      },
+      picks,
+    );
+    expect(text).toBe(
+      [
+        "Daily on Dot #208 · 1/3",
+        "✅⬜⬜",
+        "Word 4 guesses · Top 18%",
+        "Globe 3 guesses · Top 44%",
+        "✦ 3",
+      ].join("\n"),
+    );
+
+    // Every pick played: the day percentile joins the footer, whatever else is unplayed.
+    const done = shareText(
+      { day: DAY, games: ALL_PLAYED.filter((entry) => ["word", "mini", "connections"].includes(entry.id)), streaks: null, dayPercentile: 9 },
+      picks,
+    );
+    expect(done.split("\n")[0]).toBe("Daily on Dot #208 · 3/3");
+    expect(done.split("\n").at(-1)).toBe("Top 9% today");
+  });
+
   it("never contains any game's answer for a day it knows", async () => {
     const source = new InMemoryDataSource();
     const word = await source.wordAnswer(DAY);

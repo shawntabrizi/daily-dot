@@ -28,11 +28,16 @@ function sourceWith(overrides: Partial<DataSource> = {}): DataSource {
 }
 
 describe("dayComplete", () => {
-  it("needs every roster game's played bit, on time or not", () => {
-    expect(dayComplete(FULL)).toBe(true);
-    expect(dayComplete({ played: MASK, solved: 0n, ontime: 0n })).toBe(true);
+  it("needs every given game's played bit, on time or not, and nothing else", () => {
+    expect(dayComplete(FULL, GAME_ROSTER)).toBe(true);
+    expect(dayComplete({ played: MASK, solved: 0n, ontime: 0n }, GAME_ROSTER)).toBe(true);
     const first = GAME_ROSTER[0]!.gameId;
-    expect(dayComplete({ played: MASK & ~(1n << BigInt(first)), solved: 0n, ontime: 0n })).toBe(false);
+    expect(dayComplete({ played: MASK & ~(1n << BigInt(first)), solved: 0n, ontime: 0n }, GAME_ROSTER)).toBe(false);
+    // Only the picks count (D17c): the other games may stay unplayed.
+    const picks = GAME_ROSTER.slice(1, 3);
+    const played = picks.reduce((bits, game) => bits | (1n << BigInt(game.gameId)), 0n);
+    expect(dayComplete({ played, solved: 0n, ontime: 0n }, picks)).toBe(true);
+    expect(dayComplete({ played, solved: 0n, ontime: 0n }, GAME_ROSTER)).toBe(false);
   });
 });
 

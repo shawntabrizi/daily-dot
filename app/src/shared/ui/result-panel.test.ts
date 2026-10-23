@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { DataSource, DayBits } from "../data-source";
 import type { Histogram } from "../percentile";
+import { savePicks } from "../picks";
 import { GAME_ROSTER, gameById } from "../roster";
 import type { HubStreaks } from "../streaks";
 import { headerTitle } from "./header";
@@ -12,6 +13,16 @@ import {
   renderResultPanel,
   syncResultChrome,
 } from "./result-panel";
+import { pickAllGames } from "../../test/picks";
+
+// Every game picked, except where a test picks its own (D21).
+beforeEach(() => {
+  pickAllGames();
+});
+
+afterEach(() => {
+  window.localStorage.clear();
+});
 
 const WORD = gameById("word")!;
 
@@ -232,6 +243,23 @@ describe("nextGame", () => {
     expect(text(main, ".result-primary-count")).toBe("6 of 6 done");
     expect(main.dataset.game).toBeUndefined();
     expect(main.getAttribute("href")).toBe("#/");
+  });
+
+  it("steps through the picks only and counts them alone", () => {
+    savePicks([0, 4, 5]);
+    // From Word with Mini done: Connections next; Sudoku, Chess and Globe are not asked for.
+    const next = nextGame(gameById("word")!, bit("mini") | bit("chess"));
+    expect(next.game?.id).toBe("connections");
+    expect(next.done).toBe(2);
+    expect(next.total).toBe(3);
+  });
+
+  it("from an unpicked game sends the player to the first unplayed pick, its own finish not counted", () => {
+    savePicks([0, 4, 5]);
+    const next = nextGame(gameById("globe")!, bit("word"));
+    expect(next.game?.id).toBe("mini");
+    expect(next.done).toBe(1);
+    expect(next.total).toBe(3);
   });
 });
 

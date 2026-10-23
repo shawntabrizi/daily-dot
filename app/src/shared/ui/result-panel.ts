@@ -9,6 +9,7 @@ import {
   type Histogram,
   type ScoreUnit,
 } from "../percentile";
+import { pickedGames } from "../picks";
 import { GAME_ROSTER, type Game } from "../roster";
 import { shareText, type ShareGame, type ShareInput } from "../share";
 import {
@@ -30,36 +31,37 @@ const FLAME =
 const EMPTY_BITS: DayBits = { played: 0n, solved: 0n, ontime: 0n };
 
 export interface ResultNext {
-  /** The first unplayed game after the current one in roster order; null when none. */
+  /** The first unplayed picked game after the current one; null when none. */
   game: Game | null;
-  /** Games done today, the current one included. */
+  /** Picked games done today, the current one included when it is picked. */
   done: number;
   total: number;
 }
 
 /**
- * Where the main button goes: the first unplayed game after `current` in
- * roster order, wrapping; the current game always counts as done (the write
- * landed; a lagging read may not show it yet).
+ * Where the main button goes: the first unplayed game of `picks` (D21) after
+ * `current`, wrapping; from an unpicked game, the first unplayed pick. The
+ * current game always counts as done (the write landed; a lagging read may
+ * not show it yet).
  */
 export function nextGame(
   current: Game,
   played: bigint,
-  roster: readonly Game[] = GAME_ROSTER,
+  picks: readonly Game[] = pickedGames(),
 ): ResultNext {
   const bits = played | (1n << BigInt(current.gameId));
-  const start = roster.findIndex((game) => game.id === current.id);
+  const start = picks.findIndex((game) => game.id === current.id);
   let game: Game | null = null;
-  for (let step = 1; step <= roster.length && game === null; step += 1) {
-    const candidate = roster[(start + step) % roster.length]!;
+  for (let step = 1; step <= picks.length && game === null; step += 1) {
+    const candidate = picks[(start + step) % picks.length]!;
     if (!hasGameBit(bits, candidate.gameId)) {
       game = candidate;
     }
   }
   return {
     game,
-    done: popcount(bits & rosterMask(roster.map((entry) => entry.gameId))),
-    total: roster.length,
+    done: popcount(bits & rosterMask(picks.map((entry) => entry.gameId))),
+    total: picks.length,
   };
 }
 

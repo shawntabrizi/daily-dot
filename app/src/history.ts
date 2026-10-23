@@ -1,6 +1,7 @@
 import type { DataSource, DayBits } from "./shared/data-source";
 import { DAY_SECONDS, EPOCH_SECONDS, dateFromDayIndex, dayIndexFromTimestamp } from "./shared/day";
 import { readDays } from "./shared/day-summary";
+import { picksMask } from "./shared/picks";
 import { hasStarted } from "./shared/progress";
 import { GAME_ROSTER, type Game } from "./shared/roster";
 import {
@@ -88,7 +89,7 @@ export function renderHistory(source: DataSource): ViewHandle {
         <span><i class="legend-dot legend-dot--empty"></i>Empty</span>
       </div>
       <div class="calendar-legend" aria-label="Calendar legend" data-hub-legend>
-        <span><i class="legend-dot legend-dot--all"></i>All games</span>
+        <span><i class="legend-dot legend-dot--complete"></i>Complete</span>
         <span><i class="legend-dot legend-dot--any"></i>Any game</span>
         <span><i class="legend-dot legend-dot--backfill"></i>Played later</span>
         <span><i class="legend-dot legend-dot--empty"></i>Empty</span>
@@ -209,12 +210,13 @@ export function renderHistory(source: DataSource): ViewHandle {
     longestAnyNode.textContent = String(streaks.longestAny);
 
     const empty: DayBits = { played: 0n, solved: 0n, ontime: 0n };
+    const picks = picksMask();
     finishCalendar(
       monthEntries(
         count,
         0,
         (offset) => (firstDay === null ? empty : days[firstDay + offset] ?? empty),
-        (bits) => hubCellState(bits, ROSTER_MASK),
+        (bits) => hubCellState(bits, picks, ROSTER_MASK),
         (bits, day) => ((bits.played & ROSTER_MASK) !== 0n ? `#/day?day=${day}` : undefined),
       ),
     );

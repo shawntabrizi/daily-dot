@@ -189,6 +189,124 @@
   display: none;
 }
 
+/* "More games" (D21): the unpicked games, collapsed under a full-width toggle at the foot. */
+.home-more {
+  margin-top: 10px;
+}
+
+.home-more[hidden] {
+  display: none;
+}
+
+.home-more-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 10px;
+  padding: 8px 4px;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  background: none;
+  color: var(--dim);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.home-more-toggle svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 160ms ease;
+}
+
+.home-more-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.home-more-toggle:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.home-more .game-rows[hidden] {
+  display: none;
+}
+
+/* Customize (D21): the hub's rows as checkboxes; a picked row lights its tile. */
+.customize-page {
+  width: min(100%, 520px);
+}
+
+.customize-head h1 {
+  margin: 8px 0 6px;
+}
+
+.customize-lead {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.customize-list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 10px;
+  border: 0;
+}
+
+.customize-legend {
+  margin-bottom: 10px;
+  padding: 0 4px;
+  color: var(--dim);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.customize-row {
+  cursor: pointer;
+}
+
+.customize-row.is-picked .game-row-tile {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.customize-check {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.customize-check:disabled {
+  cursor: not-allowed;
+}
+
+.customize-row:has(.customize-check:focus-visible) {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.customize-note {
+  min-height: 18px;
+  margin: 14px 4px 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 /* "DONE TODAY": the board's #6c7275 fails 4.5:1 at 11 px, so the closest grey that passes. */
 .home-done-heading {
   margin: 0 0 10px;

@@ -6,6 +6,7 @@ import {
   type Histogram,
   type ScoreUnit,
 } from "./percentile";
+import { pickedGames } from "./picks";
 import { GAME_ROSTER, type Game } from "./roster";
 import { deriveHubStreaks, hasGameBit, rosterMask, type HubStreaks } from "./streaks";
 
@@ -31,15 +32,16 @@ export interface GameSummary {
 
 export interface DaySummary {
   day: number;
-  /** Every roster game has its played bit. */
+  /** Every picked game has its played bit (D17c). */
   complete: boolean;
   games: GameSummary[];
   /** The mean of the game percentiles (see `dayPercentile`). */
   dayPercentile: number | null;
 }
 
-export function dayComplete(bits: DayBits, roster: readonly Game[] = GAME_ROSTER): boolean {
-  return roster.every((game) => hasGameBit(bits.played, game.gameId));
+/** Every one of `games` (the picks, D17c) has its played bit, on time or later. */
+export function dayComplete(bits: DayBits, games: readonly Game[]): boolean {
+  return games.every((game) => hasGameBit(bits.played, game.gameId));
 }
 
 /**
@@ -74,7 +76,7 @@ export async function loadDaySummary(
   });
   return {
     day,
-    complete: dayComplete(bits, roster),
+    complete: dayComplete(bits, pickedGames()),
     games,
     dayPercentile: dayPercentile(games.map((game) => game.percentile)),
   };

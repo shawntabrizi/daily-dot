@@ -64,6 +64,15 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     perfect days and the all-games run are gone from the pill, badges, archive, streaks
     page (second tile is now "Games finished"), day summary, share text, launcher, card
     face, smoke tool and art (`gem.png` deleted). The pill's ring is gold now.
+  - **B done:** `shared/picks.ts` (key `daily-on-dot:picks:v1`, starter Word/Mini/
+    Connections, host KV + `localStorage` mirror, `syncPicksWithHost` on boot; host
+    wins), `shared/host-store.ts` (the KV helper the card store now uses too),
+    `#/customize` (drawer link; last pick cannot be unticked). Hub: picks, then Done
+    (any finished game), then a collapsed "More games" (open state per device); the
+    headline, bar and day-done panel count picks. Calendars and the drawer strip: blue =
+    every pick played, on time or later (`hubCellState` "complete"), gold = any game on
+    the day. Result Next and "n of N", share slots, save overlay tiles, launcher rows
+    use picks. Visual check at 360 and 1440: hub, Customize, drawer; no horizontal scroll.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

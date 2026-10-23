@@ -9,9 +9,10 @@ import {
 } from "./shared/card-state";
 import { dayIndexFromTimestamp } from "./shared/day";
 import { writeOpenIntent } from "./shared/open-intent";
+import { currentPicks, detectPicksStore, parsePicks, pickedGames } from "./shared/picks";
 import { hostProductId } from "./shared/pocket-prompt";
 import { hasStarted } from "./shared/progress";
-import { GAME_ROSTER, type Game } from "./shared/roster";
+import type { Game } from "./shared/roster";
 import { hasGameBit } from "./shared/streaks";
 import { gameGlyph } from "./shared/ui/game-glyphs";
 import { FLAME_SVG } from "./shared/ui/streak-badges";
@@ -19,13 +20,13 @@ import { FLAME_SVG } from "./shared/ui/streak-badges";
 /**
  * The launcher: what the product shows when the host opens it beneath the
  * expanded Pocket card, at the app's URL with `?card=daily`, in a half-height
- * sheet. A game is unplayable at that height, so this view only lists the six
- * games with today's ticks. A tap on a row selects it; the Play button sends
+ * sheet. A game is unplayable at that height, so this view only lists the
+ * picked games (D21) with today's ticks. A tap on a row selects it; the Play button sends
  * the selected game to the full app. No chain client, no signer: nothing here
  * may raise a permission sheet in the half screen.
  *
- * Today's ticks and the streak come from the same KV record the card
- * worker reads; a record for another day is yesterday's and shows as all
+ * Today's ticks, the streak and the picks come from the same KV store the
+ * card worker reads; a record for another day is yesterday's and shows as all
  * unplayed with no streak. "Resume" comes from the game's own progress
  * in localStorage (`hasStarted`), as on the hub.
  */
@@ -36,24 +37,30 @@ export function fromCard(search = window.location.search): boolean {
 const EMPTY_BITS: CardBits = { played: 0n, solved: 0n };
 
 interface TodayState {
+  /** The picked gameIds, as the card draws them. */
+  picks: number[];
   bits: CardBits;
   /** The hub streak the app last wrote (WP34); null on a record without it. */
   streak: number | null;
 }
 
-const EMPTY_STATE: TodayState = { bits: EMPTY_BITS, streak: null };
+function emptyState(picks: number[]): TodayState {
+  return { picks, bits: EMPTY_BITS, streak: null };
+}
 
 function today(): number {
   return dayIndexFromTimestamp(Date.now() / 1_000);
 }
 
 async function readTodayState(): Promise<TodayState> {
-  const store = await detectCardStore();
+  const [store, picksStore] = await Promise.all([detectCardStore(), detectPicksStore()]);
+  const picks = parsePicks(await picksStore.read()) ?? currentPicks();
   const state = parseCardState(await store.read());
   if (!state || state.day !== today()) {
-    return EMPTY_STATE;
+    return emptyState(picks);
   }
   return {
+    picks,
     bits: cardStateBits(state),
     streak: state.streakAny ?? null,
   };
@@ -182,7 +189,7 @@ export function renderCardLauncher(root: HTMLElement): () => void {
 
   let disposed = false;
   let opening = false;
-  let state: TodayState = EMPTY_STATE;
+  let state: TodayState = emptyState(currentPicks());
   // The row the Play button opens. Starts on the first unplayed game; a tap
   // moves it; a refresh keeps it unless the user has not picked yet.
   let selected: Game | null = null;
@@ -211,7 +218,8 @@ export function renderCardLauncher(root: HTMLElement): () => void {
 
   const paint = (): void => {
     const day = today();
-    const states = GAME_ROSTER.map((game): RowState =>
+    const games = pickedGames(state.picks);
+    const states = games.map((game): RowState =>
       hasGameBit(state.bits.played, game.gameId)
         ? "done"
         : hasStarted(game.gameId, day)
@@ -219,18 +227,18 @@ export function renderCardLauncher(root: HTMLElement): () => void {
           : "fresh",
     );
     const done = states.filter((entry) => entry === "done").length;
-    count.textContent = `${done}/${GAME_ROSTER.length} done`;
+    count.textContent = `${done}/${games.length} done`;
     head.querySelector("[data-launcher-streak]")?.remove();
     if (state.streak !== null && state.streak > 0) {
       head.append(streakBadge(state.streak));
     }
-    if (!picked) {
+    if (!picked || !selected || !games.includes(selected)) {
       // The first game not yet done, a started one included.
       const nextIndex = states.findIndex((entry) => entry !== "done");
-      selected = GAME_ROSTER[nextIndex === -1 ? 0 : nextIndex]!;
+      selected = games[nextIndex === -1 ? 0 : nextIndex]!;
     }
     list.replaceChildren(
-      ...GAME_ROSTER.map((game, index) => {
+      ...games.map((game, index) => {
         const button = row(game, states[index]!, game === selected);
         button.addEventListener("click", () => {
           picked = true;
@@ -241,7 +249,7 @@ export function renderCardLauncher(root: HTMLElement): () => void {
       }),
     );
     const current = selected!;
-    play.textContent = `${PLAY_VERB[states[GAME_ROSTER.indexOf(current)]!]} ${current.name}`;
+    play.textContent = `${PLAY_VERB[states[games.indexOf(current)]!]} ${current.name}`;
     // The Play button fills in the selected game's accent.
     section.dataset.launcherSelected = current.id;
   };

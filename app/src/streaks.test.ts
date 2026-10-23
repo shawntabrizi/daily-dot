@@ -1,9 +1,19 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { DataSource, DayBits } from "./shared/data-source";
 import { GAME_ROSTER } from "./shared/roster";
 import { rosterMask } from "./shared/streaks";
 import { monthLine, renderStreaks } from "./streaks";
+import { pickAllGames } from "./test/picks";
+
+// Every game picked: blue here means all six (D17c, D21).
+beforeEach(() => {
+  pickAllGames();
+});
+
+afterEach(() => {
+  window.localStorage.clear();
+});
 
 const MASK = rosterMask(GAME_ROSTER.map((game) => game.gameId));
 const FIRST = 1n << BigInt(GAME_ROSTER[0]!.gameId);
@@ -110,9 +120,9 @@ describe("streaks page", () => {
     view.element.remove();
   });
 
-  it("colours cells by state: all six blue, any gold, a backfilled day gold with a tick", async () => {
+  it("colours cells by state: every pick blue, any gold, a backfilled day gold with a tick", async () => {
     const view = await mount();
-    expect(cell(view.element, 50)?.className).toContain("calendar-day--all");
+    expect(cell(view.element, 50)?.className).toContain("calendar-day--complete");
     expect(cell(view.element, 40)?.className).toContain("calendar-day--any");
     const backfilled = cell(view.element, 36);
     expect(backfilled?.className).toContain("calendar-day--backfill");
@@ -181,7 +191,7 @@ describe("streaks page", () => {
     view.element.remove();
   });
 
-  it("keeps all-six days blue inside a perfect week", async () => {
+  it("keeps complete days blue inside a perfect week", async () => {
     // Days 39–45 all six on 42 (February 12).
     const view = await mount(
       stubSource({
@@ -194,7 +204,7 @@ describe("streaks page", () => {
     const bar = view.element.querySelector(".calendar-week--perfect")!;
     const blue = cell(view.element, 42)!;
     expect(bar.contains(blue)).toBe(true);
-    expect(blue.className).toContain("calendar-day--all");
+    expect(blue.className).toContain("calendar-day--complete");
     expect(text(view.element, "[data-month-line]")).toBe("19 played");
     view.dispose();
     view.element.remove();
