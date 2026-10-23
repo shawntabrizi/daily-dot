@@ -37,11 +37,14 @@ function streaks(any: number): HubStreaks {
   return { any, longestAny: any, finished: any };
 }
 
-/** Ten finishers; the player's bucket and the better ones set the percentile. */
-const TOP_10 = histogram([[1, 1], [3, 9]]);
-const TOP_40 = histogram([[1, 3], [4, 1], [5, 6]]);
-const TOP_41 = histogram([[1, 40], [2, 1], [3, 59]]);
-const ALONE = histogram([[1, 1]]);
+/**
+ * Ten finishers; the player's bucket and the better ones set the percentile.
+ * Word's buckets start at 0: bucket 0 is one guess.
+ */
+const TOP_10 = histogram([[0, 1], [2, 9]]);
+const TOP_40 = histogram([[0, 3], [3, 1], [4, 6]]);
+const TOP_41 = histogram([[0, 40], [1, 1], [2, 59]]);
+const ALONE = histogram([[0, 1]]);
 
 function text(element: HTMLElement, selector: string): string | null {
   return element.querySelector(selector)?.textContent ?? null;
@@ -124,7 +127,27 @@ describe("renderResultPanel", () => {
   it("counts a saved past-day play as a finisher in the head and its own bar", () => {
     const panel = renderResultPanel(WORD, 3, histogram([]), { late: true, pastDay: 9 });
     expect(text(panel, "[data-distribution-total]")).toBe("1 finished on the day");
-    expect(panel.querySelector("[data-player-bar]")?.parentElement?.getAttribute("aria-label")).toMatch(/: 1 \(you\)$/);
+    expect(panel.querySelector("[data-player-marker]")?.getAttribute("data-player-marker")).toBe("2");
+    expect(panel.querySelector("[data-distribution]")?.getAttribute("aria-label")).toBe(
+      "You are in the top 100% of 1 finisher on the day",
+    );
+  });
+
+  it("ranks a higher-better points game from the top and writes its points", () => {
+    // Daily Color's shape (D24) on a stand-in game: more points rank first.
+    const color = { ...WORD, kind: "points" as const, better: "higher" as const, buckets: { min: 0, max: 500, buckets: 100 } };
+    const day = histogram([[90, 1], [60, 8], [20, 1]]);
+    const top = renderResultPanel(color, 426, day);
+    expect(text(top, "[data-result-subline]")).toBe("42.6 points");
+    expect(text(top, "[data-result-score-tile] .result-tile-value")).toBe("42.6");
+    expect(text(top, "[data-result-score-tile] .result-tile-label")).toBe("points");
+    // Bucket 85: only the 45-pointer ranks ahead; inserted, 2 of 11.
+    expect(rank(top)).toBe("18%");
+    expect(top.querySelector("[data-distribution]")?.getAttribute("aria-label")).toBe(
+      "You are in the top 18% of 11 finishers",
+    );
+    // A 30-pointer read on time already sits in bucket 60: behind the one 45-pointer only.
+    expect(rank(renderResultPanel(color, 300, day))).toBe("20%");
   });
 
   it("keeps a past day's result inside that day: Next is its next unplayed game, the second button its hub", () => {
@@ -324,8 +347,8 @@ describe("createResultPanel", () => {
   // Why: right after the write the read can lag the best block; the result
   // must still count the player, then take the chain's own count once it lands.
   it("counts the player in a lagging read, then redraws from one re-read that holds them", async () => {
-    const reads = [histogram([[3, 9]]), histogram([[1, 4], [3, 9]])];
-    const read = vi.fn(async () => reads.shift() ?? histogram([[1, 4], [3, 9]]));
+    const reads = [histogram([[2, 9]]), histogram([[0, 4], [2, 9]])];
+    const read = vi.fn(async () => reads.shift() ?? histogram([[0, 4], [2, 9]]));
     const handle = createResultPanel(sourceWith({ histogram: read }), WORD, { unit: "guess" });
     document.body.append(handle.element);
     handle.update({ day: 10, score: 1, recorded: true, late: false });

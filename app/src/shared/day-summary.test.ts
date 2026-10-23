@@ -45,7 +45,7 @@ describe("loadDaySummary", () => {
   it("reads every game's histogram and the account's details in one call each", async () => {
     const gameIds = GAME_ROSTER.map((game) => game.gameId);
     const histograms = vi.fn(async (_day: number, ids: readonly number[]) =>
-      ids.map(() => ({ total: 4, buckets: [{ bucket: 1, count: 1 }, { bucket: 3, count: 3 }] })),
+      ids.map(() => ({ total: 4, buckets: [{ bucket: 1, count: 1 }, { bucket: 2, count: 3 }] })),
     );
     const details = vi.fn(async (_day: number, ids: readonly number[]) =>
       ids.map((id) => ({ score: id === 1 ? 20 : 3, solved: true })),
@@ -72,7 +72,7 @@ describe("loadDaySummary", () => {
     const bits: DayBits = { played: 1n << BigInt(first.gameId), solved: 1n << BigInt(first.gameId), ontime: 0n };
     const summary = await loadDaySummary(
       sourceWith({
-        histograms: async (_day, ids) => ids.map(() => ({ total: 1, buckets: [{ bucket: 2, count: 1 }] })),
+        histograms: async (_day, ids) => ids.map(() => ({ total: 1, buckets: [{ bucket: 1, count: 1 }] })),
         details: async (_day, ids) => ids.map((id) => ({ score: id === first.gameId ? 2 : 0, solved: id === first.gameId })),
       }),
       99,
@@ -133,8 +133,8 @@ describe("renderDaySummary", () => {
   it("lists each game's score and percentile and the day's mean", async () => {
     const summary = await loadDaySummary(
       sourceWith({
-        histograms: async (_day, ids) => ids.map(() => ({ total: 10, buckets: [{ bucket: 2, count: 10 }] })),
-        // Every game in the one bucket (2 guesses, or 30 s = bucket 2) except
+        histograms: async (_day, ids) => ids.map(() => ({ total: 10, buckets: [{ bucket: 1, count: 10 }] })),
+        // Every game in the one bucket (2 guesses = bucket 1) except
         // Sudoku at 45 s (bucket 3), behind all ten finishers.
         details: async (_day, ids) => ids.map((id) => ({ score: id === 1 ? 45 : id === 10 ? 30 : 2, solved: true })),
       }),

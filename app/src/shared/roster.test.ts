@@ -25,3 +25,31 @@ describe("GAME_ROSTER", () => {
     expect(isGameSlug("nope")).toBe(false);
   });
 });
+
+describe("roster bucket specs and direction", () => {
+  it("gives each game the WP40 spec: counts 1–30 then 31+, times in 15 s steps to 30:00+", () => {
+    // These must equal what `set-bucket-specs` writes on chain (set once):
+    // a change here would rank players against the wrong buckets.
+    expect(
+      Object.fromEntries(GAME_ROSTER.map((game) => [game.id, [game.better, game.buckets]])),
+    ).toEqual({
+      word: ["lower", { min: 1, max: 32, buckets: 31 }],
+      sudoku: ["lower", { min: 0, max: 1815, buckets: 121 }],
+      chess: ["lower", { min: 1, max: 32, buckets: 31 }],
+      globe: ["lower", { min: 1, max: 32, buckets: 31 }],
+      mini: ["lower", { min: 0, max: 1815, buckets: 121 }],
+      connections: ["lower", { min: 1, max: 32, buckets: 31 }],
+      code: ["lower", { min: 1, max: 32, buckets: 31 }],
+      angle: ["lower", { min: 1, max: 32, buckets: 31 }],
+    });
+  });
+
+  it("keeps every spec inside what the contract accepts", () => {
+    for (const { buckets } of GAME_ROSTER) {
+      expect(Number.isInteger(buckets.min) && Number.isInteger(buckets.max)).toBe(true);
+      expect(buckets.max).toBeGreaterThan(buckets.min);
+      expect(buckets.buckets).toBeGreaterThanOrEqual(1);
+      expect(buckets.buckets).toBeLessThanOrEqual(128);
+    }
+  });
+});

@@ -1,7 +1,18 @@
 import { describe, expect, it } from "vitest";
 
 import type { Histogram } from "../percentile";
-import { createDistribution, distributionBars } from "./distribution";
+import { COUNT_BUCKETS, SECONDS_BUCKETS } from "../roster";
+import {
+  axisLabels,
+  bucketCounts,
+  createDistribution,
+  curvePath,
+  distributionCurve,
+  distributionLabel,
+  kernelRadius,
+  smoothCounts,
+  type DistributionGame,
+} from "./distribution";
 
 function histogram(entries: [bucket: number, count: number][]): Histogram {
   return {
@@ -10,103 +21,149 @@ function histogram(entries: [bucket: number, count: number][]): Histogram {
   };
 }
 
-describe("distributionBars", () => {
-  it("draws guess counts from 1 to the last finisher, at least six bars", () => {
-    const bars = distributionBars("count", histogram([[2, 3], [4, 1]]), 4);
-    expect(bars.map((bar) => bar.label)).toEqual(["1", "2", "3", "4", "5", "6"]);
-    expect(bars.map((bar) => bar.count)).toEqual([0, 3, 0, 1, 0, 0]);
-    expect(bars.map((bar) => bar.player)).toEqual([false, false, false, true, false, false]);
-    expect(bars.every((bar) => bar.labelled)).toBe(true);
+const WORD: DistributionGame = { kind: "count", buckets: COUNT_BUCKETS, better: "lower" };
+const SUDOKU: DistributionGame = { kind: "seconds", buckets: SECONDS_BUCKETS, better: "lower" };
+/** Daily Color's shape (D24). */
+const COLOR: DistributionGame = {
+  kind: "points",
+  buckets: { min: 0, max: 500, buckets: 100 },
+  better: "higher",
+};
+
+describe("bucketCounts", () => {
+  it("spreads the histogram over every bucket of the spec", () => {
+    const counts = bucketCounts(COUNT_BUCKETS, histogram([[1, 3], [30, 2]]));
+    expect(counts).toHaveLength(31);
+    expect(counts[0]).toBe(0);
+    expect(counts[1]).toBe(3);
+    expect(counts[30]).toBe(2);
+    expect(counts.reduce((sum, value) => sum + value, 0)).toBe(5);
+  });
+});
+
+describe("smoothCounts", () => {
+  it("is a light 3-bucket kernel that keeps the peak where it was", () => {
+    expect(smoothCounts([0, 0, 4, 0, 0])).toEqual([0, 1, 2, 1, 0]);
+    // Renormalised at the edges: a crowd in the first bucket is not halved.
+    expect(smoothCounts([4, 0, 0])).toEqual([(4 * 2) / 3, 1, 0]);
   });
 
-  it("extends to the player's bucket and caps at 31+", () => {
-    const bars = distributionBars("count", histogram([[3, 2]]), 9);
-    expect(bars).toHaveLength(9);
-    expect(bars[8]).toMatchObject({ label: "9", player: true });
+  it("smooths the fine time axis a little wider than the count axis", () => {
+    expect(kernelRadius(31)).toBe(1);
+    expect(kernelRadius(100)).toBe(4);
+    expect(kernelRadius(121)).toBe(5);
+  });
+});
 
-    const capped = distributionBars("count", histogram([[3, 2], [31, 1]]), 500);
-    expect(capped).toHaveLength(31);
-    expect(capped[30]).toMatchObject({ label: "31+", count: 1, player: true });
+describe("axisLabels", () => {
+  it("labels the ends from the spec and the kind", () => {
+    expect(axisLabels("count", COUNT_BUCKETS)).toEqual(["1", "31+"]);
+    expect(axisLabels("seconds", SECONDS_BUCKETS)).toEqual(["0:00", "30:00+"]);
+    expect(axisLabels("points", COLOR.buckets)).toEqual(["0", "50"]);
+  });
+});
+
+describe("curvePath", () => {
+  it("closes an area on the baseline and never rises above the peak's head room", () => {
+    const path = curvePath([0, 5, 10, 5, 0], 100, 100);
+    expect(path.startsWith("M0,100L0,100")).toBe(true);
+    expect(path.endsWith("L100,100Z")).toBe(true);
+    const ys = [...path.matchAll(/-?\d+(?:\.\d+)?,(-?\d+(?:\.\d+)?)/g)].map((match) => Number(match[1]));
+    // Monotone segments: nothing overshoots the peak (y 14) or dips under the baseline (y 100).
+    expect(Math.min(...ys)).toBeCloseTo(14, 5);
+    expect(Math.max(...ys)).toBe(100);
   });
 
-  it("labels only a few ticks on a crowded axis, the player's always", () => {
-    const bars = distributionBars("count", histogram([[20, 1]]), 17);
-    expect(bars).toHaveLength(20);
-    expect(bars.filter((bar) => bar.labelled).map((bar) => bar.label)).toEqual([
-      "1",
-      "5",
-      "10",
-      "15",
-      "17",
-      "20",
-    ]);
+  it("draws a flat baseline for an empty day", () => {
+    expect(curvePath([0, 0, 0], 30, 10)).toBe("M0,10L0,10L5,10C8.3,10 11.7,10 15,10C18.3,10 21.7,10 25,10L30,10L30,10Z");
+  });
+});
+
+describe("distributionCurve", () => {
+  it("places the player at their bucket's centre, at the curve's height there", () => {
+    const curve = distributionCurve(WORD, histogram([[1, 3], [3, 1]]), 4);
+    expect(curve.player?.bucket).toBe(3);
+    expect(curve.player?.x).toBeCloseTo(3.5 / 31);
+    expect(curve.player!.y).toBeGreaterThan(0);
+    expect(curve.player!.y).toBeLessThan(0.86);
+    expect(curve.labels).toEqual(["1", "31+"]);
   });
 
-  it("groups seconds into minutes, 0 to the last finisher, 30+ at the top", () => {
-    // Buckets 13 (3:15) and 15 (3:45) are both minute 3; 120 is 30 min+.
-    const bars = distributionBars("seconds", histogram([[13, 2], [15, 1], [120, 1]]), 205);
-    expect(bars).toHaveLength(31);
-    expect(bars[3]).toMatchObject({ label: "3", count: 3, player: true });
-    expect(bars[30]).toMatchObject({ label: "30+", count: 1 });
-    // Ten minute bars pass the board's eight: the axis labels 0, 5, the end and the player.
-    const quiet = distributionBars("seconds", histogram([]), 50);
-    expect(quiet).toHaveLength(10);
-    expect(quiet.filter((bar) => bar.labelled).map((bar) => bar.label)).toEqual(["0", "5", "9"]);
+  it("marks nobody when the player has no score (a day summary of another day)", () => {
+    expect(distributionCurve(WORD, histogram([[1, 1]]), null).player).toBeNull();
   });
+});
 
-  it("labels every bar up to the board's eight", () => {
-    const eight = distributionBars("count", histogram([[8, 1]]), 3);
-    expect(eight).toHaveLength(8);
-    expect(eight.every((bar) => bar.labelled)).toBe(true);
-    const nine = distributionBars("count", histogram([[9, 1]]), 3);
-    expect(nine.filter((bar) => bar.labelled).map((bar) => bar.label)).toEqual(["1", "3", "5", "9"]);
-  });
-
-  it("marks no bar when the player has no score (a day summary of another day)", () => {
-    const bars = distributionBars("count", histogram([[2, 1]]), null);
-    expect(bars.some((bar) => bar.player)).toBe(false);
+describe("distributionLabel", () => {
+  it("reads the player's rank as a sentence, or the count when unranked", () => {
+    expect(distributionLabel(340, 12, false)).toBe("You are in the top 12% of 340 finishers");
+    expect(distributionLabel(1, 100, false)).toBe("You are in the top 100% of 1 finisher");
+    expect(distributionLabel(1204, 40, true)).toBe("You are in the top 40% of 1,204 finishers on the day");
+    expect(distributionLabel(8, null, false)).toBe("8 finishers today");
   });
 });
 
 describe("createDistribution", () => {
-  it("heads the card with the finisher count and 'you are here', and marks the player's bar without a count", () => {
+  it("heads the card with the finisher count and 'you are here', and labels the figure with the rank", () => {
     const element = createDistribution({
-      kind: "count",
-      histogram: histogram([[2, 3], [4, 5]]),
+      game: WORD,
+      histogram: histogram([[1, 3], [3, 5]]),
       playerScore: 4,
+      percentile: 38,
     });
-    expect(element.getAttribute("aria-label")).toBe("8 finishers today by guesses");
+    expect(element.getAttribute("aria-label")).toBe("You are in the top 38% of 8 finishers");
     expect(element.querySelector("[data-distribution-total]")?.textContent).toBe("8 finished today");
     expect(element.querySelector("[data-distribution-you]")?.textContent).toBe("you are here");
-    const player = element.querySelector<HTMLElement>("[data-player-bar]");
-    expect(player?.textContent).toBe("");
-    expect(player?.style.getPropertyValue("--fill")).toBe("100%");
-    expect(element.querySelectorAll(".distribution-bar--player")).toHaveLength(1);
+    expect(element.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 1000 100");
+    expect(element.querySelector("[data-player-marker]")?.getAttribute("data-player-marker")).toBe("3");
     expect(element.querySelector(".distribution-tick--player")?.textContent).toBe("4");
 
     // The panel passes the finishers it ranks against; a late play reads "on the day".
     const late = createDistribution({
-      kind: "count",
-      histogram: histogram([[2, 1203]]),
+      game: WORD,
+      histogram: histogram([[1, 1203]]),
       playerScore: null,
       finished: 1204,
       late: true,
     });
     expect(late.querySelector("[data-distribution-total]")?.textContent).toBe("1,204 finished on the day");
     expect(late.querySelector("[data-distribution-you]")).toBeNull();
+    expect(late.querySelector("[data-player-marker]")).toBeNull();
+    expect(late.querySelector("[data-distribution-ahead]")).toBeNull();
+    expect(late.getAttribute("aria-label")).toBe("1,204 finishers on the day");
   });
 
-  it("scales bars against the tallest one", () => {
+  it("writes the axis ends from the spec and the player's time on a seconds game", () => {
     const element = createDistribution({
-      kind: "seconds",
-      histogram: histogram([[4, 2], [8, 4]]),
-      playerScore: 60,
+      game: SUDOKU,
+      histogram: histogram([[8, 2], [16, 4]]),
+      playerScore: 245,
+      percentile: 50,
     });
-    const fills = [...element.querySelectorAll<HTMLElement>(".distribution-bar")].map(
-      (bar) => bar.style.getPropertyValue("--fill"),
-    );
-    expect(fills[1]).toBe("50%");
-    expect(fills[2]).toBe("100%");
-    expect(element.getAttribute("aria-label")).toBe("6 finishers today by minutes");
+    const ticks = [...element.querySelectorAll(".distribution-tick")].map((tick) => tick.textContent);
+    expect(ticks).toEqual(["0:00", "30:00+", "4:05"]);
+  });
+
+  it("shades from the better end: the left for fewer guesses, the right for more points", () => {
+    const word = createDistribution({ game: WORD, histogram: histogram([[3, 2]]), playerScore: 4, percentile: 50 });
+    const wordClip = word.querySelector("clipPath rect")!;
+    expect(wordClip.getAttribute("x")).toBe("0");
+    expect(Number(wordClip.getAttribute("width"))).toBeCloseTo((4 / 31) * 1000, 0);
+    expect(word.querySelector("[data-better-end]")?.classList.contains("distribution-tick--low")).toBe(true);
+
+    // A higher-better game ranks the top bucket first: the shade runs from the right.
+    const color = createDistribution({ game: COLOR, histogram: histogram([[60, 2]]), playerScore: 400, percentile: 50 });
+    const colorClip = color.querySelector("clipPath rect")!;
+    expect(colorClip.getAttribute("x")).toBe("800");
+    expect(colorClip.getAttribute("width")).toBe("200");
+    expect(color.querySelector("[data-better-end]")?.classList.contains("distribution-tick--high")).toBe(true);
+    expect(color.dataset.better).toBe("higher");
+    expect(color.querySelector(".distribution-tick--player")?.textContent).toBe("40");
+  });
+
+  it("hides the end label the player's tick would sit on", () => {
+    const element = createDistribution({ game: WORD, histogram: histogram([[0, 2]]), playerScore: 1, percentile: 67 });
+    expect(element.querySelector<HTMLElement>(".distribution-tick--low")?.hidden).toBe(true);
+    expect(element.querySelector<HTMLElement>(".distribution-tick--high")?.hidden).toBe(false);
   });
 });

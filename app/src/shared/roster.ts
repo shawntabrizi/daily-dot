@@ -14,13 +14,33 @@ export type GameSlug =
  * are frozen from first public play: they index the D5 bitmaps on chain.
  */
 /**
- * `kind` says how the game's `score` is minimised (D13, amended 2026-10-21):
- * a `count` of guesses/attempts/mistakes or elapsed `seconds`. It must match
- * the kind set on chain for the gameId (`DailyScores.setGameKind`, see
- * `scripts/set-game-kinds.ts`): the contract buckets by it and the app labels
- * the distribution by it.
+ * `kind` says what a game's `score` counts and how it is written (D13,
+ * amended 2026-10-23): a `count` of guesses/attempts/mistakes, elapsed
+ * `seconds`, or `points` in tenths of a point (426 is 42.6 points).
  */
-export type ScoreKind = "count" | "seconds";
+export type ScoreKind = "count" | "seconds" | "points";
+
+/** Which end of the score range ranks first (D13): fewer guesses, or more points. */
+export type ScoreDirection = "lower" | "higher";
+
+/**
+ * How `DailyScores` buckets the game's scores into its on-time histogram
+ * (D20, amended 2026-10-23): `buckets` equal steps over `[min, max)`, with
+ * everything below `min` in the first and everything at or above `max` in
+ * the last. It must match the spec set on chain for the gameId
+ * (`DailyScores.setBucketSpec`, set once, see `scripts/set-bucket-specs.ts`):
+ * the contract buckets by it and the app ranks and labels by it.
+ */
+export interface BucketSpec {
+  min: number;
+  max: number;
+  buckets: number;
+}
+
+/** Exact counts 1–30, then 31+ (also what an unset spec reads as on chain). */
+export const COUNT_BUCKETS: BucketSpec = { min: 1, max: 32, buckets: 31 };
+/** 15-second steps from 0:00, then 30:00+. */
+export const SECONDS_BUCKETS: BucketSpec = { min: 0, max: 1815, buckets: 121 };
 
 export interface Game {
   id: GameSlug;
@@ -30,6 +50,8 @@ export interface Game {
   startDay: number;
   route: string;
   kind: ScoreKind;
+  better: ScoreDirection;
+  buckets: BucketSpec;
 }
 
 export const GAME_ROSTER: readonly Game[] = [
@@ -41,6 +63,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/word",
     kind: "count",
+    better: "lower",
+    buckets: COUNT_BUCKETS,
   },
   {
     id: "sudoku",
@@ -50,6 +74,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/sudoku",
     kind: "seconds",
+    better: "lower",
+    buckets: SECONDS_BUCKETS,
   },
   {
     id: "chess",
@@ -59,6 +85,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/chess",
     kind: "count",
+    better: "lower",
+    buckets: COUNT_BUCKETS,
   },
   {
     id: "globe",
@@ -68,6 +96,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/globe",
     kind: "count",
+    better: "lower",
+    buckets: COUNT_BUCKETS,
   },
   {
     id: "mini",
@@ -77,6 +107,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/mini",
     kind: "seconds",
+    better: "lower",
+    buckets: SECONDS_BUCKETS,
   },
   {
     id: "connections",
@@ -86,6 +118,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/connections",
     kind: "count",
+    better: "lower",
+    buckets: COUNT_BUCKETS,
   },
   {
     id: "code",
@@ -95,6 +129,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/code",
     kind: "count",
+    better: "lower",
+    buckets: COUNT_BUCKETS,
   },
   {
     id: "angle",
@@ -104,6 +140,8 @@ export const GAME_ROSTER: readonly Game[] = [
     startDay: 0,
     route: "#/g/angle",
     kind: "count",
+    better: "lower",
+    buckets: COUNT_BUCKETS,
   },
 ];
 

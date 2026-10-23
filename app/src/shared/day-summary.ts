@@ -71,7 +71,7 @@ export async function loadDaySummary(
     const percentile =
       score === null || histogram === null
         ? null
-        : percentileFor(histogram, game.kind, score, !late);
+        : percentileFor(histogram, game, score, !late);
     return { game, played, late, score, percentile, finishers: histogram?.total ?? null };
   });
   return {

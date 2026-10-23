@@ -66,8 +66,9 @@ woff2 subsets self-hosted in `app/public/fonts/`, licences in `OFL-fredoka.txt` 
 See `shared/sources/README.md` for every source and licence.
 
 Every game writes one `DailyScores.record(gameId, day, score, solved)` at
-completion; `score` is minimised and the contract keeps a per-day histogram of
-on-time finishers for the "Top N%" view.
+completion; `score` is the game's own number (lower or higher is better per game,
+roster `better`) and the contract keeps a per-day histogram of on-time finishers,
+bucketed by each game's set-once bucket spec, for the "Top N%" view.
 
 ## Contracts
 
@@ -81,14 +82,14 @@ build them, see `PROGRESS.md`):
 (cd contracts/word && cargo-pvm-contract pvm-contract build)   # and scores, chess, mini, connections
 ```
 
-Deploy, set the score kinds, seed and verify on Paseo Next v2 (every write waits
+Deploy, set the bucket specs, seed and verify on Paseo Next v2 (every write waits
 for finality; the seeds resume from the on-chain count):
 
 ```bash
 cd app
 export DAILY_NETWORK=paseo-next-v2 DAILY_DEPLOY_DERIVATION=//4 DAILY_DEPLOY_MNEMONIC=<env>
 pnpm deploy:contracts            # all five, one fresh record in src/deployments/
-pnpm set:game-kinds              # Seconds for Sudoku and Mini, from the roster
+pnpm set:bucket-specs            # each game's bucket spec, from the roster (set once; --dry-run first)
 pnpm seed:word && pnpm seed:chess && pnpm seed:mini && pnpm seed:connections
 ```
 

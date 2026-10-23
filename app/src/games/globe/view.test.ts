@@ -39,7 +39,7 @@ function sourceFor(
     dayBits: async () => ({ played, solved: played, ontime: played }),
     dayBitsRange: async () => [],
     record,
-    histogram: async () => ({ total: 3, buckets: [{ bucket: 1, count: 3 }] }),
+    histogram: async () => ({ total: 3, buckets: [{ bucket: 0, count: 3 }] }),
   };
 }
 

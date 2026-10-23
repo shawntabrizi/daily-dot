@@ -1,7 +1,7 @@
 import { dayIndexFromTimestamp } from "./day";
 import { scoreBucket, type Histogram } from "./percentile";
 import type { StorageLike } from "./storage";
-import { GAME_ROSTER, type ScoreKind } from "./roster";
+import { COUNT_BUCKETS, GAME_ROSTER, type Game } from "./roster";
 import { WORD_LENGTH } from "../games/word/engine";
 
 export interface DayBits {
@@ -183,9 +183,17 @@ function setBit(bitmap: bigint, gameId: number): bigint {
   return bitmap | (1n << BigInt(gameId));
 }
 
-function kindOf(gameId: number): ScoreKind {
-  return GAME_ROSTER.find((game) => game.gameId === gameId)?.kind ?? "count";
+/** A gameId off the roster reads as an unset spec does on chain: counts. */
+function gameOf(gameId: number): Pick<Game, "kind" | "buckets"> {
+  return GAME_ROSTER.find((game) => game.gameId === gameId) ?? { kind: "count", buckets: COUNT_BUCKETS };
 }
+
+/** The stub's typical score and spread per kind: four guesses, four minutes, 32 points. */
+const TYPICAL = {
+  count: { centre: 4, spread: 2, floor: 1 },
+  seconds: { centre: 240, spread: 120, floor: 0 },
+  points: { centre: 320, spread: 80, floor: 0 },
+} as const;
 
 /** A small deterministic generator so the stub's "other finishers" are stable per day. */
 function* pseudoRandom(seed: number): Generator<number> {
@@ -198,22 +206,21 @@ function* pseudoRandom(seed: number): Generator<number> {
 
 /**
  * The day's other finishers, invented: a hump of 15–40 scores around a
- * typical result (four guesses, four minutes). Real records recorded through
- * this source land on top of them.
+ * typical result (four guesses, four minutes, 32 points), bucketed by the
+ * game's spec as the contract would. Real records recorded through this
+ * source land on top of them.
  */
 function seededHistogram(gameId: number, day: number): Map<number, number> {
-  const kind = kindOf(gameId);
+  const game = gameOf(gameId);
+  const { centre, spread, floor } = TYPICAL[game.kind];
   const random = pseudoRandom(day * 64 + gameId + 1);
   const total = 15 + Math.floor(random.next().value * 26);
-  const centre = kind === "count" ? 4 : 16;
-  const spread = kind === "count" ? 2 : 8;
-  const max = kind === "count" ? 31 : 120;
-  const min = kind === "count" ? 1 : 0;
   const buckets = new Map<number, number>();
   for (let finisher = 0; finisher < total; finisher += 1) {
     const offset =
       (random.next().value + random.next().value - 1) * spread * 1.5;
-    const bucket = Math.min(max, Math.max(min, Math.round(centre + offset)));
+    const score = Math.max(floor, Math.round(centre + offset));
+    const bucket = scoreBucket(game.buckets, score);
     buckets.set(bucket, (buckets.get(bucket) ?? 0) + 1);
   }
   return buckets;
@@ -324,7 +331,7 @@ export class InMemoryDataSource implements DataSource {
       if (result.gameId !== gameId || result.day !== day || !result.ontime || !result.solved) {
         continue;
       }
-      const bucket = scoreBucket(kindOf(gameId), result.score);
+      const bucket = scoreBucket(gameOf(gameId).buckets, result.score);
       buckets.set(bucket, (buckets.get(bucket) ?? 0) + 1);
     }
     const entries = [...buckets.entries()].sort(([left], [right]) => left - right);
@@ -351,9 +358,12 @@ export class InMemoryDataSource implements DataSource {
         // A seeded past day: a plausible score so a summary has numbers.
         const seeded = this.#seededDays.get(day)!;
         const solved = (seeded.solved & (1n << BigInt(gameId))) !== 0n;
-        const score = kindOf(gameId) === "count"
+        const kind = gameOf(gameId).kind;
+        const score = kind === "count"
           ? 2 + ((day + gameId) % 5)
-          : 150 + ((day * 13 + gameId * 37) % 400);
+          : kind === "seconds"
+            ? 150 + ((day * 13 + gameId * 37) % 400)
+            : 250 + ((day * 13 + gameId * 37) % 200);
         return { score, solved };
       }
       return { score: 0, solved: false };

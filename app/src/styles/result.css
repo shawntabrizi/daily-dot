@@ -163,7 +163,7 @@
   font-weight: 700;
 }
 
-/* The distribution card: the player's bar in the accent, the rest in the board's bar grey. */
+/* The distribution card: the day as a smooth curve, the player marked in the accent. */
 .distribution {
   margin: 16px 0 0;
   padding: 14px 16px 12px;
@@ -193,55 +193,92 @@
   font-weight: 800;
 }
 
-.distribution-bars {
-  display: flex;
+/* The curve: the day's finishers in the board's bar grey; the share that ranks
+   with or ahead of the player, from the game's better end, in the accent. */
+.distribution-plot {
+  position: relative;
   height: 56px;
   margin-top: 10px;
-  align-items: flex-end;
-  gap: 4px;
 }
 
-.distribution-column {
-  display: flex;
-  height: 100%;
-  min-width: 0;
-  flex: 1 1 0;
-  align-items: flex-end;
-}
-
-.distribution-bar {
-  --fill: 0%;
+.distribution-curve {
+  display: block;
   width: 100%;
-  height: max(3px, var(--fill));
-  border-radius: 3px 3px 0 0;
-  background: var(--result-bar);
+  height: 100%;
+  overflow: visible;
 }
 
-.distribution-bar--player {
+.distribution-area {
+  fill: var(--result-bar);
+  stroke: var(--neutral);
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+}
+
+.distribution-area--ahead {
+  fill: color-mix(in srgb, var(--accent) 38%, var(--surface));
+  stroke: var(--accent);
+}
+
+/* A line from the baseline up to the curve, and a dot on it. */
+.distribution-marker {
+  position: absolute;
+  bottom: 0;
+  left: var(--x);
+  width: 2px;
+  height: max(6px, var(--y));
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--accent);
+}
+
+.distribution-marker::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  box-sizing: border-box;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
   background: var(--accent);
 }
 
 .distribution-axis {
+  position: relative;
   display: flex;
+  height: 10px;
   margin-top: 6px;
-  gap: 4px;
+  justify-content: space-between;
 }
 
 .distribution-tick {
-  min-width: 0;
-  flex: 1 1 0;
-  overflow: visible;
-  color: var(--neutral);
+  color: var(--dim);
   font-size: 10px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   line-height: 1;
-  text-align: center;
   white-space: nowrap;
 }
 
+/* An end label the player's tick would sit on keeps its place but hides. */
+.distribution-tick[hidden] {
+  display: block;
+  visibility: hidden;
+}
+
+/* The better end reads brighter: fewer guesses on the left, more points on the right. */
+.distribution-tick[data-better-end] {
+  color: var(--muted);
+}
+
 .distribution-tick--player {
+  position: absolute;
+  top: 0;
+  left: clamp(14px, var(--x), calc(100% - 14px));
   color: var(--accent);
+  transform: translateX(-50%);
 }
 
 /* Next: <game> in the next game's colour, then Share · Today. */

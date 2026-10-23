@@ -80,7 +80,7 @@ describe("home", () => {
     const source = stubSource({
       dayBits: async () => bits,
       histograms: async (_day, ids) =>
-        ids.map(() => ({ total: 5, buckets: [{ bucket: 2, count: 3 }, { bucket: 4, count: 2 }] })),
+        ids.map(() => ({ total: 5, buckets: [{ bucket: 1, count: 3 }, { bucket: 3, count: 2 }] })),
       details: async (_day, ids) => ids.map((id) => ({ score: id === 0 ? 4 : 1, solved: true })),
     });
 
@@ -223,7 +223,7 @@ describe("home", () => {
 
   it("puts the day summary below the bar and announces the streaks at 6/6", async () => {
     const histograms = vi.fn(async (_day: number, ids: readonly number[]) =>
-      ids.map(() => ({ total: 5, buckets: [{ bucket: 2, count: 5 }] })),
+      ids.map(() => ({ total: 5, buckets: [{ bucket: 1, count: 5 }] })),
     );
     const source = stubSource({
       dayBits: async () => FULL,
@@ -254,7 +254,7 @@ describe("home", () => {
     expect(rowIds(view.element, "data-open-games")).toEqual([]);
     expect(rowIds(view.element, "data-done-games")).toEqual(GAME_ROSTER.map((game) => game.id));
     expect(view.element.textContent).not.toContain("Play");
-    // Count games score 2 in the one bucket of five: 20%. Seconds games at 2 s
+    // Count games score 2 (bucket 1), tied with all five: 20%. Seconds games at 2 s
     // sit in bucket 0, ahead of all five: 17%. Mean of 20, 17, 20, 20, 17.
     expect(view.element.querySelector("[data-day-rank]")?.textContent).toBe("Top 19% today");
     expect(histograms).toHaveBeenCalledTimes(1);
