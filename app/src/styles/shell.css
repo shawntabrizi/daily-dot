@@ -441,6 +441,11 @@ h1 {
   color: var(--streak-ink);
 }
 
+.activity-day--complete {
+  background: var(--streak-blue);
+  color: var(--streak-ink);
+}
+
 .activity-day--unplayed {
   background: var(--tile-empty);
   color: var(--muted);
@@ -458,6 +463,10 @@ h1 {
 
 .activity-connector--played {
   background: var(--streak-gold);
+}
+
+.activity-connector--complete {
+  background: var(--streak-blue);
 }
 
 .activity-loading {

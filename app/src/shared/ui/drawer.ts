@@ -1,15 +1,18 @@
 import type { DataSource, DayBits } from "../data-source";
 import { dateFromDayIndex } from "../day";
 import { GAME_ROSTER } from "../roster";
-import { hasGameBit } from "../streaks";
+import { hasGameBit, rosterMask } from "../streaks";
 import { icon } from "./icons";
 
 const EMPTY_BITS: DayBits = { played: 0n, solved: 0n, ontime: 0n };
+const ROSTER_MASK = rosterMask(GAME_ROSTER.map((game) => game.gameId));
 
 interface ActivityDay {
   day: number;
   date: Date;
   played: boolean;
+  // Blue on the archive's rule (D17c): every game finished on the day itself.
+  complete: boolean;
 }
 
 export interface DrawerHandle {
@@ -42,7 +45,8 @@ function activityDays(
   for (let day = today; day >= rangeStart && selected.length < 30; day -= 1) {
     const dayBits = bits[day - rangeStart] ?? EMPTY_BITS;
     const played = dayBits.played !== 0n;
-    selected.push({ day, date: dateFromDayIndex(day), played });
+    const complete = (dayBits.ontime & ROSTER_MASK) === ROSTER_MASK;
+    selected.push({ day, date: dateFromDayIndex(day), played, complete });
     consecutiveUnplayed = played ? 0 : consecutiveUnplayed + 1;
 
     if (selected.length >= 10 && consecutiveUnplayed >= 3) {
@@ -62,7 +66,9 @@ function renderActivityTrack(days: readonly ActivityDay[]): HTMLElement {
     if (previous) {
       const connector = document.createElement("span");
       connector.className = "activity-connector";
-      if (previous.played && day.played) {
+      if (previous.complete && day.complete) {
+        connector.classList.add("activity-connector--complete");
+      } else if (previous.played && day.played) {
         connector.classList.add("activity-connector--played");
       }
       connector.setAttribute("aria-hidden", "true");
@@ -74,7 +80,9 @@ function renderActivityTrack(days: readonly ActivityDay[]): HTMLElement {
     circle.href = `#/day?day=${day.day}`;
     circle.className = "activity-day";
     circle.classList.add(
-      day.played ? "activity-day--played" : "activity-day--unplayed",
+      day.complete
+        ? "activity-day--complete"
+        : day.played ? "activity-day--played" : "activity-day--unplayed",
     );
     if (index === days.length - 1) {
       circle.classList.add("activity-day--today");
@@ -87,7 +95,7 @@ function renderActivityTrack(days: readonly ActivityDay[]): HTMLElement {
         month: "long",
         day: "numeric",
         timeZone: "UTC",
-      })}, ${day.played ? "played" : "not played"}`,
+      })}, ${day.complete ? "every game finished" : day.played ? "played" : "not played"}`,
     );
     track.append(circle);
   });

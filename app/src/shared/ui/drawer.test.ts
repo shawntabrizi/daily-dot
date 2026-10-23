@@ -76,6 +76,55 @@ describe("drawer", () => {
     drawer.element.remove();
   });
 
+  it("colours a day blue only when every game was finished on the day itself", async () => {
+    const all = (1n << 6n) - 1n;
+    // 38 and 39: every game on time (blue). 37: every game, but one late (gold).
+    // 40: one game (gold).
+    const bitsFor = (day: number): DayBits => {
+      if (day === 38 || day === 39) {
+        return { played: all, solved: all, ontime: all };
+      }
+      if (day === 37) {
+        return { played: all, solved: all, ontime: all & ~1n };
+      }
+      if (day === 40) {
+        return { played: 1n, solved: 1n, ontime: 1n };
+      }
+      return { played: 0n, solved: 0n, ontime: 0n };
+    };
+    const source: DataSource = {
+      currentDay: async () => 40,
+      wordAnswer: async () => "planet",
+      dayBits: async () => ({ played: 0n, solved: 0n, ontime: 0n }),
+      dayBitsRange: async (from: number, count: number) =>
+        Array.from({ length: count }, (_, offset) => bitsFor(from + offset)),
+      record: async () => undefined,
+    };
+
+    const drawer = createDrawer(source);
+    document.body.append(drawer.element);
+    drawer.open();
+    await vi.waitFor(() => {
+      expect(drawer.element.querySelector(".activity-track")).not.toBeNull();
+    });
+
+    const dayClass = (day: number): string =>
+      [...drawer.element.querySelector<HTMLElement>(`[href="#/day?day=${day}"]`)!.classList]
+        .find((name) => name.startsWith("activity-day--") && name !== "activity-day--today")!;
+    expect(dayClass(37)).toBe("activity-day--played");
+    expect(dayClass(38)).toBe("activity-day--complete");
+    expect(dayClass(39)).toBe("activity-day--complete");
+    expect(dayClass(40)).toBe("activity-day--played");
+    expect(
+      drawer.element.querySelector(`[href="#/day?day=38"]`)?.getAttribute("aria-label"),
+    ).toContain("every game finished");
+    // Blue joins blue; a blue day next to a gold one keeps the gold link.
+    expect(drawer.element.querySelectorAll(".activity-connector--complete")).toHaveLength(1);
+    expect(drawer.element.querySelectorAll(".activity-connector--played")).toHaveLength(2);
+    drawer.close();
+    drawer.element.remove();
+  });
+
   it("offers an in-place retry when activity cannot be read", async () => {
     const currentDay = vi
       .fn<() => Promise<number>>()

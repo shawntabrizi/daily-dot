@@ -48,6 +48,11 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   upward over the globe so the phone keyboard never covers it, and scrolls inside itself
   (D18 checked at 360×780 and 1440×900). `applyGlobeGuess` now refuses a repeat country
   without spending a guess.
+- **Drawer activity colours (2026-10-23):** the hamburger's activity strip now draws a
+  day blue (`--streak-blue`) when every roster game was finished on the day itself, the
+  archive's all-games rule (D17c, `hubCellState` "all"); gold stays "a game was played".
+  Blue days join with a blue connector. A backfilled all-six day stays gold here, as it
+  is not blue on the archive either.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 
