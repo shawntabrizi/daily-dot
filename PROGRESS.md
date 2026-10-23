@@ -73,6 +73,12 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     every pick played, on time or later (`hubCellState` "complete"), gold = any game on
     the day. Result Next and "n of N", share slots, save overlay tiles, launcher rows
     use picks. Visual check at 360 and 1440: hub, Customize, drawer; no horizontal scroll.
+  - **C done:** the worker reads `daily-on-dot:picks:v1` beside the checklist and the
+    face draws the picks (rows of three, short row padded with blanks; six at most,
+    `face.ts` throws if the roster outgrows that) with `count-<n>-of-<k>.png` (27 new
+    PNGs; the old `count-<n>.png` deleted). Strip: gold = every pick, green = any game.
+    `pnpm smoke` gained a picks step. Not verified: the face on a device; the existing
+    tile PNGs were not re-baked (this sandbox's Chromium renders them byte-different).
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

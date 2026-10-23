@@ -21,6 +21,7 @@ import {
   detectCardStore,
 } from "../app/src/shared/card-state.ts";
 import { dayIndexFromTimestamp } from "../app/src/shared/day.ts";
+import { PICKS_KEY, serialisePicks } from "../app/src/shared/picks.ts";
 import { GAME_ROSTER, gameIdOf } from "../app/src/shared/roster.ts";
 import { expectText as expectFaceText, imagePathsIn, stripTokenIn, textsIn } from "./face-text.mts";
 
@@ -78,6 +79,12 @@ let frozen = (() => {
 })();
 Date.now = () => frozen;
 
+// The player picked every game (D21); a later step narrows the picks.
+await (await getHostLocalStorage())!.writeString(
+  PICKS_KEY,
+  serialisePicks(GAME_ROSTER.map((game) => game.gameId)),
+);
+
 await import("../pocket/src/worker.ts");
 await sleep(200);
 if (!onRender) fail("the worker did not register a renderer");
@@ -93,7 +100,7 @@ const cleanup = await onRender!(
 );
 await sleep(100);
 if (sent.length !== 1) fail(`expected one face on screen, got ${sent.length}`);
-expectImage(sent[0], "tiles/count-0.png", "empty store");
+expectImage(sent[0], `tiles/count-0-of-${N}.png`, "empty store");
 expectImage(sent[0], "tiles/done-today.png", "empty store");
 expectText(sent[0], "Tap to play", "empty store");
 expectStrip(sent[0], "FgTertiary", "empty store");
@@ -113,7 +120,7 @@ await writer.markRecorded(today, gameIdOf("globe"), false);
 await writer.markRecorded(today, 2, true);
 await sleep(2_600);
 if (sent.length !== 2) fail(`expected a repaint after the app recorded, got ${sent.length} faces`);
-expectImage(sent[1], "tiles/count-3.png", "three recorded");
+expectImage(sent[1], `tiles/count-3-of-${N}.png`, "three recorded");
 expectNoText(sent[1], "Tap to play", "three recorded");
 for (const id of ["word", "globe", "chess"]) expectImage(sent[1], `tiles/tile-${id}-done.png`, "three recorded");
 for (const id of ["sudoku", "mini", "connections"]) expectImage(sent[1], `tiles/tile-${id}-idle.png`, "three recorded");
@@ -148,7 +155,7 @@ await store.write(
 );
 await sleep(2_600);
 if (sent.length !== 4) fail(`expected a repaint after the stored day went stale, got ${sent.length} faces`);
-expectImage(sent[3], "tiles/count-0.png", "stale day");
+expectImage(sent[3], `tiles/count-0-of-${N}.png`, "stale day");
 expectNoText(sent[3], "Tap to play", "stale day");
 expectStrip(sent[3], "FgTertiary", "stale day");
 console.log(`ok  stale day in the store -> 0/${N}, grey strip`);
@@ -165,17 +172,33 @@ await store.write(
 );
 await sleep(2_600);
 if (sent.length !== 5) fail(`expected a repaint for the streak at risk, got ${sent.length} faces`);
-expectImage(sent[4], "tiles/count-0.png", "streak at risk");
+expectImage(sent[4], `tiles/count-0-of-${N}.png`, "streak at risk");
 expectStrip(sent[4], "FgError", "streak at risk");
 expectImage(sent[4], "tiles/flame.png", "streak at risk");
 expectText(sent[4], "3", "streak at risk");
 expectText(sent[4], "00:30:00", "streak at risk");
 console.log("ok  streak of 3, nothing played, 23:30 UTC -> red strip, countdown 00:30:00");
 
+// The player narrows the picks to Word and Mini in the app, and plays Word:
+// the card draws those two only and counts 1/2.
+await store.write(
+  JSON.stringify({ version: 1, day: today, played: "1", solved: "1", streakAny: 3 }),
+);
+await (await getHostLocalStorage())!.writeString(PICKS_KEY, serialisePicks([0, 4]));
+await sleep(2_600);
+if (sent.length !== 6) fail(`expected a repaint after the picks changed, got ${sent.length} faces`);
+expectImage(sent[5], "tiles/count-1-of-2.png", "two picks");
+const pickedTiles = imagePathsIn(sent[5]).filter((path) => path.startsWith("tiles/tile-"));
+if (pickedTiles.join() !== "tiles/tile-word-done.png,tiles/tile-mini-idle.png") {
+  fail(`two picks: expected the Word and Mini tiles only, got ${pickedTiles.join(", ")}`);
+}
+expectStrip(sent[5], "FgSuccess", "two picks");
+console.log("ok  picks narrowed to Word and Mini, Word played -> 1/2, two tiles, green strip");
+
 if (typeof cleanup === "function") cleanup();
 await writer.syncDay(today, { played: 1023n, solved: 1023n });
 await sleep(2_600);
-if (sent.length !== 5) fail("the card left the screen but the worker kept sending faces");
+if (sent.length !== 6) fail("the card left the screen but the worker kept sending faces");
 console.log("ok  card off screen -> polling stopped");
 Date.now = realNow;
 process.exit(0);

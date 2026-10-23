@@ -6,12 +6,13 @@
 // smoke test reads it back. Plain `RendererNode` literals: the renderer package
 // validates trees but no longer builds them.
 //
-// Two columns. Left, 112 wide: the big "n/6", "DONE TODAY" under it, and the
-// streak (flame + days) at the bottom. Right: the six
-// games as a 3 x 2 grid of tiles, each baked whole as one PNG (solid accent
-// with ink glyph and label when done, dark with a ring when not), spread
-// across the column. A strip down the left edge is the day's state: grey at
-// 0/6, green while playing, gold at 6/6, red when a streak is about to lapse.
+// Two columns. Left, 112 wide: the big "n/k" for the player's k picked games
+// (D21), "DONE TODAY" under it, and the streak (flame + days) at the bottom.
+// Right: the picked games in rows of three tiles, each baked whole as one PNG
+// (solid accent with ink glyph and label when done, dark with a ring when
+// not), spread across the column. A strip down the left edge is the day's
+// state: grey before any game, green once one is played, gold when every pick
+// is done, red when the streak is about to lapse.
 // The renderer has nine theme colours, five text styles and no Fredoka or
 // Nunito, so every coloured or typeset mark is a PNG from the worker archive
 // (`pocket/public/tiles/`, baked by `pnpm pocket:art`); only the streak
@@ -32,10 +33,20 @@ import type {
 
 import { CARD_ID, type CardBits, type CardSummary } from "../../app/src/shared/card-state";
 import { DAY_SECONDS, EPOCH_SECONDS } from "../../app/src/shared/day";
+import { pickedGames, STARTER_PICKS } from "../../app/src/shared/picks";
 import { GAME_ROSTER, type Game } from "../../app/src/shared/roster";
 
 export { CARD_ID };
-export const GAME_COUNT = GAME_ROSTER.length;
+
+/** Two rows of three: the most tiles the 234dp frame holds. */
+export const MAX_TILES = 6;
+// The face draws every pick; a seventh roster game needs a new layout first (WP38).
+if (GAME_ROSTER.length > MAX_TILES) {
+  throw new Error(`The card face holds ${MAX_TILES} tiles; the roster has ${GAME_ROSTER.length}`);
+}
+
+/** The games a face draws when the player never picked: the starter set. */
+export const STARTER_GAMES: readonly Game[] = pickedGames(STARTER_PICKS);
 
 /** The host frames a product card at 234dp tall with 24dp corners and clips to it. */
 const CARD_HEIGHT = 234;
@@ -48,7 +59,7 @@ const STRIP_WIDTH = 8;
 /** The left column and the gap to the grid. */
 export const LEFT_WIDTH = 112;
 const COLUMN_GAP = 14;
-/** The baked "n/6" (tiles/count-<n>.png) and "DONE TODAY" (tiles/done-today.png). */
+/** The baked "n/k" (tiles/count-<n>-of-<k>.png) and "DONE TODAY" (tiles/done-today.png). */
 export const COUNT_WIDTH = LEFT_WIDTH;
 export const COUNT_HEIGHT = 64;
 export const LABEL_WIDTH = LEFT_WIDTH;
@@ -158,17 +169,18 @@ function hasBit(bits: bigint, gameId: number): boolean {
   return (bits & (1n << BigInt(gameId))) !== 0n;
 }
 
-export function playedCount(bits: CardBits): number {
-  return GAME_ROSTER.filter((game) => hasBit(bits.played, game.gameId)).length;
+/** Picked games played today. */
+export function playedCount(bits: CardBits, games: readonly Game[]): number {
+  return games.filter((game) => hasBit(bits.played, game.gameId)).length;
 }
 
-export function headlineFor(bits: CardBits): string {
-  return `${playedCount(bits)}/${GAME_COUNT}`;
+export function headlineFor(bits: CardBits, games: readonly Game[]): string {
+  return `${playedCount(bits, games)}/${games.length}`;
 }
 
-/** The image for the count: tiles/count-<played>.png. */
-export function countImage(bits: CardBits): string {
-  return `count-${playedCount(bits)}.png`;
+/** The image for the count: tiles/count-<played>-of-<picks>.png. */
+export function countImage(bits: CardBits, games: readonly Game[]): string {
+  return `count-${playedCount(bits, games)}-of-${games.length}.png`;
 }
 
 /** The tile image for a game: tiles/tile-<id>-done.png or -idle.png. */
@@ -211,14 +223,18 @@ export function countdownToken(msLeft: number): ColorToken {
 }
 
 /**
- * The strip's colour: gold once every game is done, green while some are,
- * red when a streak is about to lapse (nothing played today, under four
- * hours left), else grey.
+ * The strip's colour: gold once every pick is done, green once any game is
+ * played (an unpicked one keeps the streak too, D17b), red when the streak is
+ * about to lapse (nothing played today, under four hours left), else grey.
  */
-export function stripState(bits: CardBits, streakAny: number, msToRollover: number): StripState {
-  const played = playedCount(bits);
-  if (played === GAME_COUNT) return "gold";
-  if (played > 0) return "green";
+export function stripState(
+  bits: CardBits,
+  streakAny: number,
+  msToRollover: number,
+  games: readonly Game[],
+): StripState {
+  if (playedCount(bits, games) === games.length) return "gold";
+  if (playedCount(bits, GAME_ROSTER) > 0) return "green";
   if (streakAny > 0 && msToRollover < RED_WINDOW_MS) return "red";
   return "grey";
 }
@@ -255,18 +271,20 @@ function streakNodes(summary: CardSummary): RendererNode[] {
 /**
  * The scoreboard. `summary` is the app's last record, or `null` when the
  * device has never recorded anything: then the card invites a first play.
- * `now` decides the strip (red needs the time to the day's end).
+ * `now` decides the strip (red needs the time to the day's end). `games` are
+ * the player's picks, roster order.
  */
 export function dailyFace(
   bits: CardBits,
   options: FaceOptions = {},
   summary: CardSummary | null = null,
   now: number = Date.now(),
+  games: readonly Game[] = STARTER_GAMES,
 ): RendererNode {
-  const strip = stripState(bits, summary?.streakAny ?? 0, msToRollover(now));
+  const strip = stripState(bits, summary?.streakAny ?? 0, msToRollover(now), games);
 
   const count = column([
-    image(countImage(bits), COUNT_WIDTH, COUNT_HEIGHT),
+    image(countImage(bits, games), COUNT_WIDTH, COUNT_HEIGHT),
     spacer({ height: LABEL_GAP }),
     image("done-today.png", LABEL_WIDTH, LABEL_HEIGHT),
   ]);
@@ -286,11 +304,16 @@ export function dailyFace(
   );
 
   const tileRows: RendererNode[] = [];
-  for (let i = 0; i < GAME_ROSTER.length; i += TILES_PER_ROW) {
-    const games = GAME_ROSTER.slice(i, i + TILES_PER_ROW);
+  for (let i = 0; i < games.length; i += TILES_PER_ROW) {
+    const lineGames = games.slice(i, i + TILES_PER_ROW);
+    // A short last row is padded with blank tiles, so its tiles stay under
+    // the columns of a full one.
+    const blanks = Array.from({ length: TILES_PER_ROW - lineGames.length }, () =>
+      spacer({ width: TILE_WIDTH, height: TILE_HEIGHT }),
+    );
     // Fixed-width tiles spread across whatever width the host gives the column.
     const line = row(
-      games.map((game) => tile(game, hasBit(bits.played, game.gameId), options)),
+      [...lineGames.map((game) => tile(game, hasBit(bits.played, game.gameId), options)), ...blanks],
       [{ tag: "FillWidth", value: true }, { tag: "Height", value: TILE_HEIGHT }],
       "SpaceBetween",
     );

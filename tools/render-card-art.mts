@@ -3,7 +3,8 @@
 // The card is the approved board (plans/wp-36-boards/Main.dc.html, "Proposed:
 // scoreboard"). The renderer has nine theme colours, five text styles and no
 // Fredoka or Nunito, so every coloured or typeset mark on the card is an image
-// from the worker archive: the "n/6" count (seven), the "DONE TODAY" label,
+// from the worker archive: the "n/k" count (every n of every k picked games),
+// the "DONE TODAY" label,
 // the flame of the streak, and the six game tiles whole
 // (accent fill with ink glyph and label when done, dark with a ring when
 // not). The state strip is a plain Box in a theme colour, so it needs no art.
@@ -136,12 +137,15 @@ interface Asset {
 }
 
 const assets: Asset[] = [
-  ...Array.from({ length: GAME_ROSTER.length + 1 }, (_, n) => ({
-    name: `count-${n}`,
-    width: COUNT_WIDTH,
-    height: COUNT_HEIGHT,
-    html: count(n, GAME_ROSTER.length),
-  })),
+  // One count per n of k: a player picks 1 to every roster game (D21).
+  ...Array.from({ length: GAME_ROSTER.length }, (_, index) => index + 1).flatMap((total) =>
+    Array.from({ length: total + 1 }, (_, n) => ({
+      name: `count-${n}-of-${total}`,
+      width: COUNT_WIDTH,
+      height: COUNT_HEIGHT,
+      html: count(n, total),
+    })),
+  ),
   { name: "done-today", width: LABEL_WIDTH, height: LABEL_HEIGHT, html: doneToday() },
   { name: "flame", width: FLAME_WIDTH, height: FLAME_HEIGHT, html: flame() },
   ...GAME_ROSTER.flatMap((game) => [
@@ -152,7 +156,7 @@ const assets: Asset[] = [
 
 // Playwright is the app package's; the root has no dependency on it.
 const appRequire = createRequire(resolve(root, "app/package.json"));
-type Chromium = { launch(): Promise<{ newContext(o: object): Promise<any>; close(): Promise<void> }> };
+type Chromium = { launch(options?: { executablePath?: string }): Promise<{ newContext(o: object): Promise<any>; close(): Promise<void> }> };
 const playwright = (await import(pathToFileURL(appRequire.resolve("@playwright/test")).href)) as {
   chromium?: Chromium;
   default?: { chromium: Chromium };
@@ -161,7 +165,10 @@ const playwright = (await import(pathToFileURL(appRequire.resolve("@playwright/t
 const chromium = playwright.chromium ?? playwright.default!.chromium;
 
 mkdirSync(out, { recursive: true });
-const browser = await chromium.launch();
+// CHROMIUM_PATH: a preinstalled browser when Playwright's own build is absent.
+const browser = await chromium.launch(
+  process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {},
+);
 let total = 0;
 try {
   const context = await browser.newContext({ deviceScaleFactor: SCALE });

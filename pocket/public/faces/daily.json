@@ -120,7 +120,7 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
-                                "value": "tiles/count-3.png"
+                                "value": "tiles/count-2-of-3.png"
                               },
                               "fit": "Contain"
                             }
@@ -355,105 +355,7 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
-                                "value": "tiles/tile-sudoku-done.png"
-                              },
-                              "fit": "Contain"
-                            }
-                          }
-                        },
-                        {
-                          "tag": "Image",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 70
-                              },
-                              {
-                                "tag": "Height",
-                                "value": 95
-                              }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-chess-done.png"
-                              },
-                              "fit": "Contain"
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "tag": "Spacer",
-                    "value": {
-                      "modifiers": [
-                        {
-                          "tag": "Height",
-                          "value": 10
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "tag": "Row",
-                    "value": {
-                      "modifiers": [
-                        {
-                          "tag": "FillWidth",
-                          "value": true
-                        },
-                        {
-                          "tag": "Height",
-                          "value": 95
-                        }
-                      ],
-                      "props": {
-                        "verticalAlignment": "Center",
-                        "horizontalArrangement": "SpaceBetween"
-                      },
-                      "children": [
-                        {
-                          "tag": "Image",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 70
-                              },
-                              {
-                                "tag": "Height",
-                                "value": 95
-                              }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-globe-idle.png"
-                              },
-                              "fit": "Contain"
-                            }
-                          }
-                        },
-                        {
-                          "tag": "Image",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 70
-                              },
-                              {
-                                "tag": "Height",
-                                "value": 95
-                              }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-mini-idle.png"
+                                "value": "tiles/tile-mini-done.png"
                               },
                               "fit": "Contain"
                             }

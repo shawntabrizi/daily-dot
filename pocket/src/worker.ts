@@ -8,8 +8,9 @@
 // Lifecycle facts this is built around (host-rust-core #632, Worker Lifecycle):
 //   - the worker runs only while the card is on screen. No background tick, so
 //     the day index is computed from the clock on every draw and every poll.
-//   - the app and this worker share no runtime. Today's bits come from the
-//     product's host KV store, which the app writes on every completion.
+//   - the app and this worker share no runtime. Today's bits and the player's
+//     picked games (D21) come from the product's host KV store, which the app
+//     writes on every completion and every change of picks.
 //     Storage has no change notification, so a visible card polls it.
 import {
   getHostLocalStorage,
@@ -27,7 +28,8 @@ import {
   type CardBits,
 } from "../../app/src/shared/card-state";
 import { dayIndexFromTimestamp } from "../../app/src/shared/day";
-import { gameById } from "../../app/src/shared/roster";
+import { parsePicks, pickedGames, PICKS_KEY, STARTER_PICKS } from "../../app/src/shared/picks";
+import { gameById, type Game } from "../../app/src/shared/roster";
 import { CARD_ID, dailyFace, EMPTY_BITS, countdownText, msToRollover, stripState } from "./face";
 
 /** How often a visible card re-reads the checklist and ticks the countdown. One local key read. */
@@ -40,6 +42,8 @@ interface Checklist {
   bits: CardBits;
   /** The streak as the app last wrote it; null when nothing was ever recorded. */
   summary: CardSummary | null;
+  /** The picked games; the starter set until the player picks. */
+  games: readonly Game[];
 }
 
 /**
@@ -53,13 +57,14 @@ async function readChecklist(): Promise<Checklist> {
   const state = storage
     ? parseCardState(await storage.readString(CARD_STATE_KEY))
     : null;
+  const picks = (storage ? parsePicks(await storage.readString(PICKS_KEY)) : null) ?? [...STARTER_PICKS];
   const bits = state && state.day === today ? cardStateBits(state) : EMPTY_BITS;
   // The streak is current whatever day the record is from (the app derives
   // it with the one-day grace). The card shows no percentile.
   const summary: CardSummary | null = state
     ? state.streakAny !== undefined ? { streakAny: state.streakAny } : {}
     : null;
-  return { today, now, bits, summary };
+  return { today, now, bits, summary, games: pickedGames(picks) };
 }
 
 /** What the face is drawn from; a change in any part repaints (midnight and
@@ -67,9 +72,9 @@ async function readChecklist(): Promise<Checklist> {
 function snapshot(checklist: Checklist): string {
   const s = checklist.summary;
   const left = msToRollover(checklist.now);
-  const strip = stripState(checklist.bits, s?.streakAny ?? 0, left);
+  const strip = stripState(checklist.bits, s?.streakAny ?? 0, left, checklist.games);
   // The countdown repaints the face every second while the card is visible.
-  return `${countdownText(left)}:${checklist.today}:${checklist.bits.played}:${checklist.bits.solved}:${s ? `${s.streakAny ?? ""}` : "none"}:${strip}`;
+  return `${countdownText(left)}:${checklist.today}:${checklist.bits.played}:${checklist.bits.solved}:${s ? `${s.streakAny ?? ""}` : "none"}:${checklist.games.map((game) => game.gameId).join(",")}:${strip}`;
 }
 
 async function openGame(slug: string): Promise<void> {
@@ -114,7 +119,7 @@ async function start(): Promise<void> {
       .catch((error: unknown) => console.warn("[daily-on-dot] drawn flag write failed", error));
     let current = await readChecklist();
     let shown = snapshot(current);
-    send(dailyFace(current.bits, {}, current.summary, current.now));
+    send(dailyFace(current.bits, {}, current.summary, current.now, current.games));
 
     // Repaint only on a change: the host stores every face it is sent.
     const poll = setInterval(() => {
@@ -124,7 +129,7 @@ async function start(): Promise<void> {
           if (key === shown) return;
           shown = key;
           current = next;
-          send(dailyFace(current.bits, {}, current.summary, current.now));
+          send(dailyFace(current.bits, {}, current.summary, current.now, current.games));
         })
         .catch((error: unknown) =>
           console.warn("[daily-on-dot] checklist read failed", error),
