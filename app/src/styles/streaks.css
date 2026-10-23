@@ -360,9 +360,6 @@ a.calendar-day:hover {
   --streak-gold-label: #c9a24a;
   --streak-gold-cell: #3a2e12;
   --streak-bar-ink: #2a1f05;
-  --streak-blue-tint: #10202a;
-  --streak-blue-ring: #1f4a5c;
-  --streak-blue-label: #5fb3d2;
   --streak-blue-ink: #0b2430;
   --streak-future-ink: #3a3f42;
   --streak-next-tile: #2a2416;
@@ -394,9 +391,8 @@ a.calendar-day:hover {
   box-shadow: inset 0 0 0 1.5px var(--streak-gold-ring);
 }
 
-.streak-tile--all {
-  background: var(--streak-blue-tint);
-  box-shadow: inset 0 0 0 1.5px var(--streak-blue-ring);
+.streak-tile--finished {
+  background: var(--surface-raised);
 }
 
 .streak-tile-mark svg {
@@ -405,7 +401,7 @@ a.calendar-day:hover {
   height: 38px;
 }
 
-.streak-tile--all .streak-tile-mark svg {
+.streak-tile--finished .streak-tile-mark svg {
   height: 30px;
 }
 
@@ -414,9 +410,12 @@ a.calendar-day:hover {
   color: var(--streak-gold);
 }
 
-.streak-tile--all .streak-tile-mark,
-.streak-tile--all .streak-tile-count {
-  color: var(--streak-blue);
+.streak-tile--finished .streak-tile-count {
+  color: var(--text);
+}
+
+.streak-tile--finished .streak-tile-mark {
+  color: var(--muted);
 }
 
 .streak-tile-count {
@@ -438,8 +437,8 @@ a.calendar-day:hover {
   color: var(--streak-gold-label);
 }
 
-.streak-tile--all .streak-tile-label {
-  color: var(--streak-blue-label);
+.streak-tile--finished .streak-tile-label {
+  color: var(--muted);
 }
 
 .streak-tile-note {

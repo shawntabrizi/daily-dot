@@ -22,8 +22,8 @@ function histogram(entries: [bucket: number, count: number][]): Histogram {
   };
 }
 
-function streaks(any: number, all = 0): HubStreaks {
-  return { any, all, longestAny: any, longestAll: all, finished: any, perfectDays: all };
+function streaks(any: number): HubStreaks {
+  return { any, longestAny: any, finished: any };
 }
 
 /** Ten finishers; the player's bucket and the better ones set the percentile. */

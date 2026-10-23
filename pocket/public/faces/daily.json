@@ -266,68 +266,6 @@
                               }
                             ]
                           }
-                        },
-                        {
-                          "tag": "Spacer",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 14
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "tag": "Image",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 16
-                              },
-                              {
-                                "tag": "Height",
-                                "value": 16
-                              }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/gem.png"
-                              },
-                              "fit": "Contain"
-                            }
-                          }
-                        },
-                        {
-                          "tag": "Spacer",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 5
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "tag": "Text",
-                          "value": {
-                            "modifiers": [],
-                            "props": {
-                              "style": "BodyLargeRegular",
-                              "color": "FgPrimary"
-                            },
-                            "children": [
-                              {
-                                "tag": "String",
-                                "value": {
-                                  "text": "2"
-                                }
-                              }
-                            ]
-                          }
                         }
                       ]
                     }

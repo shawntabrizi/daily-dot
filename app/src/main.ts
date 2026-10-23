@@ -82,11 +82,11 @@ export function startApp(
   const drawer = createDrawer(source);
   const header = createHeader({ onMenu: () => drawer.open() });
   headerTarget.append(header.element, drawer.element);
-  // The home announces the hub streaks (WP34); the header pill shows them.
+  // The home announces the hub streak (WP34); the header pill shows it.
   const onStreaks = (event: Event): void => {
-    const { streakAny, streakAll } = (event as CustomEvent<CardSummary>).detail;
-    if (typeof streakAny === "number" && typeof streakAll === "number") {
-      header.setStreaks({ any: streakAny, all: streakAll });
+    const { streakAny } = (event as CustomEvent<CardSummary>).detail;
+    if (typeof streakAny === "number") {
+      header.setStreaks({ any: streakAny });
     }
   };
   window.addEventListener("daily-day-summary", onStreaks);
@@ -270,7 +270,7 @@ export function bootApp(root: HTMLElement): () => void {
     if (!source) return;
     const today = await source.currentDay();
     const streaks = await loadHubStreaks(source, today);
-    const summary: CardSummary = { streakAny: streaks.any, streakAll: streaks.all };
+    const summary: CardSummary = { streakAny: streaks.any };
     if (recordedDay === today) {
       const bits = await source.dayBits(today);
       if (dayComplete(bits)) {

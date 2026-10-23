@@ -76,14 +76,14 @@ describe("card state merge", () => {
 
 describe("card summary", () => {
   it("rides on the day's record and survives a same-day bits merge", () => {
-    const streaks = withSummary(null, TODAY, { streakAny: 4, streakAll: 2 });
-    expect(streaks).toEqual({ version: 1, day: TODAY, played: "0", solved: "0", streakAny: 4, streakAll: 2 });
+    const streaks = withSummary(null, TODAY, { streakAny: 4 });
+    expect(streaks).toEqual({ version: 1, day: TODAY, played: "0", solved: "0", streakAny: 4 });
 
     const withBits = withResult(streaks, TODAY, 1, true);
-    expect(withBits).toMatchObject({ streakAny: 4, streakAll: 2, played: (1n << 1n).toString() });
+    expect(withBits).toMatchObject({ streakAny: 4, played: (1n << 1n).toString() });
 
     const done = withSummary(withBits, TODAY, { dayPercentile: 23 });
-    expect(done).toMatchObject({ dayPercentile: 23, streakAny: 4, streakAll: 2 });
+    expect(done).toMatchObject({ dayPercentile: 23, streakAny: 4 });
     expect(parseCardState(JSON.stringify(done))).toEqual(done);
   });
 
@@ -109,7 +109,7 @@ describe("card summary", () => {
     const storage = new MemoryStorage();
     const writer = new CardStateWriter(storageCardStore(storage));
     await writer.markRecorded(TODAY, 2, true);
-    await writer.syncSummary(TODAY, { streakAny: 5, streakAll: 5 });
+    await writer.syncSummary(TODAY, { streakAny: 5 });
     await writer.syncSummary(TODAY, { dayPercentile: 12 });
     expect(parseCardState(storage.getItem(CARD_STATE_KEY))).toEqual({
       version: 1,
@@ -117,7 +117,6 @@ describe("card summary", () => {
       played: (1n << 2n).toString(),
       solved: (1n << 2n).toString(),
       streakAny: 5,
-      streakAll: 5,
       dayPercentile: 12,
     });
   });

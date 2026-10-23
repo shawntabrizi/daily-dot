@@ -25,7 +25,7 @@ export interface ShareGame {
 export interface ShareInput {
   day: number;
   games: readonly ShareGame[];
-  streaks: { any: number; all: number } | null;
+  streaks: { any: number } | null;
   /** The day's overall percentile; written only when all six are played. */
   dayPercentile: number | null;
 }
@@ -36,7 +36,7 @@ const UNPLAYED = "⬜";
 /**
  * The one share text (WP36 decision 6): the day and count, six slots in
  * roster order, one line per played game with its score and percentile, and
- * the two streaks. Never an answer, never a grid that encodes letters.
+ * the streak. Never an answer, never a grid that encodes letters.
  */
 export function shareText(input: ShareInput, roster: readonly Game[] = GAME_ROSTER): string {
   const byId = new Map(input.games.map((game) => [game.id, game]));
@@ -59,9 +59,6 @@ export function shareText(input: ShareInput, roster: readonly Game[] = GAME_ROST
   const footer: string[] = [];
   if (input.streaks && input.streaks.any > 0) {
     footer.push(`✦ ${input.streaks.any}`);
-  }
-  if (input.streaks && input.streaks.all > 0) {
-    footer.push(`◆ ${input.streaks.all}`);
   }
   if (played.length === roster.length && input.dayPercentile !== null) {
     footer.push(`Top ${input.dayPercentile}% today`);

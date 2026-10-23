@@ -132,16 +132,14 @@ expectText(sent[2], "11:59:59", "countdown tick");
 console.log("ok  the clock moves one second -> the countdown ticks to 11:59:59");
 sent.splice(2, 1);
 
-// The home derives the hub streaks and the day percentile; the card shows them.
-await writer.syncSummary(today, { streakAny: 5, streakAll: 2, dayPercentile: 23 });
+// The home derives the hub streak and the day percentile; the card shows the streak.
+await writer.syncSummary(today, { streakAny: 5, dayPercentile: 23 });
 await sleep(2_600);
-if (sent.length !== 3) fail(`expected a repaint after the streaks landed, got ${sent.length} faces`);
-expectImage(sent[2], "tiles/flame.png", "streaks");
-expectText(sent[2], "5", "streaks");
-expectImage(sent[2], "tiles/gem.png", "streaks");
-expectText(sent[2], "2", "streaks");
-expectNoText(sent[2], "Top 23% today", "streaks");
-console.log("ok  streaks written by the app -> card shows them; the percentile stays off the card");
+if (sent.length !== 3) fail(`expected a repaint after the streak landed, got ${sent.length} faces`);
+expectImage(sent[2], "tiles/flame.png", "streak");
+expectText(sent[2], "5", "streak");
+expectNoText(sent[2], "Top 23% today", "streak");
+console.log("ok  streak written by the app -> card shows it; the percentile stays off the card");
 
 // Yesterday's record must not carry over: the worker draws 0/N for a stale day.
 const store = await detectCardStore();

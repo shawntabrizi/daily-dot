@@ -74,30 +74,23 @@ export function deriveGameStats(days: readonly DayBits[], gameId: number): GameS
 }
 
 /**
- * The two hub streaks (D17b, D17c) over a contiguous run of days ending
- * today, with D17's one-day grace, and the completionist counts.
+ * The hub streak (D17b) over a contiguous run of days ending today, with
+ * D17's one-day grace, and the lifetime count.
  *
- * `any`: consecutive days with at least one game finished on the day itself
- * (any `ontime` bit). `all`: consecutive days with every roster game
- * finished on the day (`ontime` covers `rosterMask`). A backfilled day sets
- * `played` only, so it counts toward `finished` and `perfectDays` and never
- * toward a streak. `longestAll` is the longest run of all-games days in the
- * window, no grace.
+ * `any`: consecutive days with at least one roster game finished on the day
+ * itself (any `ontime` bit). A backfilled day sets `played` only, so it
+ * counts toward `finished` and never toward the streak.
  */
 export interface HubStreaks {
   any: number;
-  all: number;
   /**
    * The longest run of any-game days in the window. The grace rule only
    * affects the run that ends today, and that run is a plain run of
    * consecutive days, so `longestAny` is never below `any`.
    */
   longestAny: number;
-  longestAll: number;
   /** Lifetime games finished: popcount of `played` over the window. */
   finished: number;
-  /** Days on which every roster game was finished, on time or later. */
-  perfectDays: number;
 }
 
 export function rosterMask(gameIds: readonly number[]): bigint {
@@ -140,32 +133,20 @@ export function deriveHubStreaks(
     throw new RangeError("The roster mask must name at least one game");
   }
   const anyDay = (day: DayBits): boolean => (day.ontime & mask) !== 0n;
-  const allDay = (day: DayBits): boolean => (day.ontime & mask) === mask;
 
   let longestAny = 0;
-  let longestAll = 0;
-  let anyRun = 0;
   let run = 0;
   let finished = 0;
-  let perfectDays = 0;
   for (const day of days) {
-    anyRun = anyDay(day) ? anyRun + 1 : 0;
-    longestAny = Math.max(longestAny, anyRun);
-    run = allDay(day) ? run + 1 : 0;
-    longestAll = Math.max(longestAll, run);
+    run = anyDay(day) ? run + 1 : 0;
+    longestAny = Math.max(longestAny, run);
     finished += popcount(day.played & mask);
-    if ((day.played & mask) === mask) {
-      perfectDays += 1;
-    }
   }
 
   return {
     any: streakWithGrace(days, anyDay),
-    all: streakWithGrace(days, allDay),
     longestAny,
-    longestAll,
     finished,
-    perfectDays,
   };
 }
 

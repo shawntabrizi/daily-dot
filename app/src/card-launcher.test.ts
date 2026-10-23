@@ -298,48 +298,36 @@ describe("card launcher", () => {
     dispose();
   });
 
-  it("shows the streak line only when the record carries streaks, the gem only above zero", async () => {
+  it("shows the streak only when the record carries one above zero", async () => {
     const { root, dispose } = mount();
     await settled();
-    expect(root.querySelector("[data-launcher-streaks]")).toBeNull();
+    expect(root.querySelector("[data-launcher-streak]")).toBeNull();
     dispose();
 
-    seedChecklist(today(), [], { streakAny: 14, streakAll: 0 });
+    seedChecklist(today(), [], { streakAny: 14 });
     const gold = mount();
     await vi.waitFor(() => {
-      expect(gold.root.querySelector("[data-launcher-streaks]")).not.toBeNull();
+      expect(gold.root.querySelector("[data-launcher-streak]")?.textContent).toBe("14");
     });
-    expect(gold.root.querySelector("[data-streak-any]")?.textContent).toBe("14");
-    expect(gold.root.querySelector("[data-streak-all]")).toBeNull();
-    expect(gold.root.querySelector(".launcher__streak--any svg")?.getAttribute("aria-hidden")).toBe("true");
+    expect(gold.root.querySelector(".launcher__streak svg")?.getAttribute("aria-hidden")).toBe("true");
     gold.dispose();
 
-    seedChecklist(today(), [], { streakAny: 14, streakAll: 3 });
-    const both = mount();
-    await vi.waitFor(() => {
-      expect(both.root.querySelector("[data-streak-all]")?.textContent).toBe("3");
-    });
-    expect(both.root.querySelector("[data-streak-any]")?.textContent).toBe("14");
-    expect(both.root.querySelectorAll("[data-launcher-streaks]")).toHaveLength(1);
-    both.dispose();
-
-    // A zero any-game streak is no streak: no line.
-    seedChecklist(today(), [], { streakAny: 0, streakAll: 0 });
+    seedChecklist(today(), [], { streakAny: 0 });
     const none = mount();
     await settled();
     await settled();
-    expect(none.root.querySelector("[data-launcher-streaks]")).toBeNull();
+    expect(none.root.querySelector("[data-launcher-streak]")).toBeNull();
     none.dispose();
   });
 
-  it("yesterday's streaks do not show today", async () => {
-    seedChecklist(today() - 1, [], { streakAny: 14, streakAll: 3 });
+  it("yesterday's streak does not show today", async () => {
+    seedChecklist(today() - 1, [], { streakAny: 14 });
     const { root, dispose } = mount();
     await vi.waitFor(() => {
       expect(host.storage.readString).toHaveBeenCalledWith(CARD_STATE_KEY);
     });
     await settled();
-    expect(root.querySelector("[data-launcher-streaks]")).toBeNull();
+    expect(root.querySelector("[data-launcher-streak]")).toBeNull();
     dispose();
   });
 

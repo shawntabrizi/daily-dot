@@ -60,6 +60,10 @@ any single context window. `PLAN.md` is the design; this is where things actuall
 - **WP38 (game selection, one streak), in progress 2026-10-23:** decisions D6, D12,
   D17b, D17c amended and D21 added (Shawn); brief `plans/wp-38-game-selection.md`.
   Order: A remove the all-games streak, B selection + Customize + More games, C card.
+  - **A done:** `HubStreaks` is `{any, longestAny, finished}`; the gem, `streakAll`,
+    perfect days and the all-games run are gone from the pill, badges, archive, streaks
+    page (second tile is now "Games finished"), day summary, share text, launcher, card
+    face, smoke tool and art (`gem.png` deleted). The pill's ring is gold now.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

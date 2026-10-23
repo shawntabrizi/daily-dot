@@ -4,7 +4,7 @@
 // scoreboard"). The renderer has nine theme colours, five text styles and no
 // Fredoka or Nunito, so every coloured or typeset mark on the card is an image
 // from the worker archive: the "n/6" count (seven), the "DONE TODAY" label,
-// the flame and the gem of the two streaks, and the six game tiles whole
+// the flame of the streak, and the six game tiles whole
 // (accent fill with ink glyph and label when done, dark with a ring when
 // not). The state strip is a plain Box in a theme colour, so it needs no art.
 // Each asset is the board's own HTML and CSS, rasterised at 3x by headless
@@ -27,7 +27,6 @@ import {
   COUNT_WIDTH,
   FLAME_HEIGHT,
   FLAME_WIDTH,
-  GEM_SIZE,
   LABEL_HEIGHT,
   LABEL_WIDTH,
   TILE_HEIGHT,
@@ -63,7 +62,6 @@ const WHITE = "#ffffff";
 const COUNT_MUTED = "#8d9396";
 const MUTED = "#9aa0a3";
 const GOLD = "#e8b53a";
-const BLUE = "#6fd3f7";
 
 const fontDir = process.env.CARD_ART_FONTS ?? resolve(root, "app/public/fonts");
 function fontFace(family: string, weight: number, file: string): string {
@@ -130,11 +128,6 @@ function flame(): string {
   );
 }
 
-/** The board's gem, 16x16, blue outline. */
-function gem(): string {
-  return svg(GEM_SIZE, GEM_SIZE, `<path d="M8 1l7 7-7 7-7-7z" fill="none" stroke="${BLUE}" stroke-width="2"/>`);
-}
-
 interface Asset {
   name: string;
   width: number;
@@ -151,7 +144,6 @@ const assets: Asset[] = [
   })),
   { name: "done-today", width: LABEL_WIDTH, height: LABEL_HEIGHT, html: doneToday() },
   { name: "flame", width: FLAME_WIDTH, height: FLAME_HEIGHT, html: flame() },
-  { name: "gem", width: GEM_SIZE, height: GEM_SIZE, html: gem() },
   ...GAME_ROSTER.flatMap((game) => [
     { name: `tile-${game.id}-done`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, true) },
     { name: `tile-${game.id}-idle`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, false) },

@@ -247,7 +247,7 @@ describe("home", () => {
     expect(view.element.querySelector("[data-day-rank]")?.textContent).toBe("Top 19% today");
     expect(histograms).toHaveBeenCalledTimes(1);
     expect(announced).toEqual([
-      { day: DAY, streakAny: 11, streakAll: 11 },
+      { day: DAY, streakAny: 11 },
       { day: DAY, dayPercentile: 19 },
     ]);
     window.removeEventListener("daily-day-summary", onSummary);

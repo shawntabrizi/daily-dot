@@ -38,7 +38,7 @@ interface Checklist {
   /** The clock the checklist was read at; the strip depends on it. */
   now: number;
   bits: CardBits;
-  /** The streaks as the app last wrote them; null when nothing was ever recorded. */
+  /** The streak as the app last wrote it; null when nothing was ever recorded. */
   summary: CardSummary | null;
 }
 
@@ -54,13 +54,10 @@ async function readChecklist(): Promise<Checklist> {
     ? parseCardState(await storage.readString(CARD_STATE_KEY))
     : null;
   const bits = state && state.day === today ? cardStateBits(state) : EMPTY_BITS;
-  // Streaks are current whatever day the record is from (the app derives them
-  // with the one-day grace). The card shows no percentile.
+  // The streak is current whatever day the record is from (the app derives
+  // it with the one-day grace). The card shows no percentile.
   const summary: CardSummary | null = state
-    ? {
-        ...(state.streakAny !== undefined ? { streakAny: state.streakAny } : {}),
-        ...(state.streakAll !== undefined ? { streakAll: state.streakAll } : {}),
-      }
+    ? state.streakAny !== undefined ? { streakAny: state.streakAny } : {}
     : null;
   return { today, now, bits, summary };
 }
@@ -72,7 +69,7 @@ function snapshot(checklist: Checklist): string {
   const left = msToRollover(checklist.now);
   const strip = stripState(checklist.bits, s?.streakAny ?? 0, left);
   // The countdown repaints the face every second while the card is visible.
-  return `${countdownText(left)}:${checklist.today}:${checklist.bits.played}:${checklist.bits.solved}:${s ? `${s.streakAny ?? ""}:${s.streakAll ?? ""}` : "none"}:${strip}`;
+  return `${countdownText(left)}:${checklist.today}:${checklist.bits.played}:${checklist.bits.solved}:${s ? `${s.streakAny ?? ""}` : "none"}:${strip}`;
 }
 
 async function openGame(slug: string): Promise<void> {

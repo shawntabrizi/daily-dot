@@ -14,7 +14,7 @@ import { hasStarted } from "./shared/progress";
 import { GAME_ROSTER, type Game } from "./shared/roster";
 import { hasGameBit } from "./shared/streaks";
 import { gameGlyph } from "./shared/ui/game-glyphs";
-import { FLAME_SVG, GEM_SVG } from "./shared/ui/streak-badges";
+import { FLAME_SVG } from "./shared/ui/streak-badges";
 
 /**
  * The launcher: what the product shows when the host opens it beneath the
@@ -24,9 +24,9 @@ import { FLAME_SVG, GEM_SVG } from "./shared/ui/streak-badges";
  * the selected game to the full app. No chain client, no signer: nothing here
  * may raise a permission sheet in the half screen.
  *
- * Today's ticks and the two streaks come from the same KV record the card
+ * Today's ticks and the streak come from the same KV record the card
  * worker reads; a record for another day is yesterday's and shows as all
- * unplayed with no streak line. "Resume" comes from the game's own progress
+ * unplayed with no streak. "Resume" comes from the game's own progress
  * in localStorage (`hasStarted`), as on the hub.
  */
 export function fromCard(search = window.location.search): boolean {
@@ -37,11 +37,11 @@ const EMPTY_BITS: CardBits = { played: 0n, solved: 0n };
 
 interface TodayState {
   bits: CardBits;
-  /** The hub streaks the home last wrote (WP34); absent on a record without them. */
-  streaks: { any: number; all: number } | null;
+  /** The hub streak the app last wrote (WP34); null on a record without it. */
+  streak: number | null;
 }
 
-const EMPTY_STATE: TodayState = { bits: EMPTY_BITS, streaks: null };
+const EMPTY_STATE: TodayState = { bits: EMPTY_BITS, streak: null };
 
 function today(): number {
   return dayIndexFromTimestamp(Date.now() / 1_000);
@@ -55,10 +55,7 @@ async function readTodayState(): Promise<TodayState> {
   }
   return {
     bits: cardStateBits(state),
-    streaks:
-      state.streakAny === undefined
-        ? null
-        : { any: state.streakAny, all: state.streakAll ?? 0 },
+    streak: state.streakAny ?? null,
   };
 }
 
@@ -148,23 +145,13 @@ function row(game: Game, state: RowState, selected: boolean): HTMLButtonElement 
   return button;
 }
 
-function streakLine(streaks: NonNullable<TodayState["streaks"]>): HTMLElement {
-  const line = document.createElement("span");
-  line.className = "launcher__streaks";
-  line.dataset.launcherStreaks = "";
-  for (const [kind, count, mark, label] of [
-    ["any", streaks.any, FLAME_SVG, "any-game"],
-    ["all", streaks.all, GEM_SVG, "all-games"],
-  ] as const) {
-    if (count <= 0) continue;
-    const badge = document.createElement("span");
-    badge.className = `launcher__streak launcher__streak--${kind}`;
-    badge.dataset[kind === "any" ? "streakAny" : "streakAll"] = String(count);
-    badge.setAttribute("aria-label", `${count}-day ${label} streak`);
-    badge.innerHTML = `${mark}<strong>${count}</strong>`;
-    line.append(badge);
-  }
-  return line;
+function streakBadge(count: number): HTMLElement {
+  const badge = document.createElement("span");
+  badge.className = "launcher__streak";
+  badge.dataset.launcherStreak = String(count);
+  badge.setAttribute("aria-label", `${count}-day streak`);
+  badge.innerHTML = `${FLAME_SVG}<strong>${count}</strong>`;
+  return badge;
 }
 
 export function renderCardLauncher(root: HTMLElement): () => void {
@@ -233,9 +220,9 @@ export function renderCardLauncher(root: HTMLElement): () => void {
     );
     const done = states.filter((entry) => entry === "done").length;
     count.textContent = `${done}/${GAME_ROSTER.length} done`;
-    head.querySelector("[data-launcher-streaks]")?.remove();
-    if (state.streaks && state.streaks.any > 0) {
-      head.append(streakLine(state.streaks));
+    head.querySelector("[data-launcher-streak]")?.remove();
+    if (state.streak !== null && state.streak > 0) {
+      head.append(streakBadge(state.streak));
     }
     if (!picked) {
       // The first game not yet done, a started one included.

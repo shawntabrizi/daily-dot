@@ -44,32 +44,20 @@
   white-space: nowrap;
 }
 
-.launcher__streaks {
-  display: flex;
-  gap: 12px;
+.launcher__streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--streak-gold);
   font-size: 13px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
-.launcher__streak {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
 .launcher__streak svg {
   width: 15px;
   height: 15px;
-}
-
-.launcher__streak--any {
-  color: var(--streak-gold);
-}
-
-.launcher__streak--all {
-  color: var(--streak-blue);
 }
 
 .launcher__list {

@@ -7,7 +7,7 @@
 // validates trees but no longer builds them.
 //
 // Two columns. Left, 112 wide: the big "n/6", "DONE TODAY" under it, and the
-// two streaks (flame + days, gem + perfect days) at the bottom. Right: the six
+// streak (flame + days) at the bottom. Right: the six
 // games as a 3 x 2 grid of tiles, each baked whole as one PNG (solid accent
 // with ink glyph and label when done, dark with a ring when not), spread
 // across the column. A strip down the left edge is the day's state: grey at
@@ -54,12 +54,10 @@ export const COUNT_HEIGHT = 64;
 export const LABEL_WIDTH = LEFT_WIDTH;
 export const LABEL_HEIGHT = 14;
 const LABEL_GAP = 6;
-/** The streak marks. */
+/** The streak mark. */
 export const FLAME_WIDTH = 16;
 export const FLAME_HEIGHT = 20;
-export const GEM_SIZE = 16;
 const STREAK_ICON_GAP = 5;
-const STREAK_GAP = 14;
 /** Tiles: fixed widths, since the host gives a second FillWidth child of a
  *  Row nothing (seen on Android 2026-10-21). Two rows fill the inner height. */
 const TILES_PER_ROW = 3;
@@ -241,29 +239,17 @@ function tile(game: Game, played: boolean, options: FaceOptions): RendererNode {
   return image(tileImage(game, played), TILE_WIDTH, TILE_HEIGHT);
 }
 
-/** The streaks: flame + days, gem + perfect days; each only when > 0. The
- *  renderer has no 18px 800 style, no gold and no blue text: the counts are
- *  `BodyLargeRegular` in `FgWarning` (gold-ish) and `FgPrimary` (white). */
+/** The streak: flame + days, only when > 0. The renderer has no 18px 800
+ *  style and no gold text: the count is `BodyLargeRegular` in `FgWarning`
+ *  (gold-ish). */
 function streakNodes(summary: CardSummary): RendererNode[] {
-  const parts: RendererNode[] = [];
   const any = summary.streakAny ?? 0;
-  const all = summary.streakAll ?? 0;
-  if (any > 0) {
-    parts.push(
-      image("flame.png", FLAME_WIDTH, FLAME_HEIGHT),
-      spacer({ width: STREAK_ICON_GAP }),
-      text(String(any), "BodyLargeRegular", "FgWarning"),
-    );
-  }
-  if (all > 0) {
-    if (parts.length) parts.push(spacer({ width: STREAK_GAP }));
-    parts.push(
-      image("gem.png", GEM_SIZE, GEM_SIZE),
-      spacer({ width: STREAK_ICON_GAP }),
-      text(String(all), "BodyLargeRegular", "FgPrimary"),
-    );
-  }
-  return parts;
+  if (any <= 0) return [];
+  return [
+    image("flame.png", FLAME_WIDTH, FLAME_HEIGHT),
+    spacer({ width: STREAK_ICON_GAP }),
+    text(String(any), "BodyLargeRegular", "FgWarning"),
+  ];
 }
 
 /**

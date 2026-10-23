@@ -98,9 +98,9 @@ export async function readDays(
 }
 
 /**
- * Enough recent days to derive the hub streaks exactly: pages back from
- * today until a page starts with a day no roster game was played on (both
- * streaks end there) or day 0.
+ * Enough recent days to derive the hub streak exactly: pages back from
+ * today until a page starts with a day no roster game was played on (the
+ * streak ends there) or day 0.
  */
 export async function readStreakWindow(
   source: DataSource,
@@ -134,7 +134,7 @@ function percentText(percentile: number | null): string {
 /**
  * The "Day done" panel: the day's overall percentile, each game's score and
  * percentile (unless `games: false`: the hub's rows already show them), and,
- * when given, the completionist counts as three tiles.
+ * when given, the lifetime count and the best streak as two tiles.
  */
 export function renderDaySummary(
   summary: DaySummary,
@@ -190,15 +190,14 @@ export function renderDaySummary(
     panel.append(list);
   }
 
-  // The streaks live in the header pill; the card adds the lifetime counts,
+  // The streak lives in the header pill; the card adds the lifetime counts,
   // each a big number over its label.
   if (streaks) {
     const stats = document.createElement("div");
     stats.className = "day-summary-stats";
     for (const [label, value] of [
       ["Games finished", streaks.finished],
-      ["Perfect days", streaks.perfectDays],
-      ["Best perfect run", streaks.longestAll],
+      ["Best streak", streaks.longestAny],
     ] as const) {
       const tile = document.createElement("div");
       tile.className = "day-summary-stat";

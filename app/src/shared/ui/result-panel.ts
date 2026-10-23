@@ -510,7 +510,7 @@ export function createResultPanel(
     return {
       day: state.day,
       games,
-      streaks: streaks ? { any: streaks.any, all: streaks.all } : null,
+      streaks: streaks ? { any: streaks.any } : null,
       dayPercentile: summary?.dayPercentile ?? null,
     };
   };

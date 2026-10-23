@@ -87,10 +87,9 @@ it("opens on the all-games calendar: blue, gold and played-later days, lifetime 
   const hub = view.element.querySelector<HTMLElement>("[data-hub-stats]");
   expect(hub?.hidden).toBe(false);
   expect(hub?.querySelector("[data-finished]")?.textContent).toBe(String(GAME_ROSTER.length * 2 + 1));
-  expect(hub?.querySelector("[data-perfect]")?.textContent).toBe("2");
-  expect(hub?.querySelector("[data-longest-all]")?.textContent).toBe("1");
   expect(hub?.querySelector("[data-streak-any]")?.getAttribute("data-streak-any")).toBe("2");
-  expect(hub?.querySelector("[data-streak-all]")?.getAttribute("data-streak-all")).toBe("1");
+  expect(hub?.querySelector("[data-longest-any]")?.textContent).toBe("2");
+  expect(hub?.querySelector("[data-perfect]")).toBeNull();
   expect(view.element.querySelector<HTMLElement>("[data-game-stats]")?.hidden).toBe(true);
 
   // Switching to one game restores its calendar and stats.

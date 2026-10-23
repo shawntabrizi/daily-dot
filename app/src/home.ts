@@ -247,7 +247,7 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
       if (disposed || request !== readRequest) {
         return null;
       }
-      announce(day, { streakAny: streaks.any, streakAll: streaks.all });
+      announce(day, { streakAny: streaks.any });
       return streaks;
     } catch {
       // A failed read leaves the header as it was.

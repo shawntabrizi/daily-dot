@@ -37,8 +37,8 @@ export function asciiJson(value: unknown): string {
 const noon = Date.UTC(2026, 9, 22, 12, 0, 0);
 const late = noon + 24 * 60 * 60 * 1_000 - msToRollover(noon) - RED_WINDOW_MS / 2;
 
-// The sheet shows a sample day: three games done, with both streaks.
-const preview = dailyFace({ played: 0b111n, solved: 0b010n }, {}, { streakAny: 5, streakAll: 2 }, noon);
+// The sheet shows a sample day: three games done, with a streak.
+const preview = dailyFace({ played: 0b111n, solved: 0b010n }, {}, { streakAny: 5 }, noon);
 const json = asciiJson(preview);
 assertFaceValid(json, { host: androidLimits });
 
@@ -50,7 +50,7 @@ writeFileSync(resolve(out, "daily.json"), json);
 const all = GAME_ROSTER.reduce((bits, game) => bits | (1n << BigInt(game.gameId)), 0n);
 const three = { played: 0b111n, solved: 0b111n };
 const full = { played: all, solved: all };
-const streaks = { streakAny: 999, streakAll: 999, dayPercentile: 100 };
+const streaks = { streakAny: 999, dayPercentile: 100 };
 const faces: Record<string, { face: RendererNode; strip: string }> = {
   "0/6 never recorded": { face: dailyFace(EMPTY_BITS, {}, null, noon), strip: "FgTertiary" },
   "0/6 never recorded, late": { face: dailyFace(EMPTY_BITS, {}, null, late), strip: "FgTertiary" },

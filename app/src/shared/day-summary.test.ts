@@ -120,7 +120,7 @@ describe("readDays and readStreakWindow", () => {
     const days = await readStreakWindow(sourceWith({ dayBitsRange: endless }), 200, MASK);
     expect(days).toHaveLength(201);
     expect(endless.mock.calls.map(([from]) => from)).toEqual([137, 73, 9, 0]);
-    expect((await loadHubStreaks(sourceWith({ dayBitsRange: endless }), 200)).all).toBe(201);
+    expect((await loadHubStreaks(sourceWith({ dayBitsRange: endless }), 200)).any).toBe(201);
   });
 });
 
@@ -136,14 +136,7 @@ describe("renderDaySummary", () => {
       100,
       FULL,
     );
-    const panel = renderDaySummary(summary, {
-      any: 3,
-      all: 1,
-      longestAny: 6,
-      longestAll: 4,
-      finished: 12,
-      perfectDays: 2,
-    });
+    const panel = renderDaySummary(summary, { any: 3, longestAny: 6, finished: 12 });
     // Mean of Sudoku's 100 and 10 for every other roster game.
     const mean = Math.round((100 + 10 * (GAME_ROSTER.length - 1)) / GAME_ROSTER.length);
     expect(panel.querySelector("[data-day-rank]")?.textContent).toBe(`Top ${mean}% today`);
@@ -153,7 +146,7 @@ describe("renderDaySummary", () => {
     expect(panel.querySelector('[data-summary-game="word"]')?.textContent).toBe("Word2 guessesTop 10%");
     expect(panel.querySelector('[data-summary-game="chess"]')?.textContent).toBe("Chess2 attemptsTop 10%");
     expect(panel.querySelector('[data-summary-game="sudoku"]')?.textContent).toBe("Sudoku0:45Top 100%");
-    // The streaks live in the header pill, not here; the counts are tiles,
+    // The streak lives in the header pill, not here; the counts are tiles,
     // each a number over its label.
     expect(panel.querySelector("[data-streak-any]")).toBeNull();
     const tiles = [...panel.querySelectorAll(".day-summary-stat")].map((tile) => [
@@ -162,8 +155,7 @@ describe("renderDaySummary", () => {
     ]);
     expect(tiles).toEqual([
       ["12", "Games finished"],
-      ["2", "Perfect days"],
-      ["4", "Best perfect run"],
+      ["6", "Best streak"],
     ]);
   });
 

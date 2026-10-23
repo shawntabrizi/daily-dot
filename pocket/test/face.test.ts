@@ -79,17 +79,16 @@ describe("msToRollover", () => {
 });
 
 describe("dailyFace layout", () => {
-  const face = dailyFace(three, {}, { streakAny: 14, streakAll: 3 }, noon);
+  const face = dailyFace(three, {}, { streakAny: 14 }, noon);
   const nodes = nodesIn(face);
 
-  it("has a left column of fixed width 112 that holds the count and the streaks", () => {
+  it("has a left column of fixed width 112 that holds the count and the streak", () => {
     const left = nodes.filter((n) => n.tag === "Column" && modifier(n, "Width") === LEFT_WIDTH);
     expect(left).toHaveLength(1);
     const inside = nodesIn(left[0]);
     expect(inside.map(imagePath)).toContain("tiles/count-3.png");
     expect(inside.map(imagePath)).toContain("tiles/done-today.png");
     expect(inside.map(imagePath)).toContain("tiles/flame.png");
-    expect(inside.map(imagePath)).toContain("tiles/gem.png");
     expect(left[0].value?.props?.verticalArrangement).toBe("SpaceBetween");
     expect(LEFT_WIDTH).toBe(112);
   });
@@ -155,7 +154,7 @@ describe("dailyFace", () => {
   });
 
   it("never shows the percentile", () => {
-    const texts = textsIn(dailyFace(full, {}, { streakAny: 4, streakAll: 2, dayPercentile: 12 }, noon));
+    const texts = textsIn(dailyFace(full, {}, { streakAny: 4, dayPercentile: 12 }, noon));
     expect(texts.some((text) => /%|Top/.test(text))).toBe(false);
   });
 
@@ -183,19 +182,14 @@ describe("dailyFace", () => {
     expect(textsIn(dailyFace(EMPTY_BITS, {}, {}, noon))).not.toContain("Tap to play");
   });
 
-  it("shows a streak count only when it is above zero, gold for days and white for perfect", () => {
-    const none = dailyFace(three, {}, { streakAny: 0, streakAll: 0 }, noon);
+  it("shows the streak count only when it is above zero, in gold", () => {
+    const none = dailyFace(three, {}, { streakAny: 0 }, noon);
     expect(imagePathsIn(none)).not.toContain("tiles/flame.png");
-    expect(imagePathsIn(none)).not.toContain("tiles/gem.png");
-    const both = dailyFace(three, {}, { streakAny: 14, streakAll: 3 }, noon);
-    expect(imagePathsIn(both)).toContain("tiles/flame.png");
-    expect(imagePathsIn(both)).toContain("tiles/gem.png");
-    const texts = nodesIn(both).filter((n) => n.tag === "Text" && !/^(NEW SET IN|\d\d:\d\d:\d\d)$/.test(textsIn(n)[0] ?? ""));
+    const some = dailyFace(three, {}, { streakAny: 14 }, noon);
+    expect(imagePathsIn(some)).toContain("tiles/flame.png");
+    const texts = nodesIn(some).filter((n) => n.tag === "Text" && !/^(NEW SET IN|\d\d:\d\d:\d\d)$/.test(textsIn(n)[0] ?? ""));
     const colours = texts.map((n) => [textsIn(n)[0], n.value?.props?.color, n.value?.props?.style]);
-    expect(colours).toEqual([
-      ["14", "FgWarning", "BodyLargeRegular"],
-      ["3", "FgPrimary", "BodyLargeRegular"],
-    ]);
+    expect(colours).toEqual([["14", "FgWarning", "BodyLargeRegular"]]);
   });
 
   it("draws the strip that stripState names: grey, green, gold, red", () => {

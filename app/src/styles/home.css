@@ -231,12 +231,7 @@
   font-weight: 800;
 }
 
-/* WP34: hub streak badges (gold flame: any game; blue gem: all games). */
-.streak-badges {
-  display: inline-flex;
-  gap: 6px;
-}
-
+/* WP34: the hub streak badge (gold flame, D17b). */
 .streak-badge {
   display: inline-flex;
   align-items: center;
@@ -244,6 +239,7 @@
   padding: 4px 9px 4px 6px;
   border-radius: 100px;
   background: var(--surface-raised);
+  color: var(--streak-gold);
   font-size: 13px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
@@ -257,14 +253,6 @@
 .streak-badge svg {
   width: 16px;
   height: 16px;
-}
-
-.streak-badge--any {
-  color: var(--streak-gold);
-}
-
-.streak-badge--all {
-  color: var(--streak-blue);
 }
 
 .streak-badge strong {
@@ -349,10 +337,10 @@
   text-align: right;
 }
 
-/* Three tiles, as on the result screen: the number large, the label small under it. */
+/* Two tiles, as on the result screen: the number large, the label small under it. */
 .day-summary-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -385,7 +373,7 @@
 }
 
 .stats-panel--hub {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .stats-panel--hub .hub-streak-stat {
@@ -403,12 +391,6 @@
 
 .stats-panel[hidden] {
   display: none;
-}
-
-@media (min-width: 560px) {
-  .stats-panel--hub {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 /* A past day's hub (Archive board): a day stepper in place of the greeting and the countdown, the headline with a gold Today chip, and the note at the foot. */

@@ -30,12 +30,11 @@ export interface CardState {
   solved: string;
   /** The day's overall percentile once every roster game is recorded (WP34). */
   dayPercentile?: number;
-  /** The hub streaks (D17b, D17c), whenever the home derives them. */
+  /** The hub streak (D17b), whenever the app derives it. */
   streakAny?: number;
-  streakAll?: number;
 }
 
-export type CardSummary = Partial<Pick<CardState, "dayPercentile" | "streakAny" | "streakAll">>;
+export type CardSummary = Partial<Pick<CardState, "dayPercentile" | "streakAny">>;
 
 export type CardBits = Pick<DayBits, "played" | "solved">;
 
@@ -53,9 +52,6 @@ function summaryOf(state: Partial<CardState>): CardSummary {
   }
   if (isCount(state.streakAny)) {
     summary.streakAny = state.streakAny;
-  }
-  if (isCount(state.streakAll)) {
-    summary.streakAll = state.streakAll;
   }
   return summary;
 }
@@ -143,7 +139,7 @@ export function withDayBits(
 }
 
 /**
- * The day's percentile and the hub streaks ride on the same record. Same
+ * The day's percentile and the hub streak ride on the same record. Same
  * rules as the bits: a newer day replaces, the same day merges, an older
  * day is ignored.
  */
