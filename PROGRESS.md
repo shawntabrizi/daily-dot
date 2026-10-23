@@ -57,6 +57,9 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   "Six to play." before the day's bits arrived, then corrected it ("Four to go."), a
   visible wrong count on every archive step. The headline now reads "Loading…" (muted)
   until the read lands, and "Six games." if it fails (the read-error line explains).
+- **WP38 (game selection, one streak), in progress 2026-10-23:** decisions D6, D12,
+  D17b, D17c amended and D21 added (Shawn); brief `plans/wp-38-game-selection.md`.
+  Order: A remove the all-games streak, B selection + Customize + More games, C card.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 
