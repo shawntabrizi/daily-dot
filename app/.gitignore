@@ -1,0 +1,3 @@
+node_modules/
+dist/
+.daily-seed-*.json

@@ -1,0 +1,19 @@
+node_modules
+dist/
+*.log
+lichess*.csv.zst
+ne_110m_admin_0_countries.geojson
+ne_admin0.geojson
+
+# Playwright artifacts (headless viewport checks)
+app/test-results/
+app/playwright-report/
+
+# Secrets and local state
+.env*
+!.env.example
+.DS_Store
+
+# AI session state
+.claude/settings.local.json
+.codex/

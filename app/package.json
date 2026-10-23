@@ -1,0 +1,61 @@
+{
+  "name": "daily-on-dot-prototype",
+  "private": true,
+  "license": "MIT",
+  "version": "0.0.0",
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:paseo": "DAILY_NETWORK=paseo-next-v2 pnpm build",
+    "test": "vitest run",
+    "typecheck:tools": "tsc -p tsconfig.tools.json",
+    "generate:countries": "node --import tsx scripts/generate-countries.ts",
+    "generate:country-shapes": "node --import tsx scripts/generate-country-shapes.ts",
+    "generate:wordlists": "node --import tsx scripts/generate-wordlists.ts",
+    "generate:mini-pool": "node --import tsx scripts/generate-mini-pool.ts",
+    "generate:mini": "node --import tsx scripts/generate-mini.ts",
+    "import:lichess": "node --import tsx scripts/import-lichess.ts",
+    "validate:wordlists": "node --import tsx scripts/validate-wordlists.ts",
+    "validate:chess": "node --import tsx scripts/validate-chess.ts",
+    "validate:mini": "node --import tsx scripts/validate-mini.ts",
+    "validate:connections": "node --import tsx scripts/validate-connections.ts",
+    "deploy:contracts": "node --import tsx scripts/deploy.ts",
+    "verify:deployment": "node --import tsx scripts/verify-deployment.ts",
+    "verify:live-reads": "node --import tsx scripts/verify-live-reads.ts",
+    "seed:word": "node --import tsx scripts/seed-word.ts",
+    "seed:chess": "node --import tsx scripts/seed-chess.ts",
+    "seed:mini": "node --import tsx scripts/seed-mini.ts",
+    "seed:connections": "node --import tsx scripts/seed-connections.ts",
+    "set:game-kinds": "node --import tsx scripts/set-game-kinds.ts",
+    "generate:guesses": "node --import tsx scripts/generate-guesses.ts"
+  },
+  "devDependencies": {
+    "@parity/product-sdk-address": "0.3.1",
+    "@parity/product-sdk-tx": "0.5.2",
+    "@playwright/test": "^1.62.0",
+    "@polkadot-labs/hdkd": "^0.0.28",
+    "@polkadot-labs/hdkd-helpers": "^0.0.30",
+    "@types/node": "^26.1.1",
+    "jsdom": "^26.1.0",
+    "polkadot-api": "3.2.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.2",
+    "viem": "^2.52.0",
+    "vite": "^7.1.3",
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@parity/product-sdk-chain-client": "0.13.2",
+    "@parity/product-sdk-contracts": "0.11.2",
+    "@parity/product-sdk-descriptors": "0.14.0",
+    "@parity/product-sdk-host": "0.27.1",
+    "@parity/product-sdk-signer": "0.17.2",
+    "chess.js": "^1.4.0",
+    "qrcode-generator": "1.4.4"
+  }
+}

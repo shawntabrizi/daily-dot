@@ -1,0 +1,24 @@
+{
+  "profile": "e2e",
+  "network": "devnet",
+  "chain": "devnet",
+  "contracts": {
+    "scores": "0x5dc2d370cb416e98a0264a2e17056a0acc6491bb",
+    "wordle": "0x3aa9b13d61fdc1a5c740712bf2fb5b427bee585c",
+    "chess": "0xe7b9658e4dfe10a0e767d877321c3d2264f310a7"
+  },
+  "abis": {
+    "scores": "f9a26ed2ded49c6d1bdace40eabdcefc6bf7bd0d060710909a5db24f32523cea",
+    "wordle": "50009da003453efb0111c07506f43cd91237a7587daad8e1a518036c43293e57",
+    "chess": "d04788c018ca867d25f7ea2c459f2ae1cd51c4bbf76a27533474dd26f3391731"
+  },
+  "content": {
+    "wordleListId": 0,
+    "chessSetId": 0
+  },
+  "seed": {
+    "wordleLadders": 3,
+    "chessPuzzles": 3
+  },
+  "deployedAt": "2026-07-28T17:50:03.096Z"
+}

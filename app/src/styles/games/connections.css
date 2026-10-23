@@ -1,0 +1,277 @@
+/* Daily Connections: the WP36 board (plans/wp-36-boards/Game.dc.html), literally.
+   Sections on the page background, the selected tile in the accent, the rule line pinned at the bottom. */
+.page.connections-page {
+  display: flex;
+  width: min(100%, 452px);
+  height: calc(100dvh - 64px);
+  min-height: 0;
+  padding: 18px 16px;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* The heading row: h1 left, the four mistake dots and the DAY chip right.
+   The h1 never breaks; on a narrow phone the dots and chip drop under it. */
+.connections-heading {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.connections-heading h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: normal;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.connections-heading-side {
+  display: inline-flex;
+  margin-left: auto;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Four 10 px dots: one fills in the accent per mistake. */
+.connections-mistakes {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.connections-mistakes:empty {
+  display: none;
+}
+
+.connections-mistakes i {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background: var(--tile-empty);
+}
+
+.connections-mistakes i.is-filled {
+  background: var(--accent-connections);
+}
+
+.connections-main {
+  display: flex;
+  min-height: 0;
+  padding-top: 14px;
+  flex: 1;
+  flex-direction: column;
+}
+
+.connections-main .game-loading,
+.connections-main .game-error {
+  min-height: 0;
+  flex: 1;
+}
+
+.connections-stage {
+  display: flex;
+  min-height: 0;
+  flex: none;
+  flex-direction: column;
+}
+
+.connections-board {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.connections-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.connections-bars:empty {
+  display: none;
+}
+
+/* A found group: label, then the words joined with " · ", in the tier colour with its ink. */
+.connections-bar {
+  display: flex;
+  padding: 12px 14px;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.connections-bar strong {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.connections-bar span {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.connections-bar--tier-0 { background: var(--present); color: #2a2504; }
+.connections-bar--tier-1 { background: var(--correct); color: #0d1a07; }
+.connections-bar--tier-2 { background: var(--tier-sky); color: #071628; }
+.connections-bar--tier-3 { background: var(--tier-plum); color: #06030a; }
+
+.connections-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.connections-tile {
+  display: grid;
+  min-width: 0;
+  height: 64px;
+  padding: 2px;
+  place-items: center;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+/* 12 px from nine letters, 11 px from twelve (the board). */
+.connections-tile--long {
+  font-size: 12px;
+}
+
+.connections-tile--longer {
+  font-size: 11px;
+}
+
+/* A 360 px phone gives a tile 72 px of text: one step smaller so eight letters still fit. */
+@media (max-width: 374px) {
+  .connections-tile {
+    font-size: 12px;
+  }
+
+  .connections-tile--long {
+    font-size: 11px;
+  }
+
+  .connections-tile--longer {
+    font-size: 10px;
+  }
+}
+
+/* Selected: the solid accent, white text, lifted 2 px. */
+.connections-tile--selected {
+  background: var(--accent-connections);
+  color: var(--accent-connections-ink);
+  transform: translateY(-2px);
+}
+
+.connections-tile:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.connections-tile:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+/* The status line below the grid. */
+.connections-message,
+.connections-result {
+  margin: 14px 0 0;
+  flex: none;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Shuffle · Clear · Submit, Submit the widest. */
+.connections-actions {
+  display: grid;
+  padding-top: 12px;
+  flex: none;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 8px;
+}
+
+.connections-actions:empty {
+  display: none;
+}
+
+.connections-action {
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* Submit: tinted in the accent until four are picked, then the solid accent. */
+.connections-action--submit {
+  background: #3a2f47;
+  color: #b9a1d1;
+  cursor: default;
+}
+
+.connections-action--ready {
+  background: var(--accent-connections);
+  color: var(--accent-connections-ink);
+  cursor: pointer;
+}
+
+.connections-actions .button-link--button {
+  min-height: 48px;
+  margin-top: 0;
+  grid-column: 1 / -1;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 13px;
+}
+
+/* The done stage holds the bars and the result panel, so it scrolls inside the fixed page. */
+.connections-stage--done {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.connections-stage--done .result-panel-slot {
+  margin-top: 12px;
+  flex: none;
+}
+
+/* The done board earns the accent (decision 1). */
+.connections-stage--done .connections-board {
+  padding: 8px;
+  border-radius: 14px;
+  background: var(--surface-connections);
+  box-shadow: inset 0 0 0 2px var(--accent-connections);
+}
+
+/* The rule line pins to the bottom of the page. */
+.connections-page .game-rule {
+  margin-top: auto;
+  padding-top: 14px;
+}

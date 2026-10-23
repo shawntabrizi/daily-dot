@@ -1,0 +1,15 @@
+/* The app stylesheet: one import per concern, in the order the rules had before the split (WP-A0). */
+
+@import "./tokens.css";
+@import "./shell.css";
+@import "./streaks.css";
+@import "./home.css";
+@import "./games/word.css";
+@import "./games/globe.css";
+@import "./games/mini.css";
+@import "./games/connections.css";
+@import "./games/sudoku.css";
+@import "./games/chess.css";
+@import "./launcher.css";
+@import "./result.css";
+@import "./save.css";

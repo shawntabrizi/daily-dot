@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Streak drawer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+body{margin:0}
+a{color:#ececec;text-decoration:none}a:hover{color:#ffffff}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #121415; color: #ececec; font-family: 'Nunito', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <header style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 0">
+    <a href="Home.dc.html" aria-label="Back to today" style="width: 44px; height: 44px; border-radius: 22px; background: #1f2224; display: grid; place-items: center"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12 4l-6 6 6 6" fill="none" stroke="#ececec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #9aa0a3">Streaks</span>
+    <span style="width: 44px"></span>
+  </header>
+
+  <section style="padding: 22px 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+    <div style="border-radius: 20px; background: #221c10; padding: 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: inset 0 0 0 1.5px #4a3a14">
+      <svg width="30" height="38" viewBox="0 0 16 20" aria-hidden="true"><path d="M8 0c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z" fill="#e8b53a"/></svg>
+      <div style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 44px; line-height: 1; color: #e8b53a">14</div>
+      <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #c9a24a">Day streak</div>
+      <div style="font-size: 12px; color: #9aa0a3; font-weight: 700; line-height: 1.4">Any one game, any day. Best 31.</div>
+    </div>
+    <div style="border-radius: 20px; background: #10202a; padding: 16px; display: flex; flex-direction: column; gap: 6px; box-shadow: inset 0 0 0 1.5px #1f4a5c">
+      <svg width="30" height="30" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l7 7-7 7-7-7z" fill="none" stroke="#6fd3f7" stroke-width="2"/></svg>
+      <div style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 44px; line-height: 1; color: #6fd3f7">3</div>
+      <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #5fb3d2">Perfect days</div>
+      <div style="font-size: 12px; color: #9aa0a3; font-weight: 700; line-height: 1.4">All six in a row. Best 5.</div>
+    </div>
+  </section>
+
+  <section style="padding: 18px 16px 0">
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <h2 style="margin: 0; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 20px">October</h2>
+      <span style="font-size: 12px; color: #9aa0a3; font-weight: 800">19 played &middot; 3 perfect</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 12px; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; color: #6c7275; text-align: center"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+    <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 6px" aria-label="October calendar: gold is any game played, blue is all six, a bar is a perfect week">
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20"></span><span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20"></span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #6c7275; display: grid; place-items: center; font-size: 12px; font-weight: 800">1</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #6c7275; display: grid; place-items: center; font-size: 12px; font-weight: 800">2</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">3</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">4</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #6c7275; display: grid; place-items: center; font-size: 12px; font-weight: 800">5</span>
+
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">6</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">7</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #6c7275; display: grid; place-items: center; font-size: 12px; font-weight: 800">8</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">9</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #6fd3f7; color: #0b2430; display: grid; place-items: center; font-size: 12px; font-weight: 800">10</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">11</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">12</span>
+
+      <span style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; border-radius: 12px; background: #e8b53a; padding: 0" aria-label="Perfect week, 13 to 19 October">
+        <span style="aspect-ratio: 1; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #2a1f05">13</span>
+        <span style="aspect-ratio: 1; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #2a1f05">14</span>
+        <span style="aspect-ratio: 1; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #2a1f05">15</span>
+        <span style="aspect-ratio: 1; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #0b2430; background: #6fd3f7; border-radius: 10px">16</span>
+        <span style="aspect-ratio: 1; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #2a1f05">17</span>
+        <span style="aspect-ratio: 1; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #2a1f05">18</span>
+        <span style="aspect-ratio: 1; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #2a1f05">19</span>
+      </span>
+
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800">20</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #6fd3f7; color: #0b2430; display: grid; place-items: center; font-size: 12px; font-weight: 800">21</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #3a2e12; color: #e8b53a; display: grid; place-items: center; font-size: 12px; font-weight: 800; box-shadow: 0 0 0 2px #ececec">22</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #3a3f42; display: grid; place-items: center; font-size: 12px; font-weight: 800">23</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #3a3f42; display: grid; place-items: center; font-size: 12px; font-weight: 800">24</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #3a3f42; display: grid; place-items: center; font-size: 12px; font-weight: 800">25</span>
+      <span style="aspect-ratio: 1; border-radius: 10px; background: #1b1e20; color: #3a3f42; display: grid; place-items: center; font-size: 12px; font-weight: 800">26</span>
+    </div>
+    <div style="display: flex; gap: 14px; margin-top: 12px; font-size: 11px; font-weight: 800; color: #9aa0a3">
+      <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #3a2e12; box-shadow: inset 0 0 0 1px #e8b53a"></span>Played</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: #6fd3f7"></span>All six</span>
+      <span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 22px; height: 10px; border-radius: 3px; background: #e8b53a"></span>Perfect week</span>
+    </div>
+  </section>
+
+  <section style="padding: 18px 16px 0">
+    <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #6c7275">Next badge</div>
+    <div style="margin-top: 8px; border-radius: 16px; background: #1b1e20; padding: 12px 14px; display: flex; align-items: center; gap: 12px">
+      <span style="width: 40px; height: 40px; border-radius: 12px; background: #2a2416; display: grid; place-items: center"><svg width="20" height="24" viewBox="0 0 16 20" aria-hidden="true"><path d="M8 0c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z" fill="#e8b53a"/></svg></span>
+      <span style="flex: 1">
+        <span style="display: block; font-weight: 800; font-size: 14px">30-day streak</span>
+        <span style="display: block; height: 6px; border-radius: 3px; background: #2a2e31; margin-top: 6px; overflow: hidden"><span style="display: block; width: 47%; height: 100%; background: #e8b53a"></span></span>
+      </span>
+      <span style="font-size: 12px; font-weight: 800; color: #9aa0a3">14 / 30</span>
+    </div>
+  </section>
+
+  <p style="margin: auto 16px 18px; font-size: 12px; color: #6c7275; font-weight: 700; line-height: 1.5">A day counts until the next set drops. Past days you fill in later count for the calendar, not the streak.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

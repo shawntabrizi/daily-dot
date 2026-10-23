@@ -1,0 +1,71 @@
+{
+  "dayIndex": [
+    {
+      "name": "epoch exactly",
+      "nowSeconds": 1767225600,
+      "expected": 0
+    },
+    {
+      "name": "one second before epoch is rejected",
+      "nowSeconds": 1767225599,
+      "error": "before_epoch"
+    },
+    {
+      "name": "one second after epoch",
+      "nowSeconds": 1767225601,
+      "expected": 0
+    },
+    {
+      "name": "one second before a day boundary",
+      "nowSeconds": 1767311999,
+      "expected": 0
+    },
+    {
+      "name": "day boundary exactly",
+      "nowSeconds": 1767312000,
+      "expected": 1
+    },
+    {
+      "name": "large far-future day",
+      "nowSeconds": 88167225600,
+      "expected": 1000000
+    }
+  ],
+  "indexForDay": [
+    {
+      "name": "first day selects the first item",
+      "day": 40,
+      "startDay": 40,
+      "count": 7,
+      "expected": 0
+    },
+    {
+      "name": "series wraps after more than one full cycle",
+      "day": 58,
+      "startDay": 40,
+      "count": 7,
+      "expected": 4
+    },
+    {
+      "name": "a future start day is rejected",
+      "day": 39,
+      "startDay": 40,
+      "count": 7,
+      "error": "before_start"
+    },
+    {
+      "name": "an empty series is rejected",
+      "day": 40,
+      "startDay": 40,
+      "count": 0,
+      "error": "empty_series"
+    },
+    {
+      "name": "a one-item series always selects zero",
+      "day": 4294967295,
+      "startDay": 40,
+      "count": 1,
+      "expected": 0
+    }
+  ]
+}

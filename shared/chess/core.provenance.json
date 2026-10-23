@@ -1,0 +1,2064 @@
+{
+  "source": {
+    "url": "https://database.lichess.org/lichess_db_puzzle.csv.zst",
+    "license": "CC0",
+    "inputSha256": "5503bfaf5534518ffe3c4c3bb0ac1ae82350d117ad1a52947796096b75e6247e"
+  },
+  "fenConvention": "Pre-opponent-move FEN with the full Lichess line; moves[0] is auto-played before the player's first solution move.",
+  "selection": {
+    "rating": [
+      1200,
+      1800
+    ],
+    "minimumPopularity": 80,
+    "minimumPlays": 500,
+    "maximumPlies": 4,
+    "order": "PuzzleId ascending",
+    "limit": 400
+  },
+  "counts": {
+    "rows": 6057356,
+    "ratingBand": 2101298,
+    "popularity": 1737394,
+    "plays": 1157171,
+    "solutionLength": 717069
+  },
+  "ratingDistribution": {
+    "min": 1202,
+    "max": 1798,
+    "mean": 1468.85,
+    "median": 1456.5,
+    "buckets": [
+      {
+        "range": "1200-1299",
+        "count": 74
+      },
+      {
+        "range": "1300-1399",
+        "count": 86
+      },
+      {
+        "range": "1400-1499",
+        "count": 73
+      },
+      {
+        "range": "1500-1599",
+        "count": 67
+      },
+      {
+        "range": "1600-1699",
+        "count": 57
+      },
+      {
+        "range": "1700-1799",
+        "count": 43
+      },
+      {
+        "range": "1800",
+        "count": 0
+      }
+    ]
+  },
+  "puzzles": [
+    {
+      "puzzleId": "0000D",
+      "gameUrl": "https://lichess.org/F8M8OS71#53",
+      "rating": 1474
+    },
+    {
+      "puzzleId": "0008Q",
+      "gameUrl": "https://lichess.org/MQSyb3KW#127",
+      "rating": 1383
+    },
+    {
+      "puzzleId": "000Pw",
+      "gameUrl": "https://lichess.org/au2lCK5o#73",
+      "rating": 1547
+    },
+    {
+      "puzzleId": "000Sa",
+      "gameUrl": "https://lichess.org/lTTa9lwd/black#64",
+      "rating": 1545
+    },
+    {
+      "puzzleId": "000Zo",
+      "gameUrl": "https://lichess.org/n8Ff742v#69",
+      "rating": 1363
+    },
+    {
+      "puzzleId": "000hf",
+      "gameUrl": "https://lichess.org/71ygsFeE/black#38",
+      "rating": 1576
+    },
+    {
+      "puzzleId": "000lC",
+      "gameUrl": "https://lichess.org/vaqz2bx6#37",
+      "rating": 1377
+    },
+    {
+      "puzzleId": "001cr",
+      "gameUrl": "https://lichess.org/7FFNwibw/black#76",
+      "rating": 1631
+    },
+    {
+      "puzzleId": "002KJ",
+      "gameUrl": "https://lichess.org/2NpTzh7O/black#20",
+      "rating": 1615
+    },
+    {
+      "puzzleId": "002Ua",
+      "gameUrl": "https://lichess.org/06i3eMVp#31",
+      "rating": 1639
+    },
+    {
+      "puzzleId": "003IX",
+      "gameUrl": "https://lichess.org/576Btq56#85",
+      "rating": 1690
+    },
+    {
+      "puzzleId": "003S3",
+      "gameUrl": "https://lichess.org/Eu6S0GPA/black#30",
+      "rating": 1349
+    },
+    {
+      "puzzleId": "003Tx",
+      "gameUrl": "https://lichess.org/A7j9VEC0#53",
+      "rating": 1512
+    },
+    {
+      "puzzleId": "003UW",
+      "gameUrl": "https://lichess.org/cXMga3rb/black#80",
+      "rating": 1473
+    },
+    {
+      "puzzleId": "0040n",
+      "gameUrl": "https://lichess.org/WIUWcrdG#39",
+      "rating": 1285
+    },
+    {
+      "puzzleId": "004BW",
+      "gameUrl": "https://lichess.org/EXlG6TZs#25",
+      "rating": 1563
+    },
+    {
+      "puzzleId": "004JD",
+      "gameUrl": "https://lichess.org/6vTeEc3x#81",
+      "rating": 1296
+    },
+    {
+      "puzzleId": "004mT",
+      "gameUrl": "https://lichess.org/Jqhi4ozb/black#102",
+      "rating": 1266
+    },
+    {
+      "puzzleId": "004u0",
+      "gameUrl": "https://lichess.org/3gEqoQeQ/black#68",
+      "rating": 1325
+    },
+    {
+      "puzzleId": "0054a",
+      "gameUrl": "https://lichess.org/kZlE1pvD/black#30",
+      "rating": 1463
+    },
+    {
+      "puzzleId": "005Bm",
+      "gameUrl": "https://lichess.org/KKslCMev/black#86",
+      "rating": 1351
+    },
+    {
+      "puzzleId": "005wJ",
+      "gameUrl": "https://lichess.org/2mU9GJhQ#17",
+      "rating": 1393
+    },
+    {
+      "puzzleId": "0068B",
+      "gameUrl": "https://lichess.org/LNdzAgWP/black#36",
+      "rating": 1426
+    },
+    {
+      "puzzleId": "006cZ",
+      "gameUrl": "https://lichess.org/qrbDEp56/black#56",
+      "rating": 1374
+    },
+    {
+      "puzzleId": "006pe",
+      "gameUrl": "https://lichess.org/gkSEAS27/black#56",
+      "rating": 1676
+    },
+    {
+      "puzzleId": "007eS",
+      "gameUrl": "https://lichess.org/8qs8bafy#57",
+      "rating": 1308
+    },
+    {
+      "puzzleId": "007ku",
+      "gameUrl": "https://lichess.org/QveLbBjG/black#70",
+      "rating": 1663
+    },
+    {
+      "puzzleId": "008D5",
+      "gameUrl": "https://lichess.org/jIGC2FuP/black#18",
+      "rating": 1421
+    },
+    {
+      "puzzleId": "008tL",
+      "gameUrl": "https://lichess.org/yhNupFCi#79",
+      "rating": 1230
+    },
+    {
+      "puzzleId": "009BH",
+      "gameUrl": "https://lichess.org/QauOOpOY/black#102",
+      "rating": 1418
+    },
+    {
+      "puzzleId": "009FP",
+      "gameUrl": "https://lichess.org/2ndCtdd9/black#18",
+      "rating": 1368
+    },
+    {
+      "puzzleId": "009J1",
+      "gameUrl": "https://lichess.org/lPhlt9XF/black#34",
+      "rating": 1239
+    },
+    {
+      "puzzleId": "009wR",
+      "gameUrl": "https://lichess.org/tBBaKL5q#81",
+      "rating": 1239
+    },
+    {
+      "puzzleId": "00AFG",
+      "gameUrl": "https://lichess.org/xpx24bwV/black#42",
+      "rating": 1581
+    },
+    {
+      "puzzleId": "00AcQ",
+      "gameUrl": "https://lichess.org/MqFuiB4J#59",
+      "rating": 1735
+    },
+    {
+      "puzzleId": "00Al5",
+      "gameUrl": "https://lichess.org/EtyflSie#37",
+      "rating": 1696
+    },
+    {
+      "puzzleId": "00B3B",
+      "gameUrl": "https://lichess.org/b7iJvp5Z#153",
+      "rating": 1429
+    },
+    {
+      "puzzleId": "00BM8",
+      "gameUrl": "https://lichess.org/IBbaWSo7/black#32",
+      "rating": 1583
+    },
+    {
+      "puzzleId": "00BSo",
+      "gameUrl": "https://lichess.org/SjQSgSG9#49",
+      "rating": 1266
+    },
+    {
+      "puzzleId": "00Bp0",
+      "gameUrl": "https://lichess.org/GN8F9TsL/black#42",
+      "rating": 1220
+    },
+    {
+      "puzzleId": "00Bul",
+      "gameUrl": "https://lichess.org/70pObIpq/black#16",
+      "rating": 1238
+    },
+    {
+      "puzzleId": "00CMj",
+      "gameUrl": "https://lichess.org/JJZ8AIxT#141",
+      "rating": 1647
+    },
+    {
+      "puzzleId": "00CWE",
+      "gameUrl": "https://lichess.org/VCQ4NAd0/black#62",
+      "rating": 1487
+    },
+    {
+      "puzzleId": "00DBP",
+      "gameUrl": "https://lichess.org/Gh4SusNq/black#68",
+      "rating": 1335
+    },
+    {
+      "puzzleId": "00DdW",
+      "gameUrl": "https://lichess.org/bT7kcwFH/black#46",
+      "rating": 1693
+    },
+    {
+      "puzzleId": "00G7g",
+      "gameUrl": "https://lichess.org/Gbq7pxMD/black#54",
+      "rating": 1297
+    },
+    {
+      "puzzleId": "00H1C",
+      "gameUrl": "https://lichess.org/GzcjOw0p/black#44",
+      "rating": 1287
+    },
+    {
+      "puzzleId": "00HoG",
+      "gameUrl": "https://lichess.org/zwJu9mKP/black#72",
+      "rating": 1499
+    },
+    {
+      "puzzleId": "00HqY",
+      "gameUrl": "https://lichess.org/eG289RUU/black#92",
+      "rating": 1731
+    },
+    {
+      "puzzleId": "00Hut",
+      "gameUrl": "https://lichess.org/wzUXW4h3#43",
+      "rating": 1261
+    },
+    {
+      "puzzleId": "00Huv",
+      "gameUrl": "https://lichess.org/KGI2jWmb/black#58",
+      "rating": 1763
+    },
+    {
+      "puzzleId": "00HzX",
+      "gameUrl": "https://lichess.org/tKKATkce#57",
+      "rating": 1572
+    },
+    {
+      "puzzleId": "00IF1",
+      "gameUrl": "https://lichess.org/bX3dAdx9/black#114",
+      "rating": 1267
+    },
+    {
+      "puzzleId": "00IPp",
+      "gameUrl": "https://lichess.org/JKNcTJw1#69",
+      "rating": 1552
+    },
+    {
+      "puzzleId": "00IUW",
+      "gameUrl": "https://lichess.org/83tyhOfz#45",
+      "rating": 1654
+    },
+    {
+      "puzzleId": "00IiM",
+      "gameUrl": "https://lichess.org/qzEITbaG#47",
+      "rating": 1719
+    },
+    {
+      "puzzleId": "00KHR",
+      "gameUrl": "https://lichess.org/m54DAZPv#69",
+      "rating": 1427
+    },
+    {
+      "puzzleId": "00KSB",
+      "gameUrl": "https://lichess.org/GqvPZnmI/black#70",
+      "rating": 1478
+    },
+    {
+      "puzzleId": "00KYU",
+      "gameUrl": "https://lichess.org/UlNVmHbT/black#80",
+      "rating": 1241
+    },
+    {
+      "puzzleId": "00L4x",
+      "gameUrl": "https://lichess.org/kQUg1Hn3/black#54",
+      "rating": 1260
+    },
+    {
+      "puzzleId": "00LH7",
+      "gameUrl": "https://lichess.org/7mA63Gfs/black#78",
+      "rating": 1549
+    },
+    {
+      "puzzleId": "00LNH",
+      "gameUrl": "https://lichess.org/gVcbpusg#43",
+      "rating": 1629
+    },
+    {
+      "puzzleId": "00LOy",
+      "gameUrl": "https://lichess.org/dq3UiVvj/black#66",
+      "rating": 1476
+    },
+    {
+      "puzzleId": "00LSv",
+      "gameUrl": "https://lichess.org/EfV2OOTd/black#56",
+      "rating": 1793
+    },
+    {
+      "puzzleId": "00ME0",
+      "gameUrl": "https://lichess.org/Z2H5mRQg/black#70",
+      "rating": 1626
+    },
+    {
+      "puzzleId": "00MFe",
+      "gameUrl": "https://lichess.org/d1J7UJ4D/black#58",
+      "rating": 1294
+    },
+    {
+      "puzzleId": "00Mbv",
+      "gameUrl": "https://lichess.org/h1QfViUk/black#48",
+      "rating": 1551
+    },
+    {
+      "puzzleId": "00MeO",
+      "gameUrl": "https://lichess.org/VgF6tpXG/black#30",
+      "rating": 1431
+    },
+    {
+      "puzzleId": "00Msq",
+      "gameUrl": "https://lichess.org/2cdEjZvR/black#60",
+      "rating": 1798
+    },
+    {
+      "puzzleId": "00Myw",
+      "gameUrl": "https://lichess.org/b9YfMjmI/black#52",
+      "rating": 1434
+    },
+    {
+      "puzzleId": "00NUS",
+      "gameUrl": "https://lichess.org/jQaVQrR6#49",
+      "rating": 1284
+    },
+    {
+      "puzzleId": "00O8m",
+      "gameUrl": "https://lichess.org/G3Q51olU/black#32",
+      "rating": 1371
+    },
+    {
+      "puzzleId": "00O9q",
+      "gameUrl": "https://lichess.org/0XcQGKAN/black#156",
+      "rating": 1304
+    },
+    {
+      "puzzleId": "00Oim",
+      "gameUrl": "https://lichess.org/p1cFe6Z8#63",
+      "rating": 1213
+    },
+    {
+      "puzzleId": "00P6j",
+      "gameUrl": "https://lichess.org/vBpR18cI/black#40",
+      "rating": 1326
+    },
+    {
+      "puzzleId": "00P6s",
+      "gameUrl": "https://lichess.org/tgzabEkd#27",
+      "rating": 1605
+    },
+    {
+      "puzzleId": "00Pw1",
+      "gameUrl": "https://lichess.org/WAkWH6IK/black#56",
+      "rating": 1225
+    },
+    {
+      "puzzleId": "00QCe",
+      "gameUrl": "https://lichess.org/fovXj5D1/black#56",
+      "rating": 1427
+    },
+    {
+      "puzzleId": "00QnO",
+      "gameUrl": "https://lichess.org/9GENZopF#59",
+      "rating": 1470
+    },
+    {
+      "puzzleId": "00Qpu",
+      "gameUrl": "https://lichess.org/GLsIyi7p/black#52",
+      "rating": 1290
+    },
+    {
+      "puzzleId": "00Qqp",
+      "gameUrl": "https://lichess.org/KZM4JRxc#91",
+      "rating": 1597
+    },
+    {
+      "puzzleId": "00R0l",
+      "gameUrl": "https://lichess.org/y06s0jL8/black#14",
+      "rating": 1232
+    },
+    {
+      "puzzleId": "00ROK",
+      "gameUrl": "https://lichess.org/EXabGwlP/black#66",
+      "rating": 1364
+    },
+    {
+      "puzzleId": "00Rep",
+      "gameUrl": "https://lichess.org/jXFjUSJk#101",
+      "rating": 1576
+    },
+    {
+      "puzzleId": "00STy",
+      "gameUrl": "https://lichess.org/yc8Ey5PU/black#80",
+      "rating": 1509
+    },
+    {
+      "puzzleId": "00SyL",
+      "gameUrl": "https://lichess.org/f988q4eE/black#30",
+      "rating": 1250
+    },
+    {
+      "puzzleId": "00TOt",
+      "gameUrl": "https://lichess.org/azv2NWmg#65",
+      "rating": 1379
+    },
+    {
+      "puzzleId": "00TRo",
+      "gameUrl": "https://lichess.org/h4dPcMj5/black#76",
+      "rating": 1698
+    },
+    {
+      "puzzleId": "00Tll",
+      "gameUrl": "https://lichess.org/rnssRcMM#53",
+      "rating": 1544
+    },
+    {
+      "puzzleId": "00Tya",
+      "gameUrl": "https://lichess.org/uhMJDCas#49",
+      "rating": 1228
+    },
+    {
+      "puzzleId": "00UEs",
+      "gameUrl": "https://lichess.org/Owc0qiXL/black#80",
+      "rating": 1513
+    },
+    {
+      "puzzleId": "00UF4",
+      "gameUrl": "https://lichess.org/xkouJg1l/black#26",
+      "rating": 1669
+    },
+    {
+      "puzzleId": "00Ueq",
+      "gameUrl": "https://lichess.org/CWZLKGkj/black#38",
+      "rating": 1710
+    },
+    {
+      "puzzleId": "00Us6",
+      "gameUrl": "https://lichess.org/rMo69Gbe/black#64",
+      "rating": 1217
+    },
+    {
+      "puzzleId": "00Uwn",
+      "gameUrl": "https://lichess.org/Nqhta4GU/black#46",
+      "rating": 1550
+    },
+    {
+      "puzzleId": "00VIe",
+      "gameUrl": "https://lichess.org/ugqyRWZm#119",
+      "rating": 1709
+    },
+    {
+      "puzzleId": "00Vdx",
+      "gameUrl": "https://lichess.org/z9NeMacX#25",
+      "rating": 1456
+    },
+    {
+      "puzzleId": "00VoA",
+      "gameUrl": "https://lichess.org/K5lY640W/black#28",
+      "rating": 1451
+    },
+    {
+      "puzzleId": "00WJN",
+      "gameUrl": "https://lichess.org/27eUCFoJ/black#106",
+      "rating": 1324
+    },
+    {
+      "puzzleId": "00WZO",
+      "gameUrl": "https://lichess.org/zw93HvDI/black#90",
+      "rating": 1247
+    },
+    {
+      "puzzleId": "00Wi9",
+      "gameUrl": "https://lichess.org/kGGKKGh6#125",
+      "rating": 1728
+    },
+    {
+      "puzzleId": "00WlQ",
+      "gameUrl": "https://lichess.org/ykiI26Nj#37",
+      "rating": 1582
+    },
+    {
+      "puzzleId": "00WqT",
+      "gameUrl": "https://lichess.org/HcfiWViE/black#52",
+      "rating": 1568
+    },
+    {
+      "puzzleId": "00WtH",
+      "gameUrl": "https://lichess.org/Xixh3rxR#89",
+      "rating": 1402
+    },
+    {
+      "puzzleId": "00X5a",
+      "gameUrl": "https://lichess.org/lNuqw2ZK#55",
+      "rating": 1332
+    },
+    {
+      "puzzleId": "00X5w",
+      "gameUrl": "https://lichess.org/tzCvvvDs#27",
+      "rating": 1228
+    },
+    {
+      "puzzleId": "00XPO",
+      "gameUrl": "https://lichess.org/ybuM6OK3#39",
+      "rating": 1767
+    },
+    {
+      "puzzleId": "00YbZ",
+      "gameUrl": "https://lichess.org/gzVgXweE#69",
+      "rating": 1344
+    },
+    {
+      "puzzleId": "00Ygn",
+      "gameUrl": "https://lichess.org/B6LsArpZ#43",
+      "rating": 1495
+    },
+    {
+      "puzzleId": "00YhY",
+      "gameUrl": "https://lichess.org/umv3Et1a#103",
+      "rating": 1670
+    },
+    {
+      "puzzleId": "00ZEc",
+      "gameUrl": "https://lichess.org/7IfLNNVB/black#70",
+      "rating": 1708
+    },
+    {
+      "puzzleId": "00ZWf",
+      "gameUrl": "https://lichess.org/bFAkQOCQ#21",
+      "rating": 1366
+    },
+    {
+      "puzzleId": "00ZeT",
+      "gameUrl": "https://lichess.org/c6iAy1Zc/black#86",
+      "rating": 1400
+    },
+    {
+      "puzzleId": "00Zit",
+      "gameUrl": "https://lichess.org/3L9d0QhX#29",
+      "rating": 1206
+    },
+    {
+      "puzzleId": "00Zwc",
+      "gameUrl": "https://lichess.org/Wo9Y7MdP/black#48",
+      "rating": 1328
+    },
+    {
+      "puzzleId": "00aDl",
+      "gameUrl": "https://lichess.org/pc79SSEd#43",
+      "rating": 1354
+    },
+    {
+      "puzzleId": "00aME",
+      "gameUrl": "https://lichess.org/16LXTr5C#27",
+      "rating": 1364
+    },
+    {
+      "puzzleId": "00au3",
+      "gameUrl": "https://lichess.org/yPpeNCSO/black#96",
+      "rating": 1225
+    },
+    {
+      "puzzleId": "00bJi",
+      "gameUrl": "https://lichess.org/7QIgY2UO#71",
+      "rating": 1470
+    },
+    {
+      "puzzleId": "00bnu",
+      "gameUrl": "https://lichess.org/zPFxVXT4#39",
+      "rating": 1602
+    },
+    {
+      "puzzleId": "00cy1",
+      "gameUrl": "https://lichess.org/TsSnBR0S/black#54",
+      "rating": 1202
+    },
+    {
+      "puzzleId": "00dCs",
+      "gameUrl": "https://lichess.org/sdm8JiCZ/black#28",
+      "rating": 1343
+    },
+    {
+      "puzzleId": "00dnp",
+      "gameUrl": "https://lichess.org/hMbf0KPM/black#128",
+      "rating": 1306
+    },
+    {
+      "puzzleId": "00dqP",
+      "gameUrl": "https://lichess.org/6NRhzen2/black#42",
+      "rating": 1750
+    },
+    {
+      "puzzleId": "00eGd",
+      "gameUrl": "https://lichess.org/uwded1rg/black#78",
+      "rating": 1264
+    },
+    {
+      "puzzleId": "00eWz",
+      "gameUrl": "https://lichess.org/T1YYoy2O#49",
+      "rating": 1657
+    },
+    {
+      "puzzleId": "00fXd",
+      "gameUrl": "https://lichess.org/PkmRzeiI/black#92",
+      "rating": 1373
+    },
+    {
+      "puzzleId": "00fmc",
+      "gameUrl": "https://lichess.org/KIWMqJFV#57",
+      "rating": 1506
+    },
+    {
+      "puzzleId": "00ft3",
+      "gameUrl": "https://lichess.org/CFT5b92o/black#100",
+      "rating": 1264
+    },
+    {
+      "puzzleId": "00fwM",
+      "gameUrl": "https://lichess.org/REHlrlvo#17",
+      "rating": 1211
+    },
+    {
+      "puzzleId": "00gsT",
+      "gameUrl": "https://lichess.org/Uwrjbb82#37",
+      "rating": 1413
+    },
+    {
+      "puzzleId": "00gyK",
+      "gameUrl": "https://lichess.org/LK8qER3u#65",
+      "rating": 1599
+    },
+    {
+      "puzzleId": "00hA5",
+      "gameUrl": "https://lichess.org/JOwIOHIj/black#106",
+      "rating": 1678
+    },
+    {
+      "puzzleId": "00hYk",
+      "gameUrl": "https://lichess.org/rWJb7AjE/black#108",
+      "rating": 1277
+    },
+    {
+      "puzzleId": "00he6",
+      "gameUrl": "https://lichess.org/ndaNSA8f#45",
+      "rating": 1709
+    },
+    {
+      "puzzleId": "00iLe",
+      "gameUrl": "https://lichess.org/fBB50Rwf#29",
+      "rating": 1787
+    },
+    {
+      "puzzleId": "00isY",
+      "gameUrl": "https://lichess.org/1q2x0Fv6/black#14",
+      "rating": 1462
+    },
+    {
+      "puzzleId": "00j1r",
+      "gameUrl": "https://lichess.org/2Nj3D5mV/black#74",
+      "rating": 1600
+    },
+    {
+      "puzzleId": "00jCD",
+      "gameUrl": "https://lichess.org/31x6vs1r#27",
+      "rating": 1363
+    },
+    {
+      "puzzleId": "00jPH",
+      "gameUrl": "https://lichess.org/01iokLOA#51",
+      "rating": 1376
+    },
+    {
+      "puzzleId": "00jXF",
+      "gameUrl": "https://lichess.org/1cNmXOuy#25",
+      "rating": 1494
+    },
+    {
+      "puzzleId": "00k2Z",
+      "gameUrl": "https://lichess.org/VixyagD2#75",
+      "rating": 1607
+    },
+    {
+      "puzzleId": "00kZF",
+      "gameUrl": "https://lichess.org/7skMhb04/black#48",
+      "rating": 1307
+    },
+    {
+      "puzzleId": "00lIV",
+      "gameUrl": "https://lichess.org/6IHxFPRp#25",
+      "rating": 1713
+    },
+    {
+      "puzzleId": "00mFI",
+      "gameUrl": "https://lichess.org/kiOTTNFh/black#56",
+      "rating": 1270
+    },
+    {
+      "puzzleId": "00mRr",
+      "gameUrl": "https://lichess.org/0dpg8xr1/black#82",
+      "rating": 1709
+    },
+    {
+      "puzzleId": "00n76",
+      "gameUrl": "https://lichess.org/1pRVU0YT#97",
+      "rating": 1611
+    },
+    {
+      "puzzleId": "00nFD",
+      "gameUrl": "https://lichess.org/FeP6qhNK#31",
+      "rating": 1287
+    },
+    {
+      "puzzleId": "00nHy",
+      "gameUrl": "https://lichess.org/nKLwXxuX#31",
+      "rating": 1271
+    },
+    {
+      "puzzleId": "00oQO",
+      "gameUrl": "https://lichess.org/Gv6O3qzw#67",
+      "rating": 1520
+    },
+    {
+      "puzzleId": "00oXF",
+      "gameUrl": "https://lichess.org/UNhxKWVR/black#50",
+      "rating": 1607
+    },
+    {
+      "puzzleId": "00ofO",
+      "gameUrl": "https://lichess.org/Xbq1CCD6/black#62",
+      "rating": 1487
+    },
+    {
+      "puzzleId": "00ouE",
+      "gameUrl": "https://lichess.org/ZjaFn424#59",
+      "rating": 1448
+    },
+    {
+      "puzzleId": "00pBn",
+      "gameUrl": "https://lichess.org/rQFsqHTR/black#102",
+      "rating": 1491
+    },
+    {
+      "puzzleId": "00pER",
+      "gameUrl": "https://lichess.org/cQjDrt9I/black#42",
+      "rating": 1571
+    },
+    {
+      "puzzleId": "00pEZ",
+      "gameUrl": "https://lichess.org/0rpW3mrV#41",
+      "rating": 1619
+    },
+    {
+      "puzzleId": "00pVS",
+      "gameUrl": "https://lichess.org/l88Pda6c/black#30",
+      "rating": 1279
+    },
+    {
+      "puzzleId": "00qIK",
+      "gameUrl": "https://lichess.org/sFoTW7Rq#31",
+      "rating": 1540
+    },
+    {
+      "puzzleId": "00qX2",
+      "gameUrl": "https://lichess.org/aDxQAOeN/black#56",
+      "rating": 1244
+    },
+    {
+      "puzzleId": "00qk4",
+      "gameUrl": "https://lichess.org/DqqRKbEM#35",
+      "rating": 1484
+    },
+    {
+      "puzzleId": "00qmI",
+      "gameUrl": "https://lichess.org/OTzPjgtI/black#102",
+      "rating": 1664
+    },
+    {
+      "puzzleId": "00qoE",
+      "gameUrl": "https://lichess.org/wVq7oLvw/black#56",
+      "rating": 1215
+    },
+    {
+      "puzzleId": "00rAM",
+      "gameUrl": "https://lichess.org/tkkuVJDA#39",
+      "rating": 1743
+    },
+    {
+      "puzzleId": "00rB5",
+      "gameUrl": "https://lichess.org/VEaD7zl9/black#46",
+      "rating": 1517
+    },
+    {
+      "puzzleId": "00rFc",
+      "gameUrl": "https://lichess.org/evWDUDoX/black#100",
+      "rating": 1748
+    },
+    {
+      "puzzleId": "00rNc",
+      "gameUrl": "https://lichess.org/nyOQHpNP#51",
+      "rating": 1512
+    },
+    {
+      "puzzleId": "00rwh",
+      "gameUrl": "https://lichess.org/Nn5tP5gN#73",
+      "rating": 1579
+    },
+    {
+      "puzzleId": "00rx9",
+      "gameUrl": "https://lichess.org/i2mJkkQL/black#52",
+      "rating": 1393
+    },
+    {
+      "puzzleId": "00t8q",
+      "gameUrl": "https://lichess.org/o3BszNqL/black#34",
+      "rating": 1601
+    },
+    {
+      "puzzleId": "00tB9",
+      "gameUrl": "https://lichess.org/I1QFfgyS#47",
+      "rating": 1289
+    },
+    {
+      "puzzleId": "00tei",
+      "gameUrl": "https://lichess.org/kVQ3BvS0/black#86",
+      "rating": 1367
+    },
+    {
+      "puzzleId": "00tgU",
+      "gameUrl": "https://lichess.org/uRJyPnFa/black#40",
+      "rating": 1685
+    },
+    {
+      "puzzleId": "00uDH",
+      "gameUrl": "https://lichess.org/9Hn6Sv3F#89",
+      "rating": 1279
+    },
+    {
+      "puzzleId": "00uJL",
+      "gameUrl": "https://lichess.org/1AY8THKB#81",
+      "rating": 1564
+    },
+    {
+      "puzzleId": "00uKb",
+      "gameUrl": "https://lichess.org/fPrESBF9#59",
+      "rating": 1545
+    },
+    {
+      "puzzleId": "00umX",
+      "gameUrl": "https://lichess.org/k9gpWj7k#37",
+      "rating": 1682
+    },
+    {
+      "puzzleId": "00voi",
+      "gameUrl": "https://lichess.org/4zZjpxHw/black#86",
+      "rating": 1496
+    },
+    {
+      "puzzleId": "00wPZ",
+      "gameUrl": "https://lichess.org/XAwlqpwf#23",
+      "rating": 1441
+    },
+    {
+      "puzzleId": "00wft",
+      "gameUrl": "https://lichess.org/9DS9Mlwd#59",
+      "rating": 1564
+    },
+    {
+      "puzzleId": "00xDa",
+      "gameUrl": "https://lichess.org/trNxydY0#55",
+      "rating": 1294
+    },
+    {
+      "puzzleId": "00y2j",
+      "gameUrl": "https://lichess.org/5qeC9Wl2#67",
+      "rating": 1639
+    },
+    {
+      "puzzleId": "00ySR",
+      "gameUrl": "https://lichess.org/kReszzMZ/black#62",
+      "rating": 1405
+    },
+    {
+      "puzzleId": "00yWQ",
+      "gameUrl": "https://lichess.org/lJke9dkh#101",
+      "rating": 1282
+    },
+    {
+      "puzzleId": "00yfI",
+      "gameUrl": "https://lichess.org/yil6l4iC#33",
+      "rating": 1489
+    },
+    {
+      "puzzleId": "00ymq",
+      "gameUrl": "https://lichess.org/V4mcVabC#61",
+      "rating": 1528
+    },
+    {
+      "puzzleId": "00z82",
+      "gameUrl": "https://lichess.org/YzMUMMSq/black#36",
+      "rating": 1578
+    },
+    {
+      "puzzleId": "00zeF",
+      "gameUrl": "https://lichess.org/ZFl1I0x7/black#40",
+      "rating": 1770
+    },
+    {
+      "puzzleId": "010Yv",
+      "gameUrl": "https://lichess.org/wfd7IC1C/black#40",
+      "rating": 1228
+    },
+    {
+      "puzzleId": "010ZV",
+      "gameUrl": "https://lichess.org/TyuyYtZG/black#26",
+      "rating": 1459
+    },
+    {
+      "puzzleId": "011J1",
+      "gameUrl": "https://lichess.org/xl6zG0ZK#69",
+      "rating": 1242
+    },
+    {
+      "puzzleId": "011Un",
+      "gameUrl": "https://lichess.org/I7ZvBtLI/black#74",
+      "rating": 1367
+    },
+    {
+      "puzzleId": "011o8",
+      "gameUrl": "https://lichess.org/8aKh42cj/black#66",
+      "rating": 1532
+    },
+    {
+      "puzzleId": "01243",
+      "gameUrl": "https://lichess.org/dfLW8TS1/black#68",
+      "rating": 1454
+    },
+    {
+      "puzzleId": "012Dg",
+      "gameUrl": "https://lichess.org/2fFOvrpM#23",
+      "rating": 1381
+    },
+    {
+      "puzzleId": "012sr",
+      "gameUrl": "https://lichess.org/hw8EPMBK/black#40",
+      "rating": 1539
+    },
+    {
+      "puzzleId": "012wC",
+      "gameUrl": "https://lichess.org/0Dqefo5O/black#24",
+      "rating": 1441
+    },
+    {
+      "puzzleId": "012wW",
+      "gameUrl": "https://lichess.org/LUerdvbI/black#92",
+      "rating": 1696
+    },
+    {
+      "puzzleId": "0147O",
+      "gameUrl": "https://lichess.org/Eyah7wJR/black#74",
+      "rating": 1510
+    },
+    {
+      "puzzleId": "014p4",
+      "gameUrl": "https://lichess.org/uHz0wNEM#35",
+      "rating": 1304
+    },
+    {
+      "puzzleId": "015Di",
+      "gameUrl": "https://lichess.org/T3BCr5TM/black#20",
+      "rating": 1713
+    },
+    {
+      "puzzleId": "015JI",
+      "gameUrl": "https://lichess.org/K311M60I#67",
+      "rating": 1744
+    },
+    {
+      "puzzleId": "015JV",
+      "gameUrl": "https://lichess.org/U52Iy8wA/black#74",
+      "rating": 1734
+    },
+    {
+      "puzzleId": "015Kw",
+      "gameUrl": "https://lichess.org/9iI3Okx5#53",
+      "rating": 1675
+    },
+    {
+      "puzzleId": "015mX",
+      "gameUrl": "https://lichess.org/ErH9zs0M/black#28",
+      "rating": 1319
+    },
+    {
+      "puzzleId": "016fz",
+      "gameUrl": "https://lichess.org/jAbGFT6B#125",
+      "rating": 1725
+    },
+    {
+      "puzzleId": "017Bw",
+      "gameUrl": "https://lichess.org/HuzRGKgz/black#24",
+      "rating": 1786
+    },
+    {
+      "puzzleId": "0181c",
+      "gameUrl": "https://lichess.org/BC7tzTnN/black#30",
+      "rating": 1319
+    },
+    {
+      "puzzleId": "019Oa",
+      "gameUrl": "https://lichess.org/l5bCSDVr#65",
+      "rating": 1565
+    },
+    {
+      "puzzleId": "019cy",
+      "gameUrl": "https://lichess.org/OcyvZXLY#43",
+      "rating": 1380
+    },
+    {
+      "puzzleId": "01AHi",
+      "gameUrl": "https://lichess.org/cEITxig3/black#40",
+      "rating": 1466
+    },
+    {
+      "puzzleId": "01AIF",
+      "gameUrl": "https://lichess.org/0vSOFrqP#103",
+      "rating": 1736
+    },
+    {
+      "puzzleId": "01B8l",
+      "gameUrl": "https://lichess.org/v2atqYUk/black#104",
+      "rating": 1402
+    },
+    {
+      "puzzleId": "01Baj",
+      "gameUrl": "https://lichess.org/SV0DvAns#29",
+      "rating": 1364
+    },
+    {
+      "puzzleId": "01Btz",
+      "gameUrl": "https://lichess.org/FMeNuY7a#33",
+      "rating": 1398
+    },
+    {
+      "puzzleId": "01CAb",
+      "gameUrl": "https://lichess.org/SyXXN7Qn/black#62",
+      "rating": 1465
+    },
+    {
+      "puzzleId": "01CGR",
+      "gameUrl": "https://lichess.org/yWAfHEnH/black#44",
+      "rating": 1767
+    },
+    {
+      "puzzleId": "01CKc",
+      "gameUrl": "https://lichess.org/Krj1ThVv/black#34",
+      "rating": 1312
+    },
+    {
+      "puzzleId": "01CQ7",
+      "gameUrl": "https://lichess.org/yu8CZvqe#41",
+      "rating": 1527
+    },
+    {
+      "puzzleId": "01CxB",
+      "gameUrl": "https://lichess.org/RKxc3BDJ#105",
+      "rating": 1311
+    },
+    {
+      "puzzleId": "01Dcf",
+      "gameUrl": "https://lichess.org/x6stMH1k#57",
+      "rating": 1256
+    },
+    {
+      "puzzleId": "01Dt6",
+      "gameUrl": "https://lichess.org/rCyfbn1Z/black#56",
+      "rating": 1398
+    },
+    {
+      "puzzleId": "01EMd",
+      "gameUrl": "https://lichess.org/cQMrswkE/black#62",
+      "rating": 1328
+    },
+    {
+      "puzzleId": "01EUl",
+      "gameUrl": "https://lichess.org/eR5rGPfR#17",
+      "rating": 1311
+    },
+    {
+      "puzzleId": "01FHB",
+      "gameUrl": "https://lichess.org/UDs8qH3o/black#40",
+      "rating": 1516
+    },
+    {
+      "puzzleId": "01Fbm",
+      "gameUrl": "https://lichess.org/JBjYDUYH/black#58",
+      "rating": 1579
+    },
+    {
+      "puzzleId": "01Fml",
+      "gameUrl": "https://lichess.org/tf8EObMs#85",
+      "rating": 1491
+    },
+    {
+      "puzzleId": "01G4i",
+      "gameUrl": "https://lichess.org/z8X3byMF/black#70",
+      "rating": 1778
+    },
+    {
+      "puzzleId": "01G6K",
+      "gameUrl": "https://lichess.org/tcrbi3Dc#39",
+      "rating": 1425
+    },
+    {
+      "puzzleId": "01GBu",
+      "gameUrl": "https://lichess.org/t1gBJrWV#45",
+      "rating": 1260
+    },
+    {
+      "puzzleId": "01Gqt",
+      "gameUrl": "https://lichess.org/9fYQl16d#73",
+      "rating": 1334
+    },
+    {
+      "puzzleId": "01H0o",
+      "gameUrl": "https://lichess.org/bfDCOeTo/black#62",
+      "rating": 1573
+    },
+    {
+      "puzzleId": "01HI3",
+      "gameUrl": "https://lichess.org/cBCqtthS#107",
+      "rating": 1220
+    },
+    {
+      "puzzleId": "01HoZ",
+      "gameUrl": "https://lichess.org/VOay9YDM#55",
+      "rating": 1783
+    },
+    {
+      "puzzleId": "01Hyk",
+      "gameUrl": "https://lichess.org/FEYtcgVm#41",
+      "rating": 1404
+    },
+    {
+      "puzzleId": "01ILK",
+      "gameUrl": "https://lichess.org/lsmelGki/black#98",
+      "rating": 1615
+    },
+    {
+      "puzzleId": "01IdQ",
+      "gameUrl": "https://lichess.org/dqJdxwOV/black#144",
+      "rating": 1670
+    },
+    {
+      "puzzleId": "01JzG",
+      "gameUrl": "https://lichess.org/Pq6aorBc#81",
+      "rating": 1404
+    },
+    {
+      "puzzleId": "01LA9",
+      "gameUrl": "https://lichess.org/mFqNeSJb/black#64",
+      "rating": 1456
+    },
+    {
+      "puzzleId": "01LEM",
+      "gameUrl": "https://lichess.org/HO5OEmwJ/black#132",
+      "rating": 1682
+    },
+    {
+      "puzzleId": "01LGs",
+      "gameUrl": "https://lichess.org/Z3tr3Uaf/black#64",
+      "rating": 1248
+    },
+    {
+      "puzzleId": "01MiZ",
+      "gameUrl": "https://lichess.org/8UEH9blg/black#30",
+      "rating": 1616
+    },
+    {
+      "puzzleId": "01N7F",
+      "gameUrl": "https://lichess.org/NBOfEd8e#91",
+      "rating": 1434
+    },
+    {
+      "puzzleId": "01NZA",
+      "gameUrl": "https://lichess.org/igpHQlEe/black#104",
+      "rating": 1642
+    },
+    {
+      "puzzleId": "01OwE",
+      "gameUrl": "https://lichess.org/PrDniYWc/black#42",
+      "rating": 1723
+    },
+    {
+      "puzzleId": "01PBg",
+      "gameUrl": "https://lichess.org/1LECkn6C/black#56",
+      "rating": 1303
+    },
+    {
+      "puzzleId": "01PI9",
+      "gameUrl": "https://lichess.org/YE44gmiR/black#54",
+      "rating": 1328
+    },
+    {
+      "puzzleId": "01PcY",
+      "gameUrl": "https://lichess.org/3g7o7Ad3/black#90",
+      "rating": 1483
+    },
+    {
+      "puzzleId": "01Pe4",
+      "gameUrl": "https://lichess.org/RdO1i0xH#19",
+      "rating": 1213
+    },
+    {
+      "puzzleId": "01Ptp",
+      "gameUrl": "https://lichess.org/nGsChwtG/black#60",
+      "rating": 1420
+    },
+    {
+      "puzzleId": "01Qdr",
+      "gameUrl": "https://lichess.org/HyDaLl1q#59",
+      "rating": 1664
+    },
+    {
+      "puzzleId": "01QgQ",
+      "gameUrl": "https://lichess.org/xBcvuwZY/black#82",
+      "rating": 1601
+    },
+    {
+      "puzzleId": "01ScQ",
+      "gameUrl": "https://lichess.org/BEejaOEt#17",
+      "rating": 1698
+    },
+    {
+      "puzzleId": "01Shz",
+      "gameUrl": "https://lichess.org/gILDftXE#57",
+      "rating": 1523
+    },
+    {
+      "puzzleId": "01Soi",
+      "gameUrl": "https://lichess.org/SZJSUMQg/black#110",
+      "rating": 1557
+    },
+    {
+      "puzzleId": "01Syz",
+      "gameUrl": "https://lichess.org/K2V4oHCA#65",
+      "rating": 1708
+    },
+    {
+      "puzzleId": "01T20",
+      "gameUrl": "https://lichess.org/9KsUlxun#89",
+      "rating": 1634
+    },
+    {
+      "puzzleId": "01TIK",
+      "gameUrl": "https://lichess.org/I86rNhhD#85",
+      "rating": 1394
+    },
+    {
+      "puzzleId": "01TUk",
+      "gameUrl": "https://lichess.org/lTjd9qSn#53",
+      "rating": 1444
+    },
+    {
+      "puzzleId": "01Tm7",
+      "gameUrl": "https://lichess.org/9g0qGlSd/black#44",
+      "rating": 1565
+    },
+    {
+      "puzzleId": "01U3J",
+      "gameUrl": "https://lichess.org/S7dtyWl6/black#48",
+      "rating": 1363
+    },
+    {
+      "puzzleId": "01Uvy",
+      "gameUrl": "https://lichess.org/r3rrr0WR/black#100",
+      "rating": 1314
+    },
+    {
+      "puzzleId": "01V7x",
+      "gameUrl": "https://lichess.org/ipZrU9eZ/black#98",
+      "rating": 1366
+    },
+    {
+      "puzzleId": "01VQD",
+      "gameUrl": "https://lichess.org/99i1AIEl#35",
+      "rating": 1351
+    },
+    {
+      "puzzleId": "01VZi",
+      "gameUrl": "https://lichess.org/De2EWy6u#63",
+      "rating": 1244
+    },
+    {
+      "puzzleId": "01Vky",
+      "gameUrl": "https://lichess.org/MkPK856n/black#48",
+      "rating": 1227
+    },
+    {
+      "puzzleId": "01Wpf",
+      "gameUrl": "https://lichess.org/TrexH5VK/black#54",
+      "rating": 1495
+    },
+    {
+      "puzzleId": "01X4v",
+      "gameUrl": "https://lichess.org/doRnRBoB#27",
+      "rating": 1394
+    },
+    {
+      "puzzleId": "01X6J",
+      "gameUrl": "https://lichess.org/rQ1CiKNS#63",
+      "rating": 1370
+    },
+    {
+      "puzzleId": "01XK2",
+      "gameUrl": "https://lichess.org/i9qA1ofF#37",
+      "rating": 1409
+    },
+    {
+      "puzzleId": "01XlK",
+      "gameUrl": "https://lichess.org/wKVwsojO/black#44",
+      "rating": 1435
+    },
+    {
+      "puzzleId": "01Xyq",
+      "gameUrl": "https://lichess.org/pIQooIlD/black#82",
+      "rating": 1372
+    },
+    {
+      "puzzleId": "01Y2F",
+      "gameUrl": "https://lichess.org/jAxvVDSP#29",
+      "rating": 1210
+    },
+    {
+      "puzzleId": "01Y67",
+      "gameUrl": "https://lichess.org/byEY64hO/black#66",
+      "rating": 1692
+    },
+    {
+      "puzzleId": "01Ykx",
+      "gameUrl": "https://lichess.org/z2s3zDqz#85",
+      "rating": 1364
+    },
+    {
+      "puzzleId": "01YlD",
+      "gameUrl": "https://lichess.org/fnki0BgO#95",
+      "rating": 1609
+    },
+    {
+      "puzzleId": "01Z93",
+      "gameUrl": "https://lichess.org/vqLvNigt/black#58",
+      "rating": 1797
+    },
+    {
+      "puzzleId": "01Zgj",
+      "gameUrl": "https://lichess.org/N8PFXdlS#55",
+      "rating": 1671
+    },
+    {
+      "puzzleId": "01b3S",
+      "gameUrl": "https://lichess.org/wBiesuqt/black#44",
+      "rating": 1349
+    },
+    {
+      "puzzleId": "01bwq",
+      "gameUrl": "https://lichess.org/uePe07RD/black#30",
+      "rating": 1204
+    },
+    {
+      "puzzleId": "01c20",
+      "gameUrl": "https://lichess.org/Jd252txs/black#48",
+      "rating": 1486
+    },
+    {
+      "puzzleId": "01cKS",
+      "gameUrl": "https://lichess.org/1ZJXmvgu/black#34",
+      "rating": 1508
+    },
+    {
+      "puzzleId": "01dGR",
+      "gameUrl": "https://lichess.org/ML6wpo8T/black#106",
+      "rating": 1425
+    },
+    {
+      "puzzleId": "01dME",
+      "gameUrl": "https://lichess.org/gqzLbtPb#49",
+      "rating": 1681
+    },
+    {
+      "puzzleId": "01e0v",
+      "gameUrl": "https://lichess.org/Tknnokbi/black#70",
+      "rating": 1716
+    },
+    {
+      "puzzleId": "01e5j",
+      "gameUrl": "https://lichess.org/MuXVKVOI/black#46",
+      "rating": 1297
+    },
+    {
+      "puzzleId": "01eLD",
+      "gameUrl": "https://lichess.org/lV0wVwgC/black#106",
+      "rating": 1460
+    },
+    {
+      "puzzleId": "01ehq",
+      "gameUrl": "https://lichess.org/KcyZDcQR#35",
+      "rating": 1466
+    },
+    {
+      "puzzleId": "01eqy",
+      "gameUrl": "https://lichess.org/DH25wLla#63",
+      "rating": 1442
+    },
+    {
+      "puzzleId": "01f7r",
+      "gameUrl": "https://lichess.org/MvDCJ18n#77",
+      "rating": 1384
+    },
+    {
+      "puzzleId": "01fz7",
+      "gameUrl": "https://lichess.org/2TXXoWS4/black#26",
+      "rating": 1352
+    },
+    {
+      "puzzleId": "01gA2",
+      "gameUrl": "https://lichess.org/COyuMP7G#29",
+      "rating": 1523
+    },
+    {
+      "puzzleId": "01gEg",
+      "gameUrl": "https://lichess.org/95ui1sX7#33",
+      "rating": 1496
+    },
+    {
+      "puzzleId": "01gcG",
+      "gameUrl": "https://lichess.org/OdG6fwEN/black#32",
+      "rating": 1380
+    },
+    {
+      "puzzleId": "01gkL",
+      "gameUrl": "https://lichess.org/e9vKK71P#23",
+      "rating": 1246
+    },
+    {
+      "puzzleId": "01hEk",
+      "gameUrl": "https://lichess.org/snjYKorv#59",
+      "rating": 1600
+    },
+    {
+      "puzzleId": "01hHF",
+      "gameUrl": "https://lichess.org/4uIwx0C8/black#88",
+      "rating": 1611
+    },
+    {
+      "puzzleId": "01hOX",
+      "gameUrl": "https://lichess.org/8Ex4kCQG/black#26",
+      "rating": 1550
+    },
+    {
+      "puzzleId": "01hRk",
+      "gameUrl": "https://lichess.org/bJFjAHbe#37",
+      "rating": 1371
+    },
+    {
+      "puzzleId": "01hf5",
+      "gameUrl": "https://lichess.org/YwXd4Syf/black#68",
+      "rating": 1627
+    },
+    {
+      "puzzleId": "01hmS",
+      "gameUrl": "https://lichess.org/FMCNOXPz#51",
+      "rating": 1202
+    },
+    {
+      "puzzleId": "01i0G",
+      "gameUrl": "https://lichess.org/75bbZXr4#75",
+      "rating": 1333
+    },
+    {
+      "puzzleId": "01iWH",
+      "gameUrl": "https://lichess.org/DagQIrfS#67",
+      "rating": 1502
+    },
+    {
+      "puzzleId": "01iWy",
+      "gameUrl": "https://lichess.org/oude4fxf#59",
+      "rating": 1434
+    },
+    {
+      "puzzleId": "01iYr",
+      "gameUrl": "https://lichess.org/q9CgHIFz/black#30",
+      "rating": 1445
+    },
+    {
+      "puzzleId": "01idE",
+      "gameUrl": "https://lichess.org/Z4Yo3Lht/black#120",
+      "rating": 1351
+    },
+    {
+      "puzzleId": "01jE5",
+      "gameUrl": "https://lichess.org/8ruwWI4M#115",
+      "rating": 1387
+    },
+    {
+      "puzzleId": "01jao",
+      "gameUrl": "https://lichess.org/SuiO7G4H#27",
+      "rating": 1350
+    },
+    {
+      "puzzleId": "01jhf",
+      "gameUrl": "https://lichess.org/fVJJYXzY/black#30",
+      "rating": 1528
+    },
+    {
+      "puzzleId": "01jwi",
+      "gameUrl": "https://lichess.org/C64KSo7n/black#44",
+      "rating": 1525
+    },
+    {
+      "puzzleId": "01kWj",
+      "gameUrl": "https://lichess.org/ZCg4YarJ/black#76",
+      "rating": 1457
+    },
+    {
+      "puzzleId": "01kfp",
+      "gameUrl": "https://lichess.org/AJXQtOkA#67",
+      "rating": 1525
+    },
+    {
+      "puzzleId": "01kyG",
+      "gameUrl": "https://lichess.org/6CFxZHSO/black#100",
+      "rating": 1656
+    },
+    {
+      "puzzleId": "01lcr",
+      "gameUrl": "https://lichess.org/lGCauifF#49",
+      "rating": 1754
+    },
+    {
+      "puzzleId": "01m2g",
+      "gameUrl": "https://lichess.org/GADtrnan#87",
+      "rating": 1281
+    },
+    {
+      "puzzleId": "01m5k",
+      "gameUrl": "https://lichess.org/JiGbkYf4#43",
+      "rating": 1287
+    },
+    {
+      "puzzleId": "01mVv",
+      "gameUrl": "https://lichess.org/1kDyJqxz/black#40",
+      "rating": 1588
+    },
+    {
+      "puzzleId": "01mgz",
+      "gameUrl": "https://lichess.org/1E9dZ74A/black#40",
+      "rating": 1394
+    },
+    {
+      "puzzleId": "01mvq",
+      "gameUrl": "https://lichess.org/9WWBV3nN#47",
+      "rating": 1697
+    },
+    {
+      "puzzleId": "01naC",
+      "gameUrl": "https://lichess.org/ZLj3rQvL/black#22",
+      "rating": 1243
+    },
+    {
+      "puzzleId": "01ncA",
+      "gameUrl": "https://lichess.org/TAMDGpzu/black#22",
+      "rating": 1583
+    },
+    {
+      "puzzleId": "01oms",
+      "gameUrl": "https://lichess.org/yk2AOCtQ#85",
+      "rating": 1407
+    },
+    {
+      "puzzleId": "01q9o",
+      "gameUrl": "https://lichess.org/1OMSE1L5#49",
+      "rating": 1296
+    },
+    {
+      "puzzleId": "01qI9",
+      "gameUrl": "https://lichess.org/EHkqqYZ1#91",
+      "rating": 1328
+    },
+    {
+      "puzzleId": "01qS4",
+      "gameUrl": "https://lichess.org/0T0H2M1F#25",
+      "rating": 1343
+    },
+    {
+      "puzzleId": "01qV4",
+      "gameUrl": "https://lichess.org/DFXZZZ6o#37",
+      "rating": 1692
+    },
+    {
+      "puzzleId": "01rEy",
+      "gameUrl": "https://lichess.org/PfrxvkuT/black#58",
+      "rating": 1440
+    },
+    {
+      "puzzleId": "01rH2",
+      "gameUrl": "https://lichess.org/SwWNbUXa/black#40",
+      "rating": 1500
+    },
+    {
+      "puzzleId": "01rSr",
+      "gameUrl": "https://lichess.org/xnizLU9K#91",
+      "rating": 1287
+    },
+    {
+      "puzzleId": "01sLK",
+      "gameUrl": "https://lichess.org/MBIZxdJr/black#74",
+      "rating": 1774
+    },
+    {
+      "puzzleId": "01tXe",
+      "gameUrl": "https://lichess.org/sTaPsXZr/black#60",
+      "rating": 1675
+    },
+    {
+      "puzzleId": "01tol",
+      "gameUrl": "https://lichess.org/XbK2oJ4T/black#54",
+      "rating": 1386
+    },
+    {
+      "puzzleId": "01tyT",
+      "gameUrl": "https://lichess.org/nHIZqqzx#95",
+      "rating": 1300
+    },
+    {
+      "puzzleId": "01u7X",
+      "gameUrl": "https://lichess.org/O32ftR2e#59",
+      "rating": 1489
+    },
+    {
+      "puzzleId": "01uGJ",
+      "gameUrl": "https://lichess.org/D0ZjugwL/black#50",
+      "rating": 1738
+    },
+    {
+      "puzzleId": "01ur6",
+      "gameUrl": "https://lichess.org/bZrVblU1/black#56",
+      "rating": 1501
+    },
+    {
+      "puzzleId": "01vQy",
+      "gameUrl": "https://lichess.org/o3NZT9Aj#85",
+      "rating": 1522
+    },
+    {
+      "puzzleId": "01vf9",
+      "gameUrl": "https://lichess.org/s3zc1GsU/black#64",
+      "rating": 1736
+    },
+    {
+      "puzzleId": "01vsS",
+      "gameUrl": "https://lichess.org/b7zg0CD6#95",
+      "rating": 1502
+    },
+    {
+      "puzzleId": "01wIv",
+      "gameUrl": "https://lichess.org/xNeKTRXN#79",
+      "rating": 1722
+    },
+    {
+      "puzzleId": "01xC6",
+      "gameUrl": "https://lichess.org/FU4475Fl/black#60",
+      "rating": 1289
+    },
+    {
+      "puzzleId": "01xZd",
+      "gameUrl": "https://lichess.org/HK3HUePu#37",
+      "rating": 1627
+    },
+    {
+      "puzzleId": "01xuW",
+      "gameUrl": "https://lichess.org/tQSpXCuc#69",
+      "rating": 1637
+    },
+    {
+      "puzzleId": "01xyH",
+      "gameUrl": "https://lichess.org/TazgBSnB#33",
+      "rating": 1579
+    },
+    {
+      "puzzleId": "01yds",
+      "gameUrl": "https://lichess.org/4fsHue7C#129",
+      "rating": 1232
+    },
+    {
+      "puzzleId": "01zHj",
+      "gameUrl": "https://lichess.org/2bSVdriN#63",
+      "rating": 1560
+    },
+    {
+      "puzzleId": "0206q",
+      "gameUrl": "https://lichess.org/cv6t5VMQ#101",
+      "rating": 1338
+    },
+    {
+      "puzzleId": "021Dc",
+      "gameUrl": "https://lichess.org/qS4iIfTa/black#28",
+      "rating": 1548
+    },
+    {
+      "puzzleId": "021GH",
+      "gameUrl": "https://lichess.org/ZLiap2Hf#73",
+      "rating": 1284
+    },
+    {
+      "puzzleId": "021U1",
+      "gameUrl": "https://lichess.org/fgXwKmjm#61",
+      "rating": 1571
+    },
+    {
+      "puzzleId": "021YZ",
+      "gameUrl": "https://lichess.org/wa6BKyGB/black#46",
+      "rating": 1229
+    },
+    {
+      "puzzleId": "021aU",
+      "gameUrl": "https://lichess.org/GDL7tjwr#93",
+      "rating": 1498
+    },
+    {
+      "puzzleId": "021cc",
+      "gameUrl": "https://lichess.org/IJfOe8LF#77",
+      "rating": 1395
+    },
+    {
+      "puzzleId": "021wj",
+      "gameUrl": "https://lichess.org/max4p5pE#89",
+      "rating": 1702
+    },
+    {
+      "puzzleId": "0220o",
+      "gameUrl": "https://lichess.org/6bINHamE#45",
+      "rating": 1406
+    },
+    {
+      "puzzleId": "022HT",
+      "gameUrl": "https://lichess.org/DxRz4P05/black#16",
+      "rating": 1404
+    },
+    {
+      "puzzleId": "022JP",
+      "gameUrl": "https://lichess.org/Rs2i5ae2/black#86",
+      "rating": 1364
+    },
+    {
+      "puzzleId": "022Uz",
+      "gameUrl": "https://lichess.org/apnCE3CT#71",
+      "rating": 1639
+    },
+    {
+      "puzzleId": "022ib",
+      "gameUrl": "https://lichess.org/RMJWhohP#55",
+      "rating": 1708
+    },
+    {
+      "puzzleId": "023E4",
+      "gameUrl": "https://lichess.org/94q1e8Cj/black#50",
+      "rating": 1255
+    },
+    {
+      "puzzleId": "023GF",
+      "gameUrl": "https://lichess.org/xFPlIFCp#61",
+      "rating": 1386
+    },
+    {
+      "puzzleId": "023VO",
+      "gameUrl": "https://lichess.org/OwR67sy3#79",
+      "rating": 1498
+    },
+    {
+      "puzzleId": "023qj",
+      "gameUrl": "https://lichess.org/ChGn1Gd0/black#40",
+      "rating": 1270
+    },
+    {
+      "puzzleId": "024CM",
+      "gameUrl": "https://lichess.org/FCkJPsQO/black#38",
+      "rating": 1536
+    },
+    {
+      "puzzleId": "024qN",
+      "gameUrl": "https://lichess.org/QxwlVOwl#55",
+      "rating": 1381
+    },
+    {
+      "puzzleId": "0257T",
+      "gameUrl": "https://lichess.org/j2ohZNAv/black#36",
+      "rating": 1465
+    },
+    {
+      "puzzleId": "0258R",
+      "gameUrl": "https://lichess.org/LPUpfznj/black#44",
+      "rating": 1453
+    },
+    {
+      "puzzleId": "025Cu",
+      "gameUrl": "https://lichess.org/qyQwfyvv/black#18",
+      "rating": 1383
+    },
+    {
+      "puzzleId": "02624",
+      "gameUrl": "https://lichess.org/ALmb9BNs#21",
+      "rating": 1749
+    },
+    {
+      "puzzleId": "0265C",
+      "gameUrl": "https://lichess.org/mvXPLz4k/black#80",
+      "rating": 1482
+    },
+    {
+      "puzzleId": "026Br",
+      "gameUrl": "https://lichess.org/5nmXyKwm/black#48",
+      "rating": 1738
+    },
+    {
+      "puzzleId": "0279c",
+      "gameUrl": "https://lichess.org/oL9whktK#33",
+      "rating": 1314
+    },
+    {
+      "puzzleId": "027HA",
+      "gameUrl": "https://lichess.org/FkDESkG9/black#54",
+      "rating": 1612
+    },
+    {
+      "puzzleId": "027oG",
+      "gameUrl": "https://lichess.org/3qJjXEnU#63",
+      "rating": 1754
+    },
+    {
+      "puzzleId": "0284S",
+      "gameUrl": "https://lichess.org/e3KgaM9D#51",
+      "rating": 1385
+    },
+    {
+      "puzzleId": "028B5",
+      "gameUrl": "https://lichess.org/j9q1QKgN/black#54",
+      "rating": 1421
+    },
+    {
+      "puzzleId": "028W0",
+      "gameUrl": "https://lichess.org/KRZH5U3N/black#62",
+      "rating": 1382
+    },
+    {
+      "puzzleId": "028i6",
+      "gameUrl": "https://lichess.org/1ziMVbPr#35",
+      "rating": 1346
+    },
+    {
+      "puzzleId": "029MM",
+      "gameUrl": "https://lichess.org/Jb7t1k3s#27",
+      "rating": 1507
+    },
+    {
+      "puzzleId": "029gy",
+      "gameUrl": "https://lichess.org/Z9kxWf3j/black#36",
+      "rating": 1436
+    },
+    {
+      "puzzleId": "02A8s",
+      "gameUrl": "https://lichess.org/TFMMblS4/black#86",
+      "rating": 1562
+    },
+    {
+      "puzzleId": "02AeY",
+      "gameUrl": "https://lichess.org/7db6HE38#107",
+      "rating": 1237
+    },
+    {
+      "puzzleId": "02Aqe",
+      "gameUrl": "https://lichess.org/DMric9BU/black#14",
+      "rating": 1370
+    },
+    {
+      "puzzleId": "02BXL",
+      "gameUrl": "https://lichess.org/HlyVLuSl#115",
+      "rating": 1309
+    },
+    {
+      "puzzleId": "02Bcd",
+      "gameUrl": "https://lichess.org/SbU38wAI#49",
+      "rating": 1585
+    },
+    {
+      "puzzleId": "02BgN",
+      "gameUrl": "https://lichess.org/XJi4iCL1#81",
+      "rating": 1235
+    },
+    {
+      "puzzleId": "02BpP",
+      "gameUrl": "https://lichess.org/GnBh73Ac#43",
+      "rating": 1323
+    },
+    {
+      "puzzleId": "02CQe",
+      "gameUrl": "https://lichess.org/7BFYWf9w/black#48",
+      "rating": 1278
+    },
+    {
+      "puzzleId": "02Cq3",
+      "gameUrl": "https://lichess.org/0MRd72jU/black#50",
+      "rating": 1655
+    },
+    {
+      "puzzleId": "02D9n",
+      "gameUrl": "https://lichess.org/SGy9v8xk/black#42",
+      "rating": 1254
+    },
+    {
+      "puzzleId": "02DgT",
+      "gameUrl": "https://lichess.org/bPcZ1oZB#53",
+      "rating": 1252
+    },
+    {
+      "puzzleId": "02Dnf",
+      "gameUrl": "https://lichess.org/XJVeiQKf/black#22",
+      "rating": 1617
+    },
+    {
+      "puzzleId": "02DqO",
+      "gameUrl": "https://lichess.org/rc2kJpkW#101",
+      "rating": 1589
+    },
+    {
+      "puzzleId": "02DwR",
+      "gameUrl": "https://lichess.org/fRO3U43N/black#118",
+      "rating": 1308
+    },
+    {
+      "puzzleId": "02F56",
+      "gameUrl": "https://lichess.org/Hx2PCMfj#27",
+      "rating": 1537
+    },
+    {
+      "puzzleId": "02F5u",
+      "gameUrl": "https://lichess.org/nr1mzMxf/black#88",
+      "rating": 1347
+    },
+    {
+      "puzzleId": "02FSn",
+      "gameUrl": "https://lichess.org/Yc1JzevW#25",
+      "rating": 1408
+    },
+    {
+      "puzzleId": "02FdM",
+      "gameUrl": "https://lichess.org/ukfHz9Qr#55",
+      "rating": 1275
+    },
+    {
+      "puzzleId": "02GG8",
+      "gameUrl": "https://lichess.org/13kqOshR#81",
+      "rating": 1743
+    },
+    {
+      "puzzleId": "02GGR",
+      "gameUrl": "https://lichess.org/FAQ5ks9b#63",
+      "rating": 1382
+    },
+    {
+      "puzzleId": "02GU0",
+      "gameUrl": "https://lichess.org/KqZQxJ0c/black#88",
+      "rating": 1529
+    }
+  ]
+}

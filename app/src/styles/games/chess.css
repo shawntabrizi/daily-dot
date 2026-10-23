@@ -1,0 +1,328 @@
+/* Daily Chess: shell, board, pieces, promotion dialog.
+   WP36 A4: neutral while playing; the solved board frame and turn label take --accent-chess. */
+
+.chess-shell {
+  width: min(100%, 600px);
+  margin: 0 auto;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.chess-stage {
+  --chess-board-size: min(
+    calc(100vw - 48px),
+    520px,
+    calc(100dvh - 280px)
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.chess-toolbar {
+  display: flex;
+  width: var(--chess-board-size);
+  min-height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chess-turn {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.chess-side {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+/* The solved board earns the accent (decision 1); a recorded day is done too. */
+.chess-stage[data-chess-phase="solved"] .chess-turn,
+.chess-stage[data-chess-phase="readonly"] .chess-turn {
+  color: var(--accent-chess);
+}
+
+.chess-stage[data-chess-phase="solved"] .chess-board,
+.chess-stage[data-chess-phase="readonly"] .chess-board {
+  border-color: var(--accent-chess);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-chess) 35%, transparent);
+}
+
+.chess-board-wrap,
+.chess-board {
+  width: var(--chess-board-size);
+  height: var(--chess-board-size);
+}
+
+.chess-board-wrap {
+  position: relative;
+}
+
+.chess-board {
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  border: 3px solid #a6a8a9;
+  border-radius: 6px;
+  background: #4b4f50;
+}
+
+.chess-square {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  cursor: pointer;
+}
+
+.chess-square--light {
+  background: #aeb3af;
+}
+
+.chess-square--dark {
+  background: #59615d;
+}
+
+.chess-square--last {
+  background: color-mix(in srgb, var(--present) 62%, #59615d);
+}
+
+.chess-square--selected {
+  box-shadow: inset 0 0 0 4px var(--present);
+}
+
+.chess-square--legal::after {
+  position: absolute;
+  z-index: 2;
+  width: 24%;
+  height: 24%;
+  border-radius: 50%;
+  background: rgb(22 24 25 / 58%);
+  content: "";
+}
+
+.chess-square--capture::after {
+  position: absolute;
+  z-index: 2;
+  inset: 7%;
+  border: max(3px, calc(var(--chess-board-size) / 100)) solid
+    rgb(22 24 25 / 55%);
+  border-radius: 50%;
+  content: "";
+}
+
+.chess-square--wrong {
+  box-shadow: inset 0 0 0 5px var(--wrong);
+}
+
+.chess-square:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.chess-piece {
+  z-index: 1;
+  display: block;
+  width: 86%;
+  height: 86%;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 25%));
+}
+
+.chess-piece svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.chess-piece--arriving {
+  animation: chess-arrive 240ms ease-out;
+}
+
+@keyframes chess-arrive {
+  from {
+    opacity: 0.4;
+    transform: scale(0.78);
+  }
+}
+
+.chess-rank-label,
+.chess-file-label {
+  position: absolute;
+  z-index: 3;
+  color: rgb(22 24 25 / 72%);
+  font-size: clamp(7px, calc(var(--chess-board-size) / 55), 10px);
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.chess-rank-label {
+  top: 4px;
+  left: 4px;
+}
+
+.chess-file-label {
+  right: 4px;
+  bottom: 3px;
+}
+
+.chess-status {
+  display: flex;
+  width: var(--chess-board-size);
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #c5c7c7;
+  font-size: 11px;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.chess-status strong {
+  flex: none;
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chess-retry {
+  min-height: 44px;
+  padding-inline: 12px;
+  flex: none;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 12px;
+}
+
+.chess-promotion {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  display: flex;
+  padding: 16px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border-radius: 6px;
+  background: rgb(22 24 25 / 88%);
+  backdrop-filter: blur(3px);
+}
+
+.chess-promotion > strong {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+}
+
+.chess-promotion-choices {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+}
+
+.chess-promotion-choices button {
+  display: grid;
+  width: clamp(48px, calc(var(--chess-board-size) / 6), 72px);
+  height: clamp(48px, calc(var(--chess-board-size) / 6), 72px);
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: #aeb3af;
+  cursor: pointer;
+}
+
+.chess-promotion-cancel {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (min-width: 560px) {
+  .chess-shell {
+    padding: 22px;
+  }
+}
+
+@media (min-width: 780px) {
+  .chess-stage {
+    --chess-board-size: min(520px, calc(100dvh - 430px));
+  }
+
+  .chess-stage:has(.result-panel) {
+    --chess-board-size: min(520px, calc(100dvh - 580px));
+  }
+}
+
+@media (max-width: 559px) and (max-height: 850px) {
+  .chess-page {
+    display: flex;
+    height: calc(100dvh - 64px);
+    min-height: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .chess-page .game-heading {
+    flex: none;
+    margin-bottom: 8px;
+  }
+
+  .chess-page .game-heading .eyebrow {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .chess-page .game-heading h1 {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .chess-shell {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding: 6px;
+    align-items: flex-start;
+    border-radius: 12px;
+  }
+
+  .chess-stage {
+    --chess-board-size: min(calc(100vw - 36px), calc(100dvh - 280px));
+    width: 100%;
+    min-height: 0;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .chess-toolbar {
+    min-height: 30px;
+  }
+
+  .chess-status {
+    min-height: 42px;
+  }
+}

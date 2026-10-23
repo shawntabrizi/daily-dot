@@ -1,0 +1,45 @@
+# Daily Word answers: hand-curated exclusions on top of LDNOOBW.
+# One word per line; "#" starts a comment. Edit, regenerate, reseed as a new list.
+# Profanity, slurs or sensitive as a daily answer
+fucked
+pissed
+idiots
+racist
+racism
+slaves
+blacks
+whites
+abused
+hatred
+virgin
+breast
+# Names and brands that SCOWL lists in lowercase
+turner
+batman
+bailey
+nelson
+brooks
+carter
+marvel
+wright
+johnny
+warren
+rogers
+amazon
+graham
+miller
+sierra
+cooper
+oxford
+guinea
+potter
+martin
+fisher
+soviet
+google
+# Slang, dialect or odd as an answer
+tweets
+whilst
+gotten
+messed
+cheers

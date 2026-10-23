@@ -1,0 +1,8 @@
+packages:
+  - app
+  - pocket
+
+# bulletin-deploy's @novasamatech/host-papp declares polkadot-api ">=2" but
+# imports "polkadot-api/signer", which 3.x dropped; pin it to the 2.x it works with.
+overrides:
+  "@novasamatech/host-papp>polkadot-api": "2.2.1"

@@ -1,0 +1,557 @@
+{
+  "tag": "Box",
+  "value": {
+    "modifiers": [
+      {
+        "tag": "FillWidth",
+        "value": true
+      },
+      {
+        "tag": "Height",
+        "value": 234
+      },
+      {
+        "tag": "Background",
+        "value": {
+          "color": "BgSurfaceContainer",
+          "shape": {
+            "tag": "Rounded",
+            "value": 24
+          }
+        }
+      }
+    ],
+    "props": {
+      "contentAlignment": "TopStart"
+    },
+    "children": [
+      {
+        "tag": "Box",
+        "value": {
+          "modifiers": [
+            {
+              "tag": "Width",
+              "value": 8
+            },
+            {
+              "tag": "FillHeight",
+              "value": true
+            },
+            {
+              "tag": "Background",
+              "value": {
+                "color": "FgSuccess",
+                "shape": {
+                  "tag": "Rounded",
+                  "value": 0
+                }
+              }
+            }
+          ],
+          "props": {
+            "contentAlignment": "TopStart"
+          },
+          "children": []
+        }
+      },
+      {
+        "tag": "Row",
+        "value": {
+          "modifiers": [
+            {
+              "tag": "FillWidth",
+              "value": true
+            },
+            {
+              "tag": "Height",
+              "value": 234
+            },
+            {
+              "tag": "Padding",
+              "value": {
+                "top": 18,
+                "end": 20,
+                "bottom": 16,
+                "start": 20
+              }
+            }
+          ],
+          "props": {
+            "verticalAlignment": "Top",
+            "horizontalArrangement": "Start"
+          },
+          "children": [
+            {
+              "tag": "Column",
+              "value": {
+                "modifiers": [
+                  {
+                    "tag": "Width",
+                    "value": 112
+                  },
+                  {
+                    "tag": "Height",
+                    "value": 200
+                  }
+                ],
+                "props": {
+                  "verticalArrangement": "SpaceBetween"
+                },
+                "children": [
+                  {
+                    "tag": "Column",
+                    "value": {
+                      "modifiers": [],
+                      "props": {},
+                      "children": [
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 112
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 64
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/count-3.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Spacer",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Height",
+                                "value": 6
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 112
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 14
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/done-today.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "tag": "Column",
+                    "value": {
+                      "modifiers": [],
+                      "props": {},
+                      "children": [
+                        {
+                          "tag": "Text",
+                          "value": {
+                            "modifiers": [],
+                            "props": {
+                              "style": "BodySmallRegular",
+                              "color": "FgSecondary"
+                            },
+                            "children": [
+                              {
+                                "tag": "String",
+                                "value": {
+                                  "text": "NEW SET IN"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "tag": "Text",
+                          "value": {
+                            "modifiers": [],
+                            "props": {
+                              "style": "TitleMediumRegular",
+                              "color": "FgPrimary"
+                            },
+                            "children": [
+                              {
+                                "tag": "String",
+                                "value": {
+                                  "text": "12:00:00"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "tag": "Row",
+                    "value": {
+                      "modifiers": [],
+                      "props": {
+                        "verticalAlignment": "Center",
+                        "horizontalArrangement": "Start"
+                      },
+                      "children": [
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 16
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 20
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/flame.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Spacer",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 5
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "tag": "Text",
+                          "value": {
+                            "modifiers": [],
+                            "props": {
+                              "style": "BodyLargeRegular",
+                              "color": "FgWarning"
+                            },
+                            "children": [
+                              {
+                                "tag": "String",
+                                "value": {
+                                  "text": "5"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "tag": "Spacer",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 14
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 16
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 16
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/gem.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Spacer",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 5
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "tag": "Text",
+                          "value": {
+                            "modifiers": [],
+                            "props": {
+                              "style": "BodyLargeRegular",
+                              "color": "FgPrimary"
+                            },
+                            "children": [
+                              {
+                                "tag": "String",
+                                "value": {
+                                  "text": "2"
+                                }
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "tag": "Spacer",
+              "value": {
+                "modifiers": [
+                  {
+                    "tag": "Width",
+                    "value": 14
+                  }
+                ]
+              }
+            },
+            {
+              "tag": "Column",
+              "value": {
+                "modifiers": [
+                  {
+                    "tag": "FillWidth",
+                    "value": true
+                  },
+                  {
+                    "tag": "Height",
+                    "value": 200
+                  }
+                ],
+                "props": {},
+                "children": [
+                  {
+                    "tag": "Row",
+                    "value": {
+                      "modifiers": [
+                        {
+                          "tag": "FillWidth",
+                          "value": true
+                        },
+                        {
+                          "tag": "Height",
+                          "value": 95
+                        }
+                      ],
+                      "props": {
+                        "verticalAlignment": "Center",
+                        "horizontalArrangement": "SpaceBetween"
+                      },
+                      "children": [
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-word-done.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-sudoku-done.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-chess-done.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "tag": "Spacer",
+                    "value": {
+                      "modifiers": [
+                        {
+                          "tag": "Height",
+                          "value": 10
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "tag": "Row",
+                    "value": {
+                      "modifiers": [
+                        {
+                          "tag": "FillWidth",
+                          "value": true
+                        },
+                        {
+                          "tag": "Height",
+                          "value": 95
+                        }
+                      ],
+                      "props": {
+                        "verticalAlignment": "Center",
+                        "horizontalArrangement": "SpaceBetween"
+                      },
+                      "children": [
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-globe-idle.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-mini-idle.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-connections-idle.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

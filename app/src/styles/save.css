@@ -1,0 +1,259 @@
+/* The save prompt (Save-Overlay, Save-Wait boards): no sign sheet opens before the player taps Save. */
+.save-layer {
+  position: fixed;
+  z-index: 70;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.save-layer--overlay {
+  background: rgb(10 12 13 / 72%);
+  backdrop-filter: blur(3px);
+}
+
+.save-layer--sheet {
+  background: linear-gradient(to bottom, transparent 45%, rgb(10 12 13 / 55%));
+}
+
+.save-dialog {
+  display: flex;
+  width: min(100%, 520px);
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 26px max(20px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
+  flex-direction: column;
+  gap: 14px;
+  border-radius: 28px 28px 0 0;
+  background: var(--surface);
+  box-shadow: 0 -8px 32px rgb(0 0 0 / 35%);
+  color: var(--text);
+  outline: none;
+}
+
+.save-tiles {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.save-tile {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--tile-empty);
+}
+
+.save-tile--lit {
+  background: var(--tile-accent, var(--accent));
+}
+
+.save-title {
+  margin: 4px 0 0;
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.save-title--sheet {
+  font-size: 22px;
+}
+
+.save-lede {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.save-steps {
+  display: flex;
+  margin: 4px 0 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+
+.save-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.save-step-number {
+  display: grid;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--tile-empty);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.save-fine {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.save-primary {
+  height: 56px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--tile-accent, var(--accent));
+  color: var(--accent-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.save-later {
+  height: 44px;
+  margin-top: -6px;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.save-phone {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  place-items: center;
+  border-radius: 28px;
+  background: color-mix(in oklab, var(--accent) 14%, var(--surface));
+  box-shadow: 0 0 0 6px color-mix(in oklab, var(--accent) 7%, var(--surface));
+  color: var(--accent);
+}
+
+.save-phone svg {
+  width: 28px;
+  height: 28px;
+}
+
+.save-progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--tile-empty);
+}
+
+.save-progress span {
+  display: block;
+  width: 40%;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--tile-accent, var(--accent));
+  animation: save-progress 1.4s ease-in-out infinite;
+}
+
+@keyframes save-progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(250%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .save-progress span {
+    animation: none;
+  }
+}
+
+/* The unsaved result (after Not now): "Not saved yet" with Save in the game's accent, above Next. */
+.result-unsaved-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  min-height: 60px;
+  box-sizing: border-box;
+  padding: 8px 8px 8px 16px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1.5px var(--unsaved-ring);
+}
+
+.result-unsaved-line {
+  color: var(--unsaved-text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.result-unsaved-save {
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--tile-accent, var(--accent));
+  color: var(--accent-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* The hub row of a finished, unsaved game (Save-Hub board). */
+.game-row[data-state="unrecorded"] {
+  box-shadow: inset 0 0 0 1.5px var(--unsaved-ring);
+}
+
+.game-row[data-state="unrecorded"] .game-row-tile {
+  background: var(--tile-accent, var(--accent));
+  color: var(--accent-ink);
+}
+
+.game-row[data-state="unrecorded"] .game-row-line {
+  color: var(--unsaved-text);
+}
+
+.game-row[data-state="unrecorded"] .game-row-action {
+  background: var(--tile-accent, var(--accent));
+  color: var(--accent-ink);
+}
+
+/* Nothing records while the prompt still asks: no status, no second Save behind it. */
+:root[data-save-phase="asking"] [data-save-status] {
+  visibility: hidden;
+}
+
+/* "Recording your score…" only while the write runs. */
+.result-unsaved-row[data-result-unsaved="unsaved"] .result-unsaved-recording {
+  display: none;
+}
+
+:root[data-save-phase="saving"] .result-unsaved-row[data-result-unsaved="unsaved"] :is(.result-unsaved-idle, .result-unsaved-save) {
+  display: none;
+}
+
+:root[data-save-phase="saving"] .result-unsaved-row[data-result-unsaved="unsaved"] .result-unsaved-recording {
+  display: inline;
+}
+
+/* The result layout has no game status line (the panel's subline says it). */
+.page.page--result .connections-result {
+  display: none;
+}

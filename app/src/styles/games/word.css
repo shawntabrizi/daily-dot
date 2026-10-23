@@ -1,0 +1,377 @@
+/* Daily Word: shell, guess grid, letter tiles, keyboard (the keyboard is shared with Mini).
+   WP36 A4: neutral while playing; the winning row and the solved line take --accent-word. */
+
+.word-shell {
+  width: min(100%, 720px);
+  min-height: 620px;
+  margin: 0 auto;
+  padding: 18px 10px 16px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.word-stage {
+  display: flex;
+  min-height: 584px;
+  flex-direction: column;
+}
+
+.word-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px 16px;
+}
+
+.word-meta > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.word-meta span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.word-meta strong {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.guess-grid {
+  --tile-size: min(64px, calc((100vw - 90px) / var(--letters)));
+  --row-gap: 6px;
+  display: flex;
+  min-height: 360px;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--row-gap);
+}
+
+/* The main word has no guess cap: past six rows the grid keeps its six-row
+   height and scrolls inside its box (D18). */
+.guess-grid--scroll {
+  max-height: calc(6 * var(--tile-size) + 5 * var(--row-gap));
+  justify-content: flex-start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.guess-grid--scroll .guess-row {
+  flex: none;
+}
+
+.guess-row {
+  display: grid;
+  grid-template-columns: repeat(var(--letters), var(--tile-size));
+  gap: 6px;
+}
+
+/* The winning row glows in the accent once the word is solved (decision 1). */
+.guess-row--won .letter-tile {
+  box-shadow:
+    0 0 0 2px var(--accent-word),
+    0 0 18px color-mix(in oklab, var(--accent-word) 55%, transparent);
+}
+
+.letter-tile {
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--tile-empty);
+  color: var(--text);
+  font-family: var(--display);
+  font-size: clamp(18px, calc(var(--tile-size) * 0.42), 26px);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.letter-tile--game {
+  width: var(--tile-size);
+  height: var(--tile-size);
+}
+
+.letter-tile--mini {
+  width: 32px;
+  height: 32px;
+}
+
+.letter-tile--correct {
+  background: var(--correct);
+}
+
+.letter-tile--present {
+  background: var(--present);
+}
+
+.letter-tile--absent {
+  background: var(--neutral);
+}
+
+.word-message {
+  min-height: 21px;
+  margin: 10px 0 9px;
+  color: #d1d2d2;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.word-message--solved {
+  color: var(--accent-word);
+  font-weight: 700;
+}
+
+.word-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+
+.word-actions:empty {
+  display: none;
+}
+
+.word-action {
+  min-height: 44px;
+  background: var(--text);
+  color: var(--bg);
+  cursor: pointer;
+}
+
+.keyboard {
+  display: flex;
+  width: min(100%, 390px);
+  margin: 0 auto;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.keyboard-row {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 4px;
+}
+
+.keyboard-key {
+  display: grid;
+  width: auto;
+  min-width: 0;
+  max-width: 32px;
+  height: 50px;
+  padding: 0;
+  flex: 1 1 0;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: var(--neutral);
+  color: var(--text);
+  cursor: pointer;
+  font-size: clamp(14px, 5vw, 20px);
+  font-weight: 900;
+}
+
+.keyboard-key--wide {
+  max-width: 52px;
+  flex-grow: 1.65;
+  font-size: 9px;
+}
+
+.keyboard-key--correct {
+  background: var(--correct);
+}
+
+.keyboard-key--present {
+  background: var(--present);
+}
+
+.keyboard-key--absent {
+  background: #454849;
+}
+
+@media (min-width: 560px) {
+  .word-shell {
+    padding: 22px;
+  }
+}
+
+@media (min-width: 780px) {
+  .word-shell,
+  .word-stage,
+  .guess-grid {
+    min-height: 0;
+  }
+
+  .guess-grid {
+    --tile-size: max(28px, min(64px, calc((100dvh - 730px) / 6)));
+  }
+}
+
+@media (max-width: 559px) and (max-height: 850px) {
+  .word-page {
+    display: flex;
+    height: calc(100dvh - 64px);
+    min-height: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .word-page .game-heading {
+    flex: none;
+    margin-bottom: 8px;
+  }
+
+  .word-page .game-heading .eyebrow {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .word-page .game-heading h1 {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .word-shell {
+    flex: 1;
+    min-height: 0;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .word-stage {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .word-meta {
+    padding-bottom: 6px;
+  }
+
+  .word-meta strong {
+    font-size: 14px;
+  }
+
+  .guess-grid {
+    --tile-size: max(
+      28px,
+      min(
+        48px,
+        calc((100vw - 83px) / var(--letters)),
+        calc((100dvh - 490px) / 6)
+      )
+    );
+    --row-gap: 5px;
+    min-height: 0;
+  }
+
+  .guess-row {
+    gap: 5px;
+  }
+
+  .word-message {
+    min-height: 18px;
+    margin: 4px 0;
+    font-size: 11px;
+    line-height: 18px;
+  }
+
+  .word-actions {
+    margin-bottom: 4px;
+  }
+
+  .word-action {
+    font-size: 12px;
+  }
+
+  /* Resolved: the result panel is taller than the keyboard it replaces, so
+     the stage scrolls and the grid keeps its natural height instead of
+     collapsing over the heading (WP36 A2 known issue). */
+  .word-stage--resolved {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .word-stage--resolved .guess-grid {
+    --tile-size: max(28px, min(40px, calc((100vw - 83px) / var(--letters)), calc((100dvh - 560px) / 6)));
+    flex: none;
+  }
+
+  .keyboard {
+    gap: 4px;
+  }
+
+  .keyboard-row {
+    gap: 3px;
+  }
+
+  .keyboard-key {
+    height: 42px;
+  }
+}
+
+/* The Result board: the page scrolls as one, no card around the grid, only the played
+   rows at 40 px, and no meta or status line (the result panel carries both). */
+.word-page.word-page--result {
+  display: block;
+  height: auto;
+  overflow: visible;
+}
+
+.word-page--result .word-shell {
+  min-height: 0;
+  padding: 0;
+  background: none;
+}
+
+.word-page--result .word-stage {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.word-page--result .word-meta,
+.word-page--result .word-message {
+  display: none;
+}
+
+.word-page--result .guess-grid {
+  --tile-size: 40px;
+  min-height: 0;
+  flex: none;
+  padding-top: 14px;
+}
+
+/* The Result board draws the guesses as plain squares: 40 px, radius 8, gap 5, no
+   letters, absent squares in the empty-tile grey, no glow on the winning row. */
+.word-page--result .guess-grid {
+  --row-gap: 5px;
+}
+
+.word-page--result .guess-row {
+  gap: 5px;
+}
+
+.word-page--result .letter-tile {
+  border: 0;
+  border-radius: 8px;
+  box-shadow: none;
+  color: transparent;
+}
+
+.word-page--result .letter-tile--absent {
+  background: var(--tile-empty);
+}

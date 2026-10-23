@@ -1,0 +1,843 @@
+/* Shell: base elements, the per-screen header, the drawer, page frame, toast, shared game chrome, card page, placeholder page. */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+button,
+select {
+  color: inherit;
+  font: inherit;
+}
+
+button,
+a,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+a {
+  color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--present);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2 {
+  font-family: var(--display);
+  font-weight: 600;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: 30px;
+  line-height: 1.05;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+#main-content {
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* The per-screen header as the boards draw it: a 44 px circle on the left (menu on the
+   hub, back elsewhere), a centred title or eyebrow, one control on the right. No hairline,
+   no blur. */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: min(100%, 520px);
+  margin: 0 auto;
+  padding: 14px 16px 0;
+}
+
+.site-header[data-left="menu"] {
+  padding-bottom: 6px;
+}
+
+.header-circle {
+  display: grid;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 22px;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.header-circle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.header-circle[hidden] {
+  display: none;
+}
+
+.site-title {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Another screen's eyebrow in the title slot: "DAILY WORD · DAY 294". */
+.site-title[data-kind="eyebrow"] {
+  color: var(--muted);
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* A game screen's title (Game board): accent dot and the short name. */
+.site-title[data-kind="game"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0;
+}
+
+.header-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+}
+
+/* The day pill on a game screen: 30 px tall, raised surface, muted caps. */
+.header-day {
+  display: inline-flex;
+  height: 30px;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 15px;
+  background: var(--surface-raised);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.header-day[hidden] {
+  display: none;
+}
+
+/* The right slot keeps the title centred when the pill is off: a 44 px spacer. */
+.header-right {
+  display: flex;
+  flex: none;
+  min-width: 44px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* The streak pill: a 36 px pill inside a 44 px target. Gold tint, blue inset ring, gold
+   flame and count, the blue gem count only above 0. */
+.streak-pill {
+  display: inline-flex;
+  height: 44px;
+  align-items: center;
+  text-decoration: none;
+}
+
+.streak-pill[hidden] {
+  display: none;
+}
+
+.streak-pill-body {
+  display: inline-flex;
+  height: 36px;
+  padding: 0 12px 0 10px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 18px;
+  background: var(--streak-gold-tint);
+  box-shadow: inset 0 0 0 2px var(--streak-blue);
+  color: var(--streak-gold);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.streak-pill-any,
+.streak-pill-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.streak-pill-all {
+  margin-left: 2px;
+  color: var(--streak-blue);
+  font-size: 12px;
+}
+
+.streak-pill-all[hidden] {
+  display: none;
+}
+
+.streak-pill-any svg {
+  width: 14px;
+  height: 18px;
+}
+
+.icon-button {
+  display: inline-grid;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.28;
+}
+
+/* The drawer behind the hub's hamburger: nav list and the activity strip, in the
+   boards' language (surface, 18 px radii, Fredoka title). */
+.drawer-shell {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+}
+
+.drawer-shell[hidden] {
+  display: none;
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  background: rgb(0 0 0 / 58%);
+  cursor: pointer;
+}
+
+.drawer {
+  position: relative;
+  display: flex;
+  width: min(84vw, 340px);
+  max-height: 100dvh;
+  min-height: 100%;
+  padding: 14px 16px 24px;
+  flex-direction: column;
+  overflow-y: auto;
+  border-radius: 0 18px 18px 0;
+  background: var(--surface);
+  box-shadow: 12px 0 34px rgb(0 0 0 / 35%);
+  transform: translateX(-100%);
+  transition: transform 180ms ease;
+}
+
+.drawer-shell.is-open .drawer {
+  transform: translateX(0);
+}
+
+.drawer-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+
+.drawer-heading strong {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.drawer-heading .icon-button {
+  flex-basis: 44px;
+  width: 44px;
+  height: 44px;
+}
+
+.drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawer-nav a {
+  display: flex;
+  min-height: 44px;
+  padding: 10px 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.drawer-nav a:hover {
+  background: var(--surface-raised);
+}
+
+.drawer-label {
+  padding: 18px 12px 6px;
+  color: var(--dim);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.drawer-completion-check {
+  display: inline-grid;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--correct);
+  color: var(--accent-word-ink);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.drawer-completion-check[hidden] {
+  display: none;
+}
+
+.drawer-activity {
+  margin-top: 18px;
+  padding: 16px 14px 12px;
+  border-radius: 18px;
+  background: var(--surface-raised);
+}
+
+.drawer-activity-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.drawer-activity-heading strong {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.drawer-activity-heading span {
+  color: var(--text);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.activity-strip {
+  width: 100%;
+  min-height: 40px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: var(--neutral) transparent;
+  scrollbar-width: thin;
+}
+
+.activity-track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+  /* 3px each side: today's 2px ring sits inside the scroll box, not clipped. */
+  padding: 3px 3px 5px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.activity-day {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.activity-day--played {
+  background: var(--streak-gold);
+  color: var(--streak-ink);
+}
+
+.activity-day--unplayed {
+  background: var(--tile-empty);
+  color: var(--muted);
+}
+
+.activity-day--today {
+  box-shadow: 0 0 0 2px var(--text);
+}
+
+.activity-connector {
+  flex: 0 0 9px;
+  height: 4px;
+  background: var(--tile-empty);
+}
+
+.activity-connector--played {
+  background: var(--streak-gold);
+}
+
+.activity-loading {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.drawer-nudge {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.page {
+  width: min(100%, 1160px);
+  margin: 0 auto;
+  padding: 10px 16px 32px;
+}
+
+/* Eyebrows: 11 px 800, wide tracking, muted (the boards). */
+.eyebrow {
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.toast {
+  position: fixed;
+  z-index: 70;
+  right: 16px;
+  bottom: 18px;
+  left: 16px;
+  max-width: 420px;
+  margin: auto;
+  padding: 12px 16px;
+  border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 30%);
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  transform: translateY(12px);
+  transition: 160ms ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pocket-offer {
+  position: fixed;
+  z-index: 60;
+  right: 16px;
+  bottom: 18px;
+  left: 16px;
+  display: grid;
+  max-width: 420px;
+  margin: auto;
+  padding: 16px;
+  gap: 8px;
+  border: 1px solid color-mix(in oklab, var(--text) 10%, transparent);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 8px 32px rgb(0 0 0 / 30%);
+  font-size: 14px;
+}
+
+.pocket-offer__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.pocket-offer__actions [data-dismiss],
+.pocket-offer__actions [data-card-page] {
+  border: 0;
+  background: transparent;
+  color: #c4c6c6;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.game-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.game-heading {
+  width: min(100%, 720px);
+  margin: 0 auto 22px;
+}
+
+.day-chip {
+  flex: none;
+  padding: 8px 11px;
+  border-radius: 100px;
+  background: var(--surface-raised);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.game-loading,
+.game-error {
+  display: flex;
+  min-height: 560px;
+  padding: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #c3c5c5;
+  text-align: center;
+}
+
+.game-error strong {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 26px;
+}
+
+/* Primary filled --text on --bg, secondary on --surface-raised (WP36 A4, buttons). */
+.game-error .button-link--button {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.game-error-back {
+  margin-top: 10px;
+  background: var(--surface-raised);
+  color: var(--text);
+}
+
+/* The rule line: a box at the bottom of the page with a gold bulb and one muted line (the boards). */
+.game-rule {
+  display: flex;
+  width: min(100%, 720px);
+  margin: 14px auto 0;
+  padding: 10px 14px;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--bg) 50%, var(--surface));
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.game-rule[hidden] {
+  display: none;
+}
+
+.game-rule-bulb {
+  display: inline-flex;
+  flex: none;
+  color: var(--streak-gold);
+}
+
+.game-rule-bulb svg {
+  width: 18px;
+  height: 18px;
+}
+
+.button-link {
+  display: inline-flex;
+  min-height: 44px;
+  padding: 0 18px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 14px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.button-link--button {
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+.card-page-intro {
+  margin: 0 auto 28px;
+}
+
+.card-page-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.card-panel {
+  min-width: 0;
+  padding: 22px 20px;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: 0 12px 34px rgb(0 0 0 / 13%);
+}
+
+.card-panel h2 {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.card-panel p,
+.card-panel li {
+  color: #c4c6c6;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.card-panel ol {
+  padding-left: 20px;
+}
+
+.card-panel--qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+/* A white tile: a phone camera needs dark modules on a light ground. */
+.qr-tile {
+  width: min(100%, 240px);
+  padding: 14px;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.qr-tile svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.card-panel__note {
+  margin: 0;
+}
+
+.card-panel__action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.card-panel__action .button-link {
+  width: 100%;
+  max-width: 320px;
+}
+
+.copy-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+}
+
+.copy-row__text {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--surface-raised);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: left;
+  word-break: break-all;
+  user-select: all;
+}
+
+.copy-row__button {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--neutral);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+@media (min-width: 780px) {
+  .card-page-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .card-panel--qr {
+    grid-row: 1 / span 3;
+  }
+}
+
+.placeholder-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.placeholder-page h1 {
+  margin-bottom: 15px;
+}
+
+.placeholder-page p:not(.eyebrow) {
+  color: #b8baba;
+}
+
+.placeholder-page .button-link {
+  margin-top: 16px;
+}
+
+.placeholder-mark {
+  display: grid;
+  width: 112px;
+  height: 112px;
+  margin-bottom: 27px;
+  place-items: center;
+  border-radius: 22px;
+  background: var(--surface);
+  font-family: var(--display);
+  font-size: 37px;
+}
+
+.placeholder-mark--chess {
+  font-size: 58px;
+}
+
+@media (min-width: 780px) {
+  #main-content {
+    max-width: 1120px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* A past day's game: "‹ DAY N ›", the same game a day earlier or later (Archive board); 44 px targets. */
+.header-day--switch {
+  height: 44px;
+  padding: 0;
+  border-radius: 22px;
+}
+
+.header-day-step {
+  display: grid;
+  width: 40px;
+  height: 44px;
+  place-items: center;
+  color: var(--text);
+}
+
+.header-day-step svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.2;
+}

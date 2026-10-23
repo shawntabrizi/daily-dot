@@ -1,0 +1,41 @@
+{
+  "network": "paseo-next-v2",
+  "chain": "paseo-asset-hub",
+  "status": "deployed",
+  "contracts": {
+    "scores": "0xd73e83ed956dfe25f1cc5a17cba73fc7263486e3",
+    "word": "0xb31cbec3f1fee095d18c82e53143a9ef65155830",
+    "chess": "0x4775352f3993d66cf7d562c91f730d11973cf0aa",
+    "mini": "0x085b864b03ed14bf0b24b60538267d433914c166",
+    "connections": "0xcf098c719f63d7bef5c90d1436f41c0d525696af"
+  },
+  "abis": {
+    "scores": {
+      "file": "paseo-next-v2-scores-938ac2186a4c.abi.json",
+      "sha256": "938ac2186a4cddef7be2b8da97c08df432b8fb1814bf595c98843c4cd3de8035"
+    },
+    "word": {
+      "file": "paseo-next-v2-word-5054e704fb24.abi.json",
+      "sha256": "5054e704fb246610ceff115eb5ebd8b66b704929331c2d61698df29a667503eb"
+    },
+    "chess": {
+      "file": "paseo-next-v2-chess-d04788c018ca.abi.json",
+      "sha256": "d04788c018ca867d25f7ea2c459f2ae1cd51c4bbf76a27533474dd26f3391731"
+    },
+    "mini": {
+      "file": "paseo-next-v2-mini-772f2ebf82ed.abi.json",
+      "sha256": "772f2ebf82edce628ae3ec3940c168d8c04631d604abfdb0e2c976d942fa998c"
+    },
+    "connections": {
+      "file": "paseo-next-v2-connections-d730eeebb7bc.abi.json",
+      "sha256": "d730eeebb7bcff48e752116eea6214fe3162648b4849cbb227b59844551e7508"
+    }
+  },
+  "deployedAt": "2026-10-22T07:20:34.339Z",
+  "content": {
+    "chessSetId": 0,
+    "miniSetId": 0,
+    "connectionsSetId": 0,
+    "wordListId": 2
+  }
+}

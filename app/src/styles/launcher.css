@@ -1,0 +1,255 @@
+/* Launcher: the half-height sheet beneath the Pocket card (WP29; the hub board's rows, WP37 R1).
+   Head and foot stay put; the six rows fit the half sheet in two columns, and the
+   list scrolls only as the safety net on a shorter sheet. A row's icon tile lights
+   in the game's accent once the game is done; the Play button fills in the selected
+   game's accent. */
+
+.launcher {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.launcher__head {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 16px 8px;
+}
+
+.launcher__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.launcher__title strong {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.launcher__count {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.launcher__streaks {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.launcher__streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.launcher__streak svg {
+  width: 15px;
+  height: 15px;
+}
+
+.launcher__streak--any {
+  color: var(--streak-gold);
+}
+
+.launcher__streak--all {
+  color: var(--streak-blue);
+}
+
+.launcher__list {
+  /* Two columns of three: six games fit a half-height sheet without scrolling. */
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  align-content: start;
+  min-height: 0;
+  padding: 0 12px 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.launcher-row {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  min-width: 0;
+  padding: 6px 10px 6px 6px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+/* The selected row carries a text-colour ring: the accent means done, not picked. */
+.launcher-row.is-selected {
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+
+.launcher-row[data-launcher-game="word"],
+.launcher[data-launcher-selected="word"] .launcher__play {
+  --accent: var(--accent-word);
+  --accent-ink: var(--accent-word-ink);
+}
+
+.launcher-row[data-launcher-game="sudoku"],
+.launcher[data-launcher-selected="sudoku"] .launcher__play {
+  --accent: var(--accent-sudoku);
+  --accent-ink: var(--accent-sudoku-ink);
+}
+
+.launcher-row[data-launcher-game="chess"],
+.launcher[data-launcher-selected="chess"] .launcher__play {
+  --accent: var(--accent-chess);
+  --accent-ink: var(--accent-chess-ink);
+}
+
+.launcher-row[data-launcher-game="globe"],
+.launcher[data-launcher-selected="globe"] .launcher__play {
+  --accent: var(--accent-globe);
+  --accent-ink: var(--accent-globe-ink);
+}
+
+.launcher-row[data-launcher-game="mini"],
+.launcher[data-launcher-selected="mini"] .launcher__play {
+  --accent: var(--accent-mini);
+  --accent-ink: var(--accent-mini-ink);
+}
+
+.launcher-row[data-launcher-game="connections"],
+.launcher[data-launcher-selected="connections"] .launcher__play {
+  --accent: var(--accent-connections);
+  --accent-ink: var(--accent-connections-ink);
+}
+
+.launcher-row__icon {
+  display: inline-grid;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  color: var(--muted);
+}
+
+.launcher-row__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.launcher-row.is-played .launcher-row__icon {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Name over state word: "Connections" plus "Resume" do not fit side by side in a
+   165 px column at 360 px, and a cut game name is worse than a second line. */
+.launcher-row__text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.launcher-row__name {
+  overflow: hidden;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The state pill, as the hub's: Play and Done neutral, Resume in the game's accent. */
+.launcher-row__state {
+  display: inline-flex;
+  align-self: flex-start;
+  height: 22px;
+  margin-top: 2px;
+  padding: 0 9px;
+  align-items: center;
+  border-radius: 11px;
+  background: var(--tile-empty);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.launcher-row[data-launcher-state="started"] .launcher-row__state {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.launcher-row[data-launcher-state="done"] .launcher-row__state {
+  color: var(--muted);
+}
+
+.launcher__foot {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 8px 12px calc(10px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--surface);
+}
+
+/* The Play button fills in the selected game's accent (set on `.launcher[data-launcher-selected]`). */
+.launcher__play {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 17px;
+  background: var(--accent, var(--text));
+  color: var(--accent-ink, var(--bg));
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.launcher__open {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.launcher.is-opening .launcher-row,
+.launcher.is-opening .launcher__play,
+.launcher.is-opening .launcher__open {
+  opacity: 0.6;
+  pointer-events: none;
+}

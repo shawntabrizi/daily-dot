@@ -1,0 +1,29 @@
+{
+  "name": "daily-on-dot",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "pocket:art": "node --import tsx tools/render-card-art.mts",
+    "pocket:assets": "node --import tsx tools/write-pocket-assets.mts",
+    "pocket:build": "pnpm pocket:assets && pnpm --filter daily-on-dot-pocket build && node --import tsx tools/check-worker-ascii.mts",
+    "pocket:publish": "node --import tsx tools/publish-pocket-cards.mts",
+    "pocket:test": "pnpm --filter daily-on-dot-prototype exec vitest run --root ../pocket",
+    "smoke": "node --import tsx tools/smoke-worker.mts",
+    "smoke:host": "node --import tsx tools/host-smoke.mts",
+    "smoke:record": "node --import tsx tools/record-smoke.mts"
+  },
+  "devDependencies": {
+    "@parity/product-sdk-host": "0.27.1",
+    "@parity/product-sdk-renderer": "0.7.0",
+    "@parity/truapi": "0.25.0",
+    "@types/node": "^26.1.1",
+    "bulletin-deploy": "0.23.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.9.2"
+  }
+}

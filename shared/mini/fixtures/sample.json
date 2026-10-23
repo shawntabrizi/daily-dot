@@ -1,0 +1,17 @@
+{
+  "name": "Daily Mini sample",
+  "emoji": "🔠",
+  "startDay": 0,
+  "puzzles": [
+    {
+      "grid": "#GET#HEARTANGERDELAY#SET#",
+      "across": ["Obtain", "Valentine symbol", "Fury", "Hold up", "Tennis unit"],
+      "down": ["Possessed", "DNA units", "Bird on the US seal", "Halloween request", "Give it a go"]
+    },
+    {
+      "grid": "DIG##ITEM#DENIM#MINI#SEED",
+      "across": ["Use a shovel", "Thing on a list", "Jeans fabric", "This puzzle's size", "Start of a plant"],
+      "down": ["Performed", "Shopping list entries", "Lamp dweller", "Belonging to me", "Halfway prefix"]
+    }
+  ]
+}

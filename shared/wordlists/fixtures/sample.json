@@ -1,0 +1,6 @@
+{
+  "name": "Word validator sample",
+  "emoji": "🧪",
+  "startDay": 0,
+  "words": ["planet", "forest"]
+}

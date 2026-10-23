@@ -1,0 +1,192 @@
+// Bakes the Pocket card's art into pocket/public/tiles/ as PNG.
+//
+// The card is the approved board (plans/wp-36-boards/Main.dc.html, "Proposed:
+// scoreboard"). The renderer has nine theme colours, five text styles and no
+// Fredoka or Nunito, so every coloured or typeset mark on the card is an image
+// from the worker archive: the "n/6" count (seven), the "DONE TODAY" label,
+// the flame and the gem of the two streaks, and the six game tiles whole
+// (accent fill with ink glyph and label when done, dark with a ring when
+// not). The state strip is a plain Box in a theme colour, so it needs no art.
+// Each asset is the board's own HTML and CSS, rasterised at 3x by headless
+// Chromium (the app's Playwright) so it is crisp on a phone. Commit the PNGs:
+// Vite copies pocket/public into the worker archive.
+//
+// Fonts: Fredoka 700 and Nunito (variable, used at 800) latin woff2 (Google Fonts, OFL) read from
+// app/public/fonts/, or from CARD_ART_FONTS=<dir> when the app does not hold
+// them yet.
+//
+//   pnpm pocket:art
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+import { GAME_ROSTER, type GameSlug } from "../app/src/shared/roster.ts";
+import {
+  COUNT_HEIGHT,
+  COUNT_WIDTH,
+  FLAME_HEIGHT,
+  FLAME_WIDTH,
+  GEM_SIZE,
+  LABEL_HEIGHT,
+  LABEL_WIDTH,
+  TILE_HEIGHT,
+  TILE_RADIUS,
+  TILE_WIDTH,
+} from "../pocket/src/face.ts";
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const out = resolve(root, "pocket/public/tiles");
+const SCALE = 3;
+
+/** The six accents and the ink that sits on each (tokens.css `--accent-<id>`). */
+const ACCENT: Record<GameSlug, { fill: string; ink: string }> = {
+  word: { fill: "#55b725", ink: "#0d1a07" },
+  sudoku: { fill: "#22b8a0", ink: "#062420" },
+  chess: { fill: "#e07b39", ink: "#2a1407" },
+  globe: { fill: "#4f7df3", ink: "#0b1a3a" },
+  mini: { fill: "#d85a9e", ink: "#2b0a1c" },
+  connections: { fill: "#9b59c9", ink: "#ffffff" },
+};
+/** The idle tile and the ring around it. */
+const IDLE = { fill: "#202427", ink: "#8d9396", ring: "#2e3336" };
+/** The tile labels: each game's own name. A long name gets smaller type, never another name. */
+const LABEL: Record<GameSlug, string> = {
+  word: "WORD",
+  sudoku: "SUDOKU",
+  chess: "CHESS",
+  globe: "GLOBE",
+  mini: "MINI",
+  connections: "CONNECTIONS",
+};
+const WHITE = "#ffffff";
+const COUNT_MUTED = "#8d9396";
+const MUTED = "#9aa0a3";
+const GOLD = "#e8b53a";
+const BLUE = "#6fd3f7";
+
+const fontDir = process.env.CARD_ART_FONTS ?? resolve(root, "app/public/fonts");
+function fontFace(family: string, weight: number, file: string): string {
+  const path = resolve(fontDir, file);
+  if (!existsSync(path)) {
+    throw new Error(`font ${file} is missing from ${fontDir}; set CARD_ART_FONTS=<dir> to a folder that holds it`);
+  }
+  const data = readFileSync(path).toString("base64");
+  return `@font-face{font-family:"${family}";font-weight:${weight};src:url(data:font/woff2;base64,${data}) format("woff2")}`;
+}
+const FONT_FACES =
+  fontFace("Fredoka", 700, "fredoka-700-latin.woff2") + fontFace("Nunito", 800, "nunito-latin.woff2");
+
+/** The board's glyphs, 26x26, in the given ink. */
+const GLYPH: Record<GameSlug, (ink: string) => string> = {
+  word: (ink) =>
+    `<rect x="2" y="2" width="9" height="9" rx="2" fill="${ink}"/><rect x="15" y="2" width="9" height="9" rx="2" fill="${ink}" opacity="0.55"/><rect x="2" y="15" width="9" height="9" rx="2" fill="${ink}" opacity="0.55"/><rect x="15" y="15" width="9" height="9" rx="2" fill="${ink}"/>`,
+  sudoku: (ink) =>
+    `<path d="M3 3h20v20H3zM3 10h20M3 17h20M10 3v20M17 3v20" fill="none" stroke="${ink}" stroke-width="1.6"/>`,
+  chess: (ink) => `<path d="M9 23h8M10 20h6l-1-5c3-1 4-4 3-7l-3-3-2 2-2-2-3 3c-1 3 0 6 3 7z" fill="${ink}"/>`,
+  globe: (ink) =>
+    `<circle cx="13" cy="13" r="10" fill="none" stroke="${ink}" stroke-width="1.6"/><path d="M3 13h20M13 3c4 4 4 16 0 20M13 3c-4 4-4 16 0 20" fill="none" stroke="${ink}" stroke-width="1.6"/>`,
+  mini: (ink) =>
+    `<rect x="3" y="3" width="20" height="20" rx="2" fill="none" stroke="${ink}" stroke-width="2"/><path d="M3 11h20M11 3v20" stroke="${ink}" stroke-width="2"/><rect x="15" y="15" width="8" height="8" fill="${ink}"/>`,
+  connections: (ink) =>
+    `<circle cx="7" cy="7" r="3.5" fill="${ink}"/><circle cx="19" cy="7" r="3.5" fill="${ink}"/><circle cx="7" cy="19" r="3.5" fill="${ink}"/><circle cx="19" cy="19" r="3.5" fill="${ink}"/>`,
+};
+
+function svg(width: number, height: number, body: string): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${body}</svg>`;
+}
+
+/** One whole tile: glyph over label, centred, on the accent or the idle dark. */
+function tile(id: GameSlug, done: boolean): string {
+  const fill = done ? ACCENT[id].fill : IDLE.fill;
+  const ink = done ? ACCENT[id].ink : IDLE.ink;
+  const ring = done ? "" : `box-shadow:inset 0 0 0 1.5px ${IDLE.ring};`;
+  return (
+    `<div style="width:${TILE_WIDTH}px;height:${TILE_HEIGHT}px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:${TILE_RADIUS}px;background:${fill};color:${ink};${ring}">` +
+    svg(26, 26, GLYPH[id](ink)) +
+    `<span style="font-family:'Nunito';font-size:${LABEL[id].length > 8 ? "8.5px" : "11px"};font-weight:800;letter-spacing:${LABEL[id].length > 8 ? "0.01em" : "0.06em"};white-space:nowrap">${LABEL[id]}</span></div>`
+  );
+}
+
+/** The count: "n" big in Fredoka, "/N" small and muted, nothing behind it. */
+function count(n: number, total: number): string {
+  return (
+    `<div style="width:${COUNT_WIDTH}px;height:${COUNT_HEIGHT}px;display:flex;align-items:flex-end;font-family:'Fredoka';font-weight:700;font-size:64px;line-height:0.95;letter-spacing:-0.02em;color:${WHITE};white-space:nowrap">` +
+    `<div>${n}<span style="font-size:30px;color:${COUNT_MUTED}">/${total}</span></div></div>`
+  );
+}
+
+/** "DONE TODAY" under the count. */
+function doneToday(): string {
+  return `<div style="width:${LABEL_WIDTH}px;height:${LABEL_HEIGHT}px;display:flex;align-items:center;font-family:'Nunito';font-size:12px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:${MUTED};white-space:nowrap">done today</div>`;
+}
+
+/** The board's flame, 16x20, gold. */
+function flame(): string {
+  return svg(
+    FLAME_WIDTH,
+    FLAME_HEIGHT,
+    `<path d="M8 0c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z" fill="${GOLD}"/>`,
+  );
+}
+
+/** The board's gem, 16x16, blue outline. */
+function gem(): string {
+  return svg(GEM_SIZE, GEM_SIZE, `<path d="M8 1l7 7-7 7-7-7z" fill="none" stroke="${BLUE}" stroke-width="2"/>`);
+}
+
+interface Asset {
+  name: string;
+  width: number;
+  height: number;
+  html: string;
+}
+
+const assets: Asset[] = [
+  ...Array.from({ length: GAME_ROSTER.length + 1 }, (_, n) => ({
+    name: `count-${n}`,
+    width: COUNT_WIDTH,
+    height: COUNT_HEIGHT,
+    html: count(n, GAME_ROSTER.length),
+  })),
+  { name: "done-today", width: LABEL_WIDTH, height: LABEL_HEIGHT, html: doneToday() },
+  { name: "flame", width: FLAME_WIDTH, height: FLAME_HEIGHT, html: flame() },
+  { name: "gem", width: GEM_SIZE, height: GEM_SIZE, html: gem() },
+  ...GAME_ROSTER.flatMap((game) => [
+    { name: `tile-${game.id}-done`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, true) },
+    { name: `tile-${game.id}-idle`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, false) },
+  ]),
+];
+
+// Playwright is the app package's; the root has no dependency on it.
+const appRequire = createRequire(resolve(root, "app/package.json"));
+type Chromium = { launch(): Promise<{ newContext(o: object): Promise<any>; close(): Promise<void> }> };
+const playwright = (await import(pathToFileURL(appRequire.resolve("@playwright/test")).href)) as {
+  chromium?: Chromium;
+  default?: { chromium: Chromium };
+};
+// CommonJS package: the named exports ride on `default` under Node's ESM loader.
+const chromium = playwright.chromium ?? playwright.default!.chromium;
+
+mkdirSync(out, { recursive: true });
+const browser = await chromium.launch();
+let total = 0;
+try {
+  const context = await browser.newContext({ deviceScaleFactor: SCALE });
+  const page = await context.newPage();
+  for (const asset of assets) {
+    await page.setViewportSize({ width: asset.width, height: asset.height });
+    await page.setContent(
+      `<!doctype html><html><head><style>${FONT_FACES}html,body{margin:0;background:transparent}svg{display:block}</style></head><body>${asset.html}</body></html>`,
+    );
+    await page.evaluate(() => document.fonts.ready);
+    const png = resolve(out, `${asset.name}.png`);
+    await page.screenshot({ path: png, omitBackground: true, type: "png" });
+    const bytes = statSync(png).size;
+    total += bytes;
+    process.stdout.write(`${png.slice(root.length + 1)}: ${asset.width * SCALE}x${asset.height * SCALE}, ${bytes} bytes\n`);
+  }
+} finally {
+  await browser.close();
+}
+process.stdout.write(`${assets.length} assets, ${total} bytes; fonts from ${fontDir}\n`);

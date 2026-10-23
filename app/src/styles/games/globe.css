@@ -1,0 +1,352 @@
+/* Daily Globe: page, globe canvas, guess form and guess list.
+   WP36 A4: neutral while playing; the found country and the result line take --accent-globe. */
+
+.page.globe-page {
+  display: flex;
+  height: calc(100dvh - 64px);
+  min-height: 0;
+  padding-top: 18px;
+  padding-bottom: 12px;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.globe-page .game-heading {
+  flex: none;
+  margin-bottom: 12px;
+}
+
+.globe-shell {
+  display: flex;
+  width: min(100%, 720px);
+  min-height: 0;
+  margin: 0 auto;
+  padding: 14px;
+  flex: 1;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.globe-shell .game-loading,
+.globe-shell .game-error {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.globe-stage {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+/* Square, capped by height so heading, input and a few guess rows fit D18. */
+.globe-globe {
+  position: relative;
+  width: min(100%, 42vh);
+  margin: 0 auto 10px;
+  flex: none;
+  aspect-ratio: 1;
+}
+
+/* Over the disc's corner, where no land is drawn at 1×. */
+.globe-zoom {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.globe-zoom .icon-button {
+  flex-basis: 44px;
+  width: 44px;
+  height: 44px;
+  background: var(--surface-raised);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* The found country earns the accent: a ring around the globe (decision 1). */
+.globe-stage--done .globe-globe canvas {
+  box-shadow: 0 0 0 3px var(--accent-globe);
+}
+
+.globe-globe canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.globe-globe canvas:active {
+  cursor: grabbing;
+}
+
+.globe-meta {
+  display: flex;
+  min-height: 30px;
+  padding: 0 2px 8px;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.globe-meta span,
+.globe-form label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.globe-meta strong {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.globe-form {
+  display: flex;
+  padding-bottom: 8px;
+  flex: none;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.globe-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 84px;
+  gap: 6px;
+}
+
+.globe-input-row input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--neutral);
+  border-radius: 6px;
+  outline: 0;
+  background: var(--tile-empty);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+}
+
+.globe-input-row input:focus {
+  border-color: var(--text);
+  box-shadow: 0 0 0 1px var(--text);
+}
+
+.globe-input-row input[aria-invalid="true"] {
+  border-color: var(--wrong);
+  box-shadow: 0 0 0 1px var(--wrong);
+}
+
+.globe-input-row button {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--text);
+  color: var(--bg);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.globe-message {
+  min-height: 16px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+
+.globe-result {
+  min-height: 44px;
+  margin: 0 0 8px;
+  padding: 9px 12px;
+  flex: none;
+  border-radius: 7px;
+  background: var(--surface-globe);
+  box-shadow: inset 0 0 0 2px var(--accent-globe);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.globe-guess-list {
+  min-height: 0;
+  padding-right: 3px;
+  overflow-y: auto;
+  flex: 1;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--neutral) var(--tile-empty);
+  scrollbar-width: thin;
+}
+
+.globe-guess-list:focus-visible {
+  outline: 2px solid var(--present);
+  outline-offset: 2px;
+}
+
+.globe-empty {
+  display: grid;
+  height: 100%;
+  min-height: 120px;
+  margin: 0;
+  place-items: center;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.globe-guess-row {
+  --proximity-mix: 0%;
+  position: relative;
+  display: grid;
+  min-height: 52px;
+  padding: 7px 8px 7px 15px;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr) auto 34px;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 3px solid var(--surface);
+  border-radius: 7px;
+  background: var(--surface-raised);
+}
+
+.globe-guess-row::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 7px;
+  content: "";
+}
+
+.globe-guess-row--far::before {
+  background: color-mix(
+    in srgb,
+    var(--present) var(--proximity-mix),
+    var(--wrong)
+  );
+}
+
+.globe-guess-row--near::before {
+  background: color-mix(
+    in srgb,
+    var(--correct) var(--proximity-mix),
+    var(--present)
+  );
+}
+
+.globe-guess-country {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.globe-guess-country strong {
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.globe-guess-country span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.globe-distance {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.globe-direction {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--tile-empty);
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.globe-actions {
+  display: flex;
+  padding-top: 8px;
+  flex: none;
+  justify-content: center;
+}
+
+.globe-actions .button-link--button {
+  min-height: 44px;
+  margin-top: 0;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 12px;
+}
+
+.globe-page .game-rule {
+  flex: none;
+  margin-top: 8px;
+  padding-block: 8px;
+}
+
+@media (min-width: 780px) {
+  .page.globe-page {
+    padding-top: 28px;
+    padding-bottom: 16px;
+  }
+}
+
+@media (max-width: 559px) and (max-height: 850px) {
+  .page.globe-page {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .globe-page .game-heading {
+    margin-bottom: 8px;
+  }
+
+  .globe-page .game-heading .eyebrow {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .globe-page .game-heading h1 {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .globe-shell {
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+}

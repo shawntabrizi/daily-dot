@@ -1,0 +1,492 @@
+/* Home: the hub as the board draws it — head (date, greeting + headline, countdown block), six-segment bar, game rows, the done group, day summary (WP37 R1). */
+
+.home-page {
+  width: min(100%, 520px);
+  padding-top: 10px;
+}
+
+.home-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 6px;
+}
+
+.home-head .eyebrow {
+  margin: 0;
+}
+
+.home-head h1 {
+  margin-top: 4px;
+}
+
+.home-countdown {
+  flex: none;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  line-height: 1.6;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.home-countdown span {
+  color: var(--text);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+/* One segment per roster game; a segment takes the game's accent once it is done. */
+.day-bar {
+  display: flex;
+  gap: 5px;
+  padding: 10px 0 14px;
+}
+
+.day-bar-segment {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--tile-empty);
+}
+
+.day-bar-segment[data-done="true"][data-segment="word"] { background: var(--accent-word); }
+.day-bar-segment[data-done="true"][data-segment="sudoku"] { background: var(--accent-sudoku); }
+.day-bar-segment[data-done="true"][data-segment="chess"] { background: var(--accent-chess); }
+.day-bar-segment[data-done="true"][data-segment="globe"] { background: var(--accent-globe); }
+.day-bar-segment[data-done="true"][data-segment="mini"] { background: var(--accent-mini); }
+.day-bar-segment[data-done="true"][data-segment="connections"] { background: var(--accent-connections); }
+
+.game-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Each row carries its game's colours; the states below pick them up. */
+.game-row[data-game-row="word"] { --accent: var(--accent-word); --accent-ink: var(--accent-word-ink); --accent-text: var(--accent-word-text); --surface-tint: var(--surface-word); }
+.game-row[data-game-row="sudoku"] { --accent: var(--accent-sudoku); --accent-ink: var(--accent-sudoku-ink); --accent-text: var(--accent-sudoku-text); --surface-tint: var(--surface-sudoku); }
+.game-row[data-game-row="chess"] { --accent: var(--accent-chess); --accent-ink: var(--accent-chess-ink); --accent-text: var(--accent-chess-text); --surface-tint: var(--surface-chess); }
+.game-row[data-game-row="globe"] { --accent: var(--accent-globe); --accent-ink: var(--accent-globe-ink); --accent-text: var(--accent-globe-text); --surface-tint: var(--surface-globe); }
+.game-row[data-game-row="mini"] { --accent: var(--accent-mini); --accent-ink: var(--accent-mini-ink); --accent-text: var(--accent-mini-text); --surface-tint: var(--surface-mini); }
+.game-row[data-game-row="connections"] { --accent: var(--accent-connections); --accent-ink: var(--accent-connections-ink); --accent-text: var(--accent-connections-text); --surface-tint: var(--surface-connections); }
+
+/* The whole row is the link: 72 px tall, radius 18, on the surface. */
+.game-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--surface);
+  text-decoration: none;
+}
+
+.game-row-tile {
+  display: grid;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  color: var(--muted);
+}
+
+.game-row-tile svg {
+  width: 22px;
+  height: 22px;
+}
+
+.game-row-text {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.game-row-name {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.game-row-line {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.game-row-line:empty {
+  display: none;
+}
+
+.game-row-action {
+  display: inline-flex;
+  flex: none;
+  height: 34px;
+  padding: 0 14px;
+  align-items: center;
+  border-radius: 17px;
+  background: var(--tile-empty);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+/* In progress: the accent bar on the left, the tile tinted with the accent glyph, Resume in the accent. */
+.game-row[data-state="started"] {
+  box-shadow: inset 4px 0 0 var(--accent);
+}
+
+.game-row[data-state="started"] .game-row-tile {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent);
+}
+
+.game-row[data-state="started"] .game-row-action {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* Done: the tinted surface with a 1.5 px ring, the accent tile, the score in the accent. */
+.game-row[data-state="done"] {
+  padding: 12px 16px;
+  background: var(--surface-tint);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 35%, var(--surface-tint));
+}
+
+.game-row[data-state="done"] .game-row-tile {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.game-row[data-state="done"] .game-row-name {
+  font-size: 17px;
+}
+
+.game-row-score {
+  color: var(--accent-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.home-done {
+  margin-top: 10px;
+}
+
+.home-done[hidden] {
+  display: none;
+}
+
+/* "DONE TODAY": the board's #6c7275 fails 4.5:1 at 11 px, so the closest grey that passes. */
+.home-done-heading {
+  margin: 0 0 10px;
+  padding: 8px 4px 0;
+  color: var(--dim);
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.read-error {
+  display: flex;
+  margin: 0 0 10px;
+  padding: 12px 16px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.read-error[hidden] {
+  display: none;
+}
+
+.read-error button,
+.read-retry {
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+/* WP34: hub streak badges (gold flame: any game; blue gem: all games). */
+.streak-badges {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px 4px 6px;
+  border-radius: 100px;
+  background: var(--surface-raised);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.streak-badge[hidden] {
+  display: none;
+}
+
+.streak-badge svg {
+  width: 16px;
+  height: 16px;
+}
+
+.streak-badge--any {
+  color: var(--streak-gold);
+}
+
+.streak-badge--all {
+  color: var(--streak-blue);
+}
+
+.streak-badge strong {
+  color: var(--text);
+}
+
+.home-day-summary[hidden] {
+  display: none;
+}
+
+.home-day-summary {
+  margin-bottom: 10px;
+}
+
+.day-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 16px 16px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.day-summary-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.day-summary-head .eyebrow {
+  margin-bottom: 6px;
+  color: var(--streak-blue);
+}
+
+.day-summary-rank {
+  font-family: var(--display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.day-summary-note {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.day-summary-games {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 1px;
+  list-style: none;
+}
+
+.day-summary-game {
+  display: grid;
+  grid-template-columns: minmax(64px, auto) minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--surface-raised);
+  font-size: 13px;
+}
+
+.day-summary-name {
+  font-weight: 800;
+}
+
+.day-summary-score {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.day-summary-percentile {
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  text-align: right;
+}
+
+/* Three tiles, as on the result screen: the number large, the label small under it. */
+.day-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.day-summary-stat {
+  display: flex;
+  min-width: 0;
+  padding: 12px 6px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  text-align: center;
+}
+
+.day-summary-stat strong {
+  font-family: var(--display);
+  font-size: 24px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.day-summary-stat span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.stats-panel--hub {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.stats-panel--hub .hub-streak-stat {
+  min-height: 64px;
+}
+
+.stats-panel--hub .streak-badge {
+  font-size: 18px;
+}
+
+.stats-panel--hub .streak-badge svg {
+  width: 20px;
+  height: 20px;
+}
+
+.stats-panel[hidden] {
+  display: none;
+}
+
+@media (min-width: 560px) {
+  .stats-panel--hub {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* A past day's hub (Archive board): a day stepper in place of the greeting and the countdown, the headline with a gold Today chip, and the note at the foot. */
+.day-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.day-stepper-label {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.day-stepper-label .eyebrow {
+  margin: 0;
+}
+
+.day-stepper-label strong {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.day-step--none {
+  width: 44px;
+  height: 44px;
+  flex: none;
+}
+
+.home-head--past {
+  align-items: center;
+  padding-top: 16px;
+}
+
+.home-head--past h1 {
+  margin: 0;
+}
+
+.today-chip {
+  display: inline-flex;
+  flex: none;
+  min-height: 44px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  border-radius: 22px;
+  background: var(--streak-gold-tint);
+  color: var(--streak-gold);
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.today-chip svg {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+}
+
+/* The past-day note: the rule line's surface, a gold calendar glyph. */
+.past-note {
+  display: flex;
+  margin: 18px 0 0;
+  padding: 10px 14px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--bg) 50%, var(--surface));
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.past-note svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--streak-gold);
+}

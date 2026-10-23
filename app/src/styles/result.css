@@ -1,0 +1,327 @@
+/* Result: a finished game's result and the day's distribution, as the WP37 Result board draws them. */
+
+.result-panel-slot[hidden] {
+  display: none;
+}
+
+.result-panel-slot {
+  width: min(100%, 390px);
+  margin: 4px auto 0;
+}
+
+/* The game's own heading block leaves once the result shows (the header carries the title). */
+.game-heading[hidden] {
+  display: none;
+}
+
+/* No card: the sections sit on the page background. The accent is earned by the game. */
+.result {
+  --accent: var(--neutral);
+  --accent-ink: var(--text);
+  /* The board's two colours that are not shared tokens. */
+  --result-bar: #2e3336;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+  font-family: var(--body);
+  text-align: center;
+}
+
+.result[data-game="word"],
+.result-primary[data-game="word"] {
+  --accent: var(--accent-word);
+  --accent-ink: var(--accent-word-ink);
+}
+
+.result[data-game="sudoku"],
+.result-primary[data-game="sudoku"] {
+  --accent: var(--accent-sudoku);
+  --accent-ink: var(--accent-sudoku-ink);
+}
+
+.result[data-game="chess"],
+.result-primary[data-game="chess"] {
+  --accent: var(--accent-chess);
+  --accent-ink: var(--accent-chess-ink);
+}
+
+.result[data-game="globe"],
+.result-primary[data-game="globe"] {
+  --accent: var(--accent-globe);
+  --accent-ink: var(--accent-globe-ink);
+}
+
+.result[data-game="mini"],
+.result-primary[data-game="mini"] {
+  --accent: var(--accent-mini);
+  --accent-ink: var(--accent-mini-ink);
+}
+
+.result[data-game="connections"],
+.result-primary[data-game="connections"] {
+  --accent: var(--accent-connections);
+  --accent-ink: var(--accent-connections-ink);
+}
+
+.result--loading {
+  padding: 18px 0 0;
+}
+
+.result-loading {
+  margin: 0;
+}
+
+.result-head {
+  padding-top: 18px;
+}
+
+.result-headline {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.result-subline {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.result-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.result-tile {
+  padding: 12px 10px;
+  border-radius: 16px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.result-tile-value {
+  display: inline-flex;
+  align-items: center;
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.result-tile-value small {
+  font-size: 15px;
+}
+
+.result-tile-value svg {
+  width: 14px;
+  height: 18px;
+  margin-right: 4px;
+}
+
+.result-tile-label {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.result-tile--score .result-tile-value {
+  color: var(--accent);
+}
+
+.result-tile--streak .result-tile-value {
+  color: var(--streak-gold);
+}
+
+.result-milestone {
+  margin: 10px 0 0;
+  color: var(--streak-gold);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* The distribution card: the player's bar in the accent, the rest in the board's bar grey. */
+.distribution {
+  margin: 16px 0 0;
+  padding: 14px 16px 12px;
+  border-radius: 18px;
+  background: var(--surface);
+  text-align: left;
+}
+
+.distribution-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.distribution-total {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.distribution-you {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.distribution-bars {
+  display: flex;
+  height: 56px;
+  margin-top: 10px;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.distribution-column {
+  display: flex;
+  height: 100%;
+  min-width: 0;
+  flex: 1 1 0;
+  align-items: flex-end;
+}
+
+.distribution-bar {
+  --fill: 0%;
+  width: 100%;
+  height: max(3px, var(--fill));
+  border-radius: 3px 3px 0 0;
+  background: var(--result-bar);
+}
+
+.distribution-bar--player {
+  background: var(--accent);
+}
+
+.distribution-axis {
+  display: flex;
+  margin-top: 6px;
+  gap: 4px;
+}
+
+.distribution-tick {
+  min-width: 0;
+  flex: 1 1 0;
+  overflow: visible;
+  color: var(--neutral);
+  font-size: 10px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.distribution-tick--player {
+  color: var(--accent);
+}
+
+/* Next: <game> in the next game's colour, then Share · Today. */
+.result-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.result-primary {
+  display: flex;
+  height: 54px;
+  padding: 0 18px;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 16px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.result-primary-count {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.result-secondary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.result-action {
+  display: inline-flex;
+  height: 46px;
+  padding: 0 16px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The Result board on the board games: the page scrolls as one, no card frame,
+   a small board, and no toolbar or status line (the result carries both). */
+.page.page--result {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+.page.page--result :is(.mini-shell, .sudoku-shell, .chess-shell, .globe-shell),
+.page.page--result :is(.mini-stage, .sudoku-stage, .chess-stage, .globe-stage) {
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  flex: none;
+  overflow: visible;
+}
+
+.page.page--result :is(.mini-shell, .sudoku-shell, .chess-shell, .globe-shell) {
+  padding: 0;
+  background: none;
+}
+
+.page.page--result :is(.mini-toolbar, .sudoku-toolbar, .chess-toolbar, .mini-status, .sudoku-status, .chess-status, .mini-cluebar, .globe-zoom, .globe-meta, .globe-result) {
+  display: none;
+}
+
+.page.page--result .mini-stage {
+  --mini-grid-size: 200px;
+}
+
+.page.page--result .sudoku-stage {
+  --sudoku-grid-size: 240px;
+}
+
+.page.page--result .chess-stage {
+  --chess-board-size: 240px;
+}
+
+.page.page--result .globe-globe {
+  width: 200px;
+}

@@ -1,0 +1,146 @@
+# Daily Mini extra answers: common words the google-20k frequency list lacks.
+# Authored by hand on 2026-10-21; every entry must also be in ENABLE.
+# Comment lines start with #; entries are whitespace-separated.
+
+# 3 letters
+oar ewe yak awl bog bun cog cud ebb eel foe gnu
+hoe hue jab jar jig jog jot jug keg nab nag nun
+oat pew pig pry pup ram rut sag sly sob sod sow
+sty toe top tub tug tux vow wad wag wed woe wok
+yam yap yaw yew zap zit
+
+# 5 letters
+adore afoot alibi amble amuse anvil ascot avert awoke bagel balmy barge
+baste bathe bleak blimp blurt boast bossy bough braid brine brink brisk
+broil broom broth brown brunt budge bulge bulky bully burly cameo camel
+carve chant chest chewy chick chime china chirp choke churn cinch clang
+clasp cleat cling cloak clove clump cramp creak crepe crept croak crook
+crumb dandy decoy dicey dimly dingy dirty ditto diver dizzy donut drape
+dream droll drone droop drown dully dunce easel eerie eject elope ember
+erupt evade evict exalt exert fiend filly fizzy flake flank flask fling
+fluke flung foamy foggy folly forgo frail friar frill frisk frock froth
+frown froze fudge fussy gassy gaunt gauze gavel gecko geese giant giddy
+giver glare glaze gleam glint gloat gloom gouge graft grate gravy graze
+grime groan grope group growl gruel grunt guise gummy gusty halve haste
+hasty haunt heave hefty heist heron hippo hoist hover humid hunch hyena
+icing idiom igloo inept inert infer itchy jaunt jazzy jelly jerky jiffy
+joker joust juice jumpy kebab knack knead kneel knelt knoll koala ladle
+lager lanky lapse lathe leafy leaky leash ledge leech lemon libel liken
+limbo lingo llama lofty loopy lorry lousy lucid lunge lurch macaw magma
+march mauve melon mince minty mirth miser mocha molar moose morph mossy
+mound mourn mural murky musty navel niece nomad noose nudge ovary overt
+pansy parka parry party pasty pecan perch peril perky pesky petal phone
+picky piece piggy piney pinky plank plead pleat plier pluck plumb plume
+plunk poach poise polka polyp poser power prank prawn privy prowl prude
+prune punch purge pushy putty quack quail qualm quash quill quirk rabid
+relic remit rerun rhyme ripen roost rowdy ruddy rusty salty salve saute
+savor scald scalp scant scold scone scorn scowl scram sever shaky shard
+shawl sheen shone shove showy shred shrub shrug shuck shunt shush siren
+skier skimp skulk slain slant sleet slime slimy slink sloop slosh sloth
+slump slung slurp slush smear smelt smirk snail snare snarl sneer snide
+sniff snore snort snout snuck snuff soapy sonar spade speck spied spiny
+spire splat spoil spoof spook spool spore spout spree sprig spurt squat
+staid stale stalk stank stash stave steed stink stint stoic stomp stoop
+stork strap strip strut stump stung stunk style suave sulky surly swarm
+swash swine swirl swish swoop swore swung tacit tacky taffy taint talon
+tangy taper tardy taste taunt tempt tepid terse thorn throb thump tiara
+tight timid tipsy tonic totem tramp trawl truce tunic twang tweet twirl
+udder ulcer undue unfit unify valor verge vigil vowel wafer wager weedy
+whack whiff whine whirl whisk white widen wield wince wiser women wordy
+yearn zesty
+
+# Second authored batch, 2026-10-21, after the fill ran dry at day ~115 on
+# the first pool: the fillable part of a 5x5 pool is smaller than the pool.
+
+# 3 letters
+ail bin bob cam cob coo coy dud eke eon fad hew
+hob icy irk jag jut lye maw mow nub oft ova pox
+pug pun sat sop sun vex
+
+# 4 letters
+ache ahoy ajar amok anew atop awry bale balk bane bask
+bawl beak beep beet bide bile blab bled blip blob blot boar
+bony boon brag bran brat bray brim brow buns burp cask
+cede chug chum clap clod clog clot coax cram curd cusp
+cyst daze deem deft defy dill dodo doer doff dole dolt dope
+dote dour doze drab dray duet dunk dupe eave edgy
+eels emit ewes fang fawn faze fend feud fizz flak flax flit
+floe flog flue foal fowl fray fret fume furl fuss fuzz gaff
+gait gall gape garb gash gasp germ gild gilt gist
+glee glib glob glum glut gnat gnaw gosh gout grit grub
+gulp gush gust hazy heed heft heir hilt hind hiss hive hoax
+hone honk hoof hoot howl huff hula hurl husk idly iota
+itch jack jeer jest jibe jilt jinx jolt judo keel
+kelp kiln kilt kink lair lank lard lark lash lass laze lice
+lilt lint loaf lobe loom loon loot lout lull lurk
+mace maim malt mane mark mash maul meek meld mend meow
+mink minx mire mite mitt moan moat molt moor moot mope moth
+muck mull mush musk mutt newt nigh nook nosy numb oats
+oboe ogle ogre oily oink okra omen ooze orca ouch oust ovum
+owes oxen pail pang pave pawn peal peat peep pelt
+pent perk perm plod plop plow ploy poke pomp pore posh
+pout prim prow puny pupa purr putt quip raft rasp raze ream
+redo reek rein rend rift rile rind rink roam roar romp rook
+rosy rote rout rung ruse sank sash sass
+scab scum sear seep sham shun sift sill silo
+silt sine skew skid skim skit slat slaw sled slew slid slit
+slop slum smog smug snag snip snob snub
+snug soot sown spar spat sped spry spud stow stun suds sulk
+sunk swag swam swat sway swum tact tame tarp
+tart taut teem thaw thud tint toad tofu toil
+toot tore trod trot tuba tuft tusk twig vane veal
+veer vile waft wail wane wart wary wasp wavy waxy
+wean weep welt wept whet whim whir whiz whoa wick wilt
+wiry wisp womb wren yank yawn yelp yogi yoke yolk yuck
+yule zany zeal zest zing
+
+# 5 letters
+abase abate abbot abhor abode abort abyss acrid adage adept adobe adorn
+affix afire afoul agate aglow agony aider allay allot aloft aloof
+amass amaze amiss amity amply angst annoy annul anode antic aorta
+aping apple aptly ardor arson artsy ashen askew atoll atone augur
+awash axiom azure baggy baler banal batty bawdy bayou beady beefy
+befit beget belch belie beret beset bevel bigot
+binge biome bitty blare bleat bleep bloat bloke blurb bobby
+boney bongo booby booze boozy borax botch brash brawl brawn briar
+bribe briny brood brute bugle bushy butch bylaw cabby cacti
+caddy canny caper caste catty caulk chafe
+chard chasm chide chock chore chump chute clack clank cleft clink clout
+cluck clued clung comfy conch conic corer corny coven covet covey
+cower coyly crass crave craze credo crick crier crimp crock crone
+crony crump cumin curio curvy cynic dally daunt debar decry defer
+deign deity delve demur deuce dingo dirge ditty dodgy dogma dopey
+dowdy dowel downy dowry drawl drool dryly
+dumpy dusky duvet dwelt edict egret elate
+elude embed enact endow ensue envoy erode ethic ethos
+evoke expel facet farce feign felon femur feral
+fetid filer filet filmy fishy fjord flail flaky
+fleck flier floss flout fluff flume flunk foist foray foyer frond
+fugue furor gaffe gaily gamut gaudy gawky gazer geeky ghoul girly girth
+glade glean glyph gnash godly goner goody gooey goofy
+gourd grail grimy gripe groin grout gruff guava guile gulch gully gumbo
+guppy gusto harem hater heady hilly hippy hoard hotly hovel
+hunky hutch icily impel
+irate islet jetty joist juror khaki kinky knave kneed lapel larva
+lasso latte leach leant leapt leery lefty leggy lemur lithe livid
+loamy loath louse lowly lumpy lurid lusty macho madly mange
+mangy manic manly mealy meaty medic melee midge milky mimic
+mogul moldy mower mucky mucus mulch munch mushy musky myrrh
+nadir neigh nerdy nobly nutty nymph oaken oddly
+olden opine opium outdo palsy
+patsy penal penne pesto phony piety
+pique pithy pixie plait plied pooch posit pouty preen pried
+prong pudgy pulpy puree pygmy quell radii raspy
+ratty rayon rebar rebut recur reedy refit repel retch
+retry revel revue rigor riser rivet roomy rouse rower rumba
+salvo sappy saucy scaly scamp scoff scour scrum seedy
+segue sepia shale shank sheik shied shirk shoal shorn shrew shyly sieve
+sinew singe skiff skunk slunk slyly smack smite smock smote snaky snipe
+soggy sooty sower spasm spelt spiel spiky spilt spurn squib stead stilt
+suing sully swami swath swill swoon tabby taker tamer tapir
+tatty tawny teary tenet testy thrum thyme tithe
+tonal torus toxin triad trite trove truss
+twine undid untie
+unzip vapid verve vicar vigor vixen vomit vouch
+warty waver waxen whiny whoop wimpy winch wispy woken
+wooly woozy wreak wring wrung wryly

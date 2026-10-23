@@ -1,0 +1,20 @@
+{
+  "name": "daily-on-dot-pocket",
+  "private": true,
+  "license": "MIT",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@parity/product-sdk-host": "0.27.1"
+  },
+  "devDependencies": {
+    "@parity/product-sdk-renderer": "0.7.0",
+    "@types/node": "^26.1.1",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3"
+  }
+}

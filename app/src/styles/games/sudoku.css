@@ -1,0 +1,318 @@
+/* Daily Sudoku: shell, toolbar, grid, notes, number pad.
+   WP36 A4: neutral while playing; the solved grid border and the solved line take --accent-sudoku. */
+
+.sudoku-shell {
+  width: min(100%, 560px);
+  min-height: 590px;
+  margin: 0 auto;
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.sudoku-stage {
+  --sudoku-grid-size: min(calc(100vw - 48px), 520px, calc(100dvh - 290px));
+  display: flex;
+  min-height: 566px;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.sudoku-toolbar {
+  display: flex;
+  width: var(--sudoku-grid-size);
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sudoku-timer {
+  font-family: var(--display);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.pencil-toggle {
+  display: inline-flex;
+  min-height: 44px;
+  padding: 0 14px;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pencil-toggle[aria-pressed="true"] {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.pencil-toggle span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.sudoku-mode-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.sudoku-grid {
+  display: grid;
+  width: var(--sudoku-grid-size);
+  height: var(--sudoku-grid-size);
+  overflow: hidden;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-rows: repeat(9, minmax(0, 1fr));
+  border: 3px solid #a6a8a9;
+  border-radius: 5px;
+  background: #4b4f50;
+}
+
+/* The solved grid earns the accent (decision 1). */
+.sudoku-grid--solved {
+  border-color: var(--accent-sudoku);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent-sudoku) 35%, transparent);
+}
+
+.sudoku-cell {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-right: 1px solid #4b4f50;
+  border-bottom: 1px solid #4b4f50;
+  background: var(--tile-empty);
+  color: var(--text);
+  cursor: pointer;
+  font-size: clamp(16px, calc(var(--sudoku-grid-size) / 14), 34px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.sudoku-cell:nth-child(3n) {
+  border-right-width: 3px;
+  border-right-color: #a6a8a9;
+}
+
+.sudoku-cell:nth-child(9n) {
+  border-right: 0;
+}
+
+.sudoku-cell:nth-child(n + 19):nth-child(-n + 27),
+.sudoku-cell:nth-child(n + 46):nth-child(-n + 54) {
+  border-bottom-width: 3px;
+  border-bottom-color: #a6a8a9;
+}
+
+.sudoku-cell:nth-child(n + 73) {
+  border-bottom: 0;
+}
+
+.sudoku-cell--given {
+  background: #3a3e40;
+  color: var(--text);
+  cursor: default;
+  font-weight: 900;
+}
+
+.sudoku-cell--selected {
+  z-index: 1;
+  box-shadow: inset 0 0 0 3px var(--text);
+}
+
+.sudoku-cell--conflict {
+  background: color-mix(in srgb, var(--wrong) 72%, var(--tile-empty));
+  color: var(--text);
+}
+
+.sudoku-cell:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.sudoku-notes {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.sudoku-notes i {
+  display: grid;
+  place-items: center;
+  color: #c6c8c8;
+  font-size: clamp(6px, calc(var(--sudoku-grid-size) / 45), 12px);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.sudoku-status {
+  display: flex;
+  width: var(--sudoku-grid-size);
+  min-height: 24px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #c5c7c7;
+  font-size: 11px;
+  text-align: center;
+}
+
+.sudoku-status strong {
+  color: var(--accent-sudoku);
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sudoku-retry {
+  min-height: 44px;
+  padding-inline: 12px;
+  background: var(--text);
+  color: var(--bg);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.sudoku-pad {
+  display: grid;
+  width: var(--sudoku-grid-size);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.sudoku-pad button {
+  min-width: 0;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: var(--neutral);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.sudoku-pad .sudoku-erase {
+  background: var(--surface-raised);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* Pencil: a full-width row under the digits, raised; pressed turns light. */
+.sudoku-pad .pencil-toggle {
+  grid-column: 1 / -1;
+  justify-content: center;
+  border-radius: 5px;
+  background: var(--surface-raised);
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sudoku-pad .pencil-toggle[aria-pressed="true"] {
+  background: var(--text);
+  color: var(--bg);
+}
+
+@media (min-width: 560px) {
+  .sudoku-shell {
+    padding: 22px;
+  }
+}
+
+@media (min-width: 780px) {
+  .sudoku-stage {
+    --sudoku-grid-size: min(520px, calc(100dvh - 500px));
+  }
+
+  /* The finished state adds the day's distribution (about 150px) under the
+     status; the board gives that height back so the screen still fits (D18). */
+  .sudoku-stage:has(.result-panel) {
+    --sudoku-grid-size: min(520px, calc(100dvh - 650px));
+  }
+}
+
+@media (max-width: 559px) and (max-height: 850px) {
+  .sudoku-page {
+    display: flex;
+    height: calc(100dvh - 64px);
+    min-height: 0;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sudoku-page .game-heading {
+    flex: none;
+    margin-bottom: 8px;
+  }
+
+  .sudoku-page .game-heading .eyebrow {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .sudoku-page .game-heading h1 {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .sudoku-shell {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    padding: 6px;
+    align-items: flex-start;
+    border-radius: 12px;
+  }
+
+  .sudoku-stage {
+    --sudoku-grid-size: min(calc(100vw - 36px), calc(100dvh - 290px));
+    width: 100%;
+    min-height: 0;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .sudoku-toolbar {
+    min-height: 44px;
+  }
+
+  .sudoku-status {
+    min-height: 20px;
+    line-height: 1.1;
+  }
+
+  .sudoku-pad {
+    gap: 4px;
+  }
+
+  .sudoku-pad button {
+    height: 44px;
+  }
+}

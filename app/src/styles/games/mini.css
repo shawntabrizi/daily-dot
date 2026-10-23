@@ -1,0 +1,379 @@
+/* Daily Mini: page, board, clues, clue bar.
+   WP36 A4: neutral while playing; the solved grid and the solved line take --accent-mini. */
+
+.page.mini-page {
+  display: flex;
+  height: calc(100dvh - 64px);
+  min-height: 0;
+  padding-top: 18px;
+  padding-bottom: 12px;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mini-page .game-heading {
+  flex: none;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 559px) and (max-height: 850px) {
+  .mini-page .game-heading {
+    margin-bottom: 8px;
+  }
+
+  .mini-page .game-heading .eyebrow {
+    margin-bottom: 4px;
+    font-size: 10px;
+  }
+
+  .mini-page .game-heading h1 {
+    font-size: 24px;
+    line-height: 1;
+  }
+}
+
+.mini-shell {
+  display: flex;
+  width: min(100%, 720px);
+  min-height: 0;
+  margin: 0 auto;
+  padding: 12px;
+  flex: 1;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.mini-shell .game-loading,
+.mini-shell .game-error {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
+.mini-stage {
+  --mini-grid-size: min(calc(100vw - 48px), 340px, calc(100dvh - 450px));
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.mini-toolbar {
+  display: flex;
+  width: var(--mini-grid-size);
+  min-height: 30px;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mini-timer {
+  font-family: var(--display);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.mini-mode-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.mini-clues-toggle {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.mini-clues-toggle[aria-expanded="true"] {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.mini-board {
+  position: relative;
+  display: flex;
+  width: var(--mini-grid-size);
+  flex: none;
+  justify-content: center;
+  gap: 16px;
+}
+
+.mini-grid {
+  display: grid;
+  width: var(--mini-grid-size);
+  height: var(--mini-grid-size);
+  padding: 3px;
+  flex: none;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+  border-radius: 8px;
+  background: #4b4f50;
+}
+
+.mini-cell {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 4px;
+  background: var(--tile-empty);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--display);
+  font-size: clamp(20px, calc(var(--mini-grid-size) / 9), 32px);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.mini-cell--black {
+  background: #0e0f10;
+  cursor: default;
+}
+
+.mini-cell--entry {
+  background: #3a3e40;
+}
+
+.mini-cell--selected {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* The solved grid earns the accent: lines and a tint (decision 1). */
+.mini-grid--solved {
+  background: var(--accent-mini);
+}
+
+.mini-cell--solved {
+  background: color-mix(in oklab, var(--accent-mini) 28%, var(--tile-empty));
+  cursor: default;
+}
+
+.mini-cell:disabled {
+  opacity: 1;
+}
+
+.mini-cell-number {
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  font-family: var(--body);
+  font-size: clamp(8px, calc(var(--mini-grid-size) / 30), 11px);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.mini-cell-letter {
+  padding-top: 4px;
+}
+
+.mini-clues {
+  position: absolute;
+  z-index: 2;
+  display: none;
+  inset: 0;
+  overflow: auto;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--surface-raised);
+}
+
+.mini-clues--open {
+  display: block;
+}
+
+.mini-clue-list h3 {
+  margin: 4px 0 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mini-clue-list ol {
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.mini-clue {
+  display: flex;
+  width: 100%;
+  padding: 5px 6px;
+  align-items: baseline;
+  gap: 8px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #d1d2d2;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  line-height: 16px;
+  text-align: left;
+}
+
+.mini-clue b {
+  flex: none;
+  min-width: 16px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.mini-clue--active {
+  background: #3a3e40;
+  color: var(--text);
+}
+
+.mini-clue:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.mini-cluebar {
+  display: flex;
+  width: var(--mini-grid-size);
+  min-height: 44px;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  border-radius: 7px;
+  background: var(--surface-raised);
+}
+
+.mini-cluebar[hidden] {
+  display: none;
+}
+
+.mini-cluebar-step {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.mini-cluebar-text {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--text);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.mini-cluebar-text b {
+  flex: none;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.mini-status {
+  display: flex;
+  width: var(--mini-grid-size);
+  min-height: 20px;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #c5c7c7;
+  font-size: 11px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.mini-status strong {
+  color: var(--accent-mini);
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mini-retry {
+  min-height: 44px;
+  padding-inline: 12px;
+  background: var(--text);
+  color: var(--bg);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.mini-stage [data-keyboard] {
+  width: min(100%, 390px);
+  flex: none;
+}
+
+.mini-stage .keyboard {
+  margin-top: 2px;
+}
+
+.mini-page .game-rule {
+  flex: none;
+  margin-top: 8px;
+  padding-block: 8px;
+}
+
+@media (min-width: 780px) {
+  .page.mini-page {
+    padding-top: 28px;
+    padding-bottom: 16px;
+  }
+
+  .mini-stage {
+    --mini-grid-size: min(320px, calc(100dvh - 520px));
+  }
+
+  .mini-toolbar,
+  .mini-board,
+  .mini-cluebar,
+  .mini-status {
+    width: min(100%, 640px);
+  }
+
+  .mini-board {
+    justify-content: flex-start;
+  }
+
+  .mini-clues-toggle {
+    display: none;
+  }
+
+  .mini-clues {
+    position: static;
+    display: block;
+    min-width: 0;
+    max-height: var(--mini-grid-size);
+    flex: 1;
+  }
+}

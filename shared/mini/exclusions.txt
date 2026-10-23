@@ -1,0 +1,48 @@
+# Daily Mini answer exclusions. Comment lines start with #; entries are
+# whitespace-separated and matched case-insensitively as whole words.
+# Reviewed by hand from the 3-letter pool on 2026-10-21: abbreviations,
+# fragments, names, slang, and sensitive words that survive the source filters.
+tel dev las del ave lib res med reg sri lat eng ins chi dos gen alt hon cox sox
+mem rec phi ons sim sol col ser nam mas dom cos ana eau mil pas dui til pix pam
+leu dee mae mel ids att als mol ems rem cis mis lea nos ops sup mos vis cor ars
+lam ich goa tas vac mus eff ole tis lac bel bis hep wat ras ama aba ors lex luv
+dal moc bos tam ami jin ora bal rei mot bas syn lux ged nom vox aff wen pax taj
+bod gam dex lev dun lis dag ess dit hes fas heh pee jew dis kay pac biz pic rex
+sis sal
+# Reviewed from the first generated answer set (1,866 answers), 2026-10-21.
+# Names that need trivia clues:
+alan alec anna cain carr cobb cole devon duff erica henry howe jess jesse jones
+kane kris logan louis lowe lulu mack macon marc otto perry peter rick roger shaw
+shea tate tony tori troy vera
+# Foreign words and phrases:
+casa ciao dolce haute monde monte santo petit terra vita vitae supra prima playa
+# Abbreviations, fragments, jargon, brands:
+acta alba alfa alma amiga exec expat fave haha hast lemma midi offs olds ortho
+pap plat prog roms sept sims soma tele tyne wight ness evite celeb brit dinar
+lira euros ares argus barre beck coca coco cocos congo keno luna mana mafia
+cutie nitro tyre tyres
+# Vulgar or sensitive:
+asses booty crap gay homo meth nazi nudes piss sluts urine fetus
+# Reviewed from the second generated answer set (2,230 answers), 2026-10-21.
+jews jihad gays naked booby lusty opium harem zaire leone saul kirk lang hogan
+nelly bach tory bates sears largo mondo carte avant aero mach macs pics regs
+secs toons maxi meta deco cote dray gage hart kern mans pent liens wont coed
+bros brad
+# Reviewed from the third generated answer set (2,234 answers), 2026-10-21.
+sperm thong dyke carl lars mike ruth scots maya phat devel dong mags cams
+# Inflections of obscenities (the source list holds only the stems) and
+# names, brands and fragments found in the fourth generated set, 2026-10-21.
+trans dicks butts craps fucks queer raped sexes
+hicks weber xerox cory ralph infos whats codec twain boney momma randy
+# Found in the fifth generated set, 2026-10-21.
+nazis nite hath mods
+# Found in the sixth generated set, 2026-10-21.
+damn femme jill coke prof maths
+# Found in the seventh generated set, 2026-10-21.
+conn harry hong linn libs missy pimp shawn hydro
+# Found in the eighth generated set, 2026-10-21.
+sith pooh
+# One review pass over every pool word still without a clue (916), 2026-10-21.
+matt jake fuji khan mick ritz toby vail holt nous jeux ling welch mikes turks
+johns lynch sally trump comp huns gimp lust hell butch bawdy pygmy minx poly
+quasi cant fetal crump

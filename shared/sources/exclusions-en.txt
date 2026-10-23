@@ -1,0 +1,57 @@
+# Editorially curated exclusions for generated puzzle answers.
+#
+# The frequency corpus is web-derived, so it contains entries that ARE listed in web2
+# yet make poor puzzle answers: abbreviations, tickers, file extensions, proper nouns,
+# months, and weekday names. Frequency and dictionary membership cannot separate these,
+# so they are enumerated here.
+#
+# Whole-word, case-insensitive. Answers only — the guess dictionary stays permissive.
+
+# --- abbreviations, acronyms, fragments, tickers ---
+foo sig ala dow sen rel ast och nan lim tor fra ger gnu cam sic wan cho pol ret
+inc ltd llc est gmt avg acc usr src bin var num pos neg int str obj arr len idx
+seq def ret env cfg tmp doc pdf gif png jpg mpg mp3 mp4 exe dll sys www ftp ssl
+tcp udp dns url uri api sdk cpu gpu ram rom bios lan wan vpn xml sql php asp jsp
+usd eur gbp jpy cad aud chf pst est cst mst edt cdt mdt pdt utc
+mon tue wed thu fri sat sun jan feb mar apr jun jul aug sep oct nov dec
+
+# --- months and weekdays spelled out ---
+january february march april june july august september october november december
+monday tuesday wednesday thursday friday saturday sunday
+
+# --- place names ---
+canada america american africa african asia asian europe european britain british
+england english ireland irish scotland wales france french germany german spain
+spanish italy italian china chinese japan japanese india indian russia russian
+mexico brazil texas florida georgia michigan colorado montana ohio iowa utah
+virginia carolina dakota nevada oregon kansas arizona alabama alaska indiana
+atlantic pacific phoenix austin boston chicago denver dallas seattle
+eastern western northern southern
+
+# --- personal and brand names ---
+ben dan tim tom joe jim bob lee sam max ted jack mark john james david michael
+robert richard thomas william daniel matthew andrew charles joseph steven kevin
+brian jason justin ryan adam eric scott sterling franklin mercury commons
+yahoo google ebay amazon linux windows adobe apple oracle
+roc poe gan dar gee berlin paris london tokyo moscow rome madrid vienna
+
+# --- WP5d residual curation: abbreviations and fragments ---
+hud tha sha sar rad sax apa ers mal para hist kat quo deb tra tho tri wap nat kai mib lin het
+
+# --- WP5d residual curation: proper nouns ---
+tao kos kent larry finland tiffany broadway mir mary jane
+
+# --- WP19 proper nouns, places, brands, and appropriateness surfaced by Waffle ---
+alamo allan ariel barry benny betty billy blair blake bobby bosch bowie brent brett brock
+buffy burke cajun chang cheng chevy chico chile ching cisco clark clint clive colin
+costa cyrus darby dixie donna dover dutch garth gypsy hanna honda huron irene jenna jenny
+jerry jimmy julio kelly
+kerry kodak kraft laura levin lewis lohan marco maria molly morse nancy norma pablo palma
+paolo pedro peggy porto reese riley ryder sammy satan silva singh sloan sonny swiss
+tammy terry tibet timor tommy tonga walsh welsh
+wigan
+willy
+
+# --- WP23 consolidated all-length proper-noun audit ---
+abigail beth caroline chad colleen emma kyle lucy willie
+alameda florence geneva hastings

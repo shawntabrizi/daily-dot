@@ -1,0 +1,771 @@
+/* Streaks: the streaks route (tiles, month calendar, milestone), the history page (stats panel, month calendar, legend) and the day page. */
+
+.history-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* The archive's game filter: wrapping chips, 44 px tall, the pressed one raised and outlined. */
+.game-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.game-chip {
+  height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+a.game-chip {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.game-chip[aria-pressed="true"] {
+  background: var(--surface-raised);
+  box-shadow: inset 0 0 0 1.5px var(--text);
+  color: var(--text);
+}
+
+.stats-panel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 28px 0 16px;
+}
+
+.stats-panel > div {
+  display: flex;
+  min-width: 0;
+  min-height: 92px;
+  padding: 13px 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--surface-raised);
+}
+
+.stats-panel strong {
+  font-size: clamp(26px, 9vw, 34px);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.stats-panel span {
+  margin-top: 7px;
+  color: #b4b6b6;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-align: center;
+}
+
+.stats-panel .streak-stat {
+  background: var(--correct);
+}
+
+.stats-panel .streak-stat span {
+  color: var(--text);
+}
+
+.month-panel {
+  padding: 16px 10px 18px;
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.month-controls {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.month-controls h2 {
+  margin: 0;
+  font-size: 20px;
+  text-align: center;
+}
+
+.month-button {
+  background: var(--surface-raised);
+}
+
+.calendar-loading,
+.calendar-error {
+  min-height: 310px;
+  padding-top: 120px;
+  color: #b4b6b6;
+  text-align: center;
+}
+
+.calendar-error {
+  display: flex;
+  padding-top: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.calendar-weekdays {
+  margin-bottom: 7px;
+}
+
+.calendar-weekdays span {
+  color: #a6a8a9;
+  font-size: 10px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.calendar-day,
+.calendar-spacer {
+  min-width: 0;
+  aspect-ratio: 1;
+}
+
+.calendar-day {
+  position: relative;
+  display: flex;
+  padding: 6px 4px 5px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: var(--surface-raised);
+  text-decoration: none;
+}
+
+a.calendar-day:hover {
+  border-color: var(--text);
+}
+
+.calendar-day-number {
+  font-size: clamp(11px, 3.4vw, 14px);
+  font-weight: 500;
+}
+
+.calendar-day-dot {
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--neutral);
+  border-radius: 50%;
+}
+
+.calendar-day--played .calendar-day-dot {
+  border-color: var(--correct);
+  background: var(--correct);
+}
+
+.calendar-day--archive .calendar-day-dot {
+  border-color: var(--present);
+  background: var(--present);
+}
+
+.calendar-day--started .calendar-day-dot {
+  border-color: var(--text);
+  background: var(--text);
+}
+
+/* All-games calendar (D17b, D17c, decision 7): the whole cell is blue for
+   every game on the day, gold for at least one, grey with a tick for a day
+   only played later. Gold and blue are the same in both theme blocks, so the
+   ink on them is fixed. */
+.calendar-day--all,
+.calendar-day--any,
+.calendar-day--backfill {
+  justify-content: center;
+}
+
+.calendar-day--all,
+.calendar-day--any {
+  color: var(--streak-ink);
+}
+
+.calendar-day--all {
+  background: var(--streak-blue);
+}
+
+.calendar-day--any {
+  background: var(--streak-gold);
+}
+
+.calendar-day--all .calendar-day-dot,
+.calendar-day--any .calendar-day-dot {
+  display: none;
+}
+
+.calendar-day--all .calendar-day-number,
+.calendar-day--any .calendar-day-number {
+  font-weight: 700;
+}
+
+.calendar-day--backfill .calendar-day-dot {
+  position: absolute;
+  right: 4px;
+  bottom: 3px;
+  width: auto;
+  height: auto;
+  border: 0;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 7px;
+}
+
+/* Today is ringed in the text colour; a future day is a blank cell. */
+.calendar-day--today {
+  box-shadow: 0 0 0 2px var(--text);
+}
+
+.calendar-day--blank {
+  background: transparent;
+}
+
+.calendar-day--disabled {
+  background: transparent;
+  color: var(--neutral);
+  opacity: 0.32;
+}
+
+.calendar-day--disabled .calendar-day-dot {
+  display: none;
+}
+
+.calendar-legend {
+  display: flex;
+  margin-top: 17px;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 14px;
+  color: #c1c3c3;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.calendar-legend[hidden] {
+  display: none;
+}
+
+.calendar-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--neutral);
+  border-radius: 50%;
+}
+
+.legend-dot--played {
+  border-color: var(--correct);
+  background: var(--correct);
+}
+
+.legend-dot--archive {
+  border-color: var(--present);
+  background: var(--present);
+}
+
+.legend-dot--started {
+  border-color: var(--text);
+  background: var(--text);
+}
+
+.legend-dot--all {
+  border-color: var(--streak-blue);
+  background: var(--streak-blue);
+}
+
+.legend-dot--any {
+  border-color: var(--streak-gold);
+  background: var(--streak-gold);
+}
+
+.legend-dot--backfill {
+  border-color: var(--muted);
+  background: var(--muted);
+}
+
+.legend-dot--today {
+  border-color: var(--text);
+}
+
+@media (min-width: 560px) {
+  .month-panel {
+    padding: 22px;
+  }
+
+  .calendar-weekdays,
+  .calendar-grid {
+    gap: 8px;
+  }
+}
+
+@media (min-width: 780px) {
+  .history-page {
+    width: min(100%, 840px);
+  }
+
+  .stats-panel {
+    gap: 14px;
+  }
+
+  .stats-panel > div {
+    min-height: 108px;
+  }
+
+  .month-panel {
+    padding: 24px 28px 28px;
+  }
+
+  .calendar-day {
+    padding: 9px 6px 8px;
+  }
+}
+
+/* The streaks route: the Streak board (plans/wp-36-boards/Streak.dc.html). The
+   board's own colours (tints, rings, inks) live here; the shared tokens are
+   referenced by name. */
+.streaks-page {
+  --streak-gold-tint: #221c10;
+  --streak-gold-ring: #4a3a14;
+  --streak-gold-label: #c9a24a;
+  --streak-gold-cell: #3a2e12;
+  --streak-bar-ink: #2a1f05;
+  --streak-blue-tint: #10202a;
+  --streak-blue-ring: #1f4a5c;
+  --streak-blue-label: #5fb3d2;
+  --streak-blue-ink: #0b2430;
+  --streak-future-ink: #3a3f42;
+  --streak-next-tile: #2a2416;
+  display: flex;
+  width: min(100%, 560px);
+  padding: 0 16px 18px;
+  flex-direction: column;
+}
+
+/* Two tiles, always tinted: the number carries the colour. */
+.streak-tiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.streak-tile {
+  display: flex;
+  min-width: 0;
+  padding: 16px;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 20px;
+}
+
+.streak-tile--any {
+  background: var(--streak-gold-tint);
+  box-shadow: inset 0 0 0 1.5px var(--streak-gold-ring);
+}
+
+.streak-tile--all {
+  background: var(--streak-blue-tint);
+  box-shadow: inset 0 0 0 1.5px var(--streak-blue-ring);
+}
+
+.streak-tile-mark svg {
+  display: block;
+  width: 30px;
+  height: 38px;
+}
+
+.streak-tile--all .streak-tile-mark svg {
+  height: 30px;
+}
+
+.streak-tile--any .streak-tile-mark,
+.streak-tile--any .streak-tile-count {
+  color: var(--streak-gold);
+}
+
+.streak-tile--all .streak-tile-mark,
+.streak-tile--all .streak-tile-count {
+  color: var(--streak-blue);
+}
+
+.streak-tile-count {
+  font-family: var(--display);
+  font-size: 44px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.streak-tile-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.streak-tile--any .streak-tile-label {
+  color: var(--streak-gold-label);
+}
+
+.streak-tile--all .streak-tile-label {
+  color: var(--streak-blue-label);
+}
+
+.streak-tile-note {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* The month: "October" and its count on one line, Monday-first grid. */
+.streak-month {
+  margin-top: 18px;
+}
+
+.streak-month-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.streak-month-head h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.streak-month-line {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.streak-month .calendar-weekdays,
+.streak-month .calendar-grid {
+  gap: 6px;
+}
+
+.streak-month .calendar-weekdays {
+  margin: 12px 0 6px;
+}
+
+.streak-month .calendar-weekdays span {
+  color: var(--neutral);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.streak-month .calendar-day {
+  padding: 0;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--neutral);
+}
+
+.streak-month .calendar-day-number {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.streak-month .calendar-day-dot {
+  display: none;
+}
+
+/* Played: the gold tint with a gold number. A backfilled day is a played
+   day for the calendar; its grey tick in the corner says "later". */
+.streak-month .calendar-day--any,
+.streak-month .calendar-day--backfill {
+  background: var(--streak-gold-cell);
+  color: var(--streak-gold);
+}
+
+.streak-month .calendar-day--backfill .calendar-day-dot {
+  position: absolute;
+  right: 3px;
+  bottom: 2px;
+  display: block;
+  width: auto;
+  height: auto;
+  border: 0;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* All six: solid blue, inside a bar too. */
+.streak-month .calendar-day--all {
+  background: var(--streak-blue);
+  color: var(--streak-blue-ink);
+}
+
+.streak-month .calendar-day--blank {
+  background: var(--surface);
+  color: var(--streak-future-ink);
+}
+
+.streak-month .calendar-day--disabled {
+  background: var(--surface);
+  color: var(--neutral);
+  opacity: 1;
+}
+
+.streak-month .calendar-day--today {
+  box-shadow: 0 0 0 2px var(--text);
+}
+
+.streak-month a.calendar-day:hover {
+  box-shadow: 0 0 0 2px var(--text);
+}
+
+/* A perfect week: the row is one gold bar; the all-six days stay blue. */
+.calendar-week--perfect {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  border-radius: 12px;
+  background: var(--streak-gold);
+}
+
+.streak-month .calendar-week--perfect .calendar-day--any,
+.streak-month .calendar-week--perfect .calendar-day--backfill {
+  background: transparent;
+  color: var(--streak-bar-ink);
+}
+
+.streak-month .calendar-week--perfect .calendar-day--backfill .calendar-day-dot {
+  color: var(--streak-bar-ink);
+}
+
+/* Legend left, the month arrows right, 12 px under the grid. */
+.streak-month-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.streak-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.streak-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.streak-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.streak-swatch--played {
+  background: var(--streak-gold-cell);
+  box-shadow: inset 0 0 0 1px var(--streak-gold);
+}
+
+.streak-swatch--all {
+  background: var(--streak-blue);
+}
+
+.streak-swatch--week {
+  width: 22px;
+  background: var(--streak-gold);
+}
+
+.streak-month-nav {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.streak-month-button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0 0 2px;
+  place-items: center;
+  border: 0;
+  border-radius: 22px;
+  background: var(--surface-raised);
+  color: var(--muted);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.streak-month-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.28;
+}
+
+/* Below 376 px the grid bleeds 4 px into each gutter with a 4 px gap, so a
+   cell stays a 44 px tap target (7 × 44 + 6 × 4 = 332 ≤ 336). */
+@media (max-width: 375px) {
+  .streak-month .calendar {
+    margin-inline: -4px;
+  }
+
+  .streak-month .calendar-weekdays,
+  .streak-month .calendar-grid,
+  .calendar-week--perfect {
+    gap: 4px;
+  }
+
+  .streak-legend {
+    gap: 6px 10px;
+  }
+}
+
+/* Next badge: the eyebrow and a card with the flame tile, the bar and the count. */
+.streak-next {
+  margin-top: 18px;
+}
+
+.streak-next[hidden] {
+  display: none;
+}
+
+.streak-next-eyebrow {
+  margin: 0;
+  color: var(--neutral);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.streak-next-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.streak-next-mark {
+  display: grid;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--streak-next-tile);
+  color: var(--streak-gold);
+}
+
+.streak-next-mark svg {
+  display: block;
+  width: 20px;
+  height: 24px;
+}
+
+.streak-next-body {
+  display: block;
+  min-width: 0;
+  flex: 1;
+}
+
+.streak-next-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.streak-progress {
+  display: block;
+  overflow: hidden;
+  height: 6px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: var(--tile-empty);
+}
+
+.streak-progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--streak-gold);
+}
+
+.streak-next-count {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The grace rule sits at the bottom of the screen. */
+.streak-rule {
+  margin: auto 0 0;
+  padding-top: 18px;
+  color: var(--neutral);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.day-page {
+  width: min(100%, 720px);
+}
+
+.day-page .history-heading {
+  margin-bottom: 22px;
+}
+
+.day-page .day-chip {
+  text-decoration: none;
+}
+
+.day-page .game-loading,
+.day-page .game-error {
+  min-height: 240px;
+}
