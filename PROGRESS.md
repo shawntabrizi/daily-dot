@@ -83,6 +83,9 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     `daily-on-dot:autosign:v1` removal on load and its test, and
     `tools/publish-pocket-cards.mts` / `pnpm pocket:publish` (only needed with
     bulletin-deploy <= 0.22; the repo pins 0.23.0).
+- **WP39 (Daily Code, Daily Angle, card overflow), in progress 2026-10-23:** D12/D21
+  amended, D22/D23 added (Shawn); brief `plans/wp-39-code-and-angle.md`. Angle ships
+  without Angledle's six-guess cap (D13: no loss state) unless Shawn changes D13.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

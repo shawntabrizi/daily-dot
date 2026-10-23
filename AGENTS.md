@@ -29,7 +29,7 @@ below, **stop and say so** rather than designing around it.
   commit**. Once live, changes ship as `v2` from a future start day. Before a game is live to
   players, `v1` may be rewritten in place — there is no history to protect.
 - **D12** The roster is open-ended and append-only, see `app/src/shared/roster.ts`: Word 0,
-  Sudoku 1, Chess 2, Globe 3, Mini 4, Connections 5 today. A gameId is never reused or
+  Sudoku 1, Chess 2, Globe 3, Mini 4, Connections 5, Code 6, Angle 7 today. A gameId is never reused or
   moved once a game is live; the D5 bitmaps cap the roster at 64.
 - **D13** `DailyScores` detail is `{score: u32, solved: bool}`; `score` is per-game and
   **minimised** (guesses, attempts, seconds, mistakes); `solved` means finished. No game
@@ -53,9 +53,16 @@ below, **stop and say so** rather than designing around it.
   streak: changing the selection may turn past days from blue to gold, and that is the
   intended nudge. No perfect-day counts.
 - **D21** Each player picks the games they play daily (starter set: Word, Mini,
-  Connections). Picked games lead the hub and are all the Pocket card, the drawer, the
-  headline and the share text count; unpicked games stay playable under "More games".
-  At least one game is always picked. See `plans/wp-38-game-selection.md`.
+  Connections, Code). Picked games lead the hub and are all the Pocket card, the drawer,
+  the headline and the share text count; unpicked games stay playable under "More games".
+  At least one game is always picked; there is no upper limit. The card shows six tiles:
+  unfinished picks first, then finished; with more than six unfinished, five and a **+**.
+  See `plans/wp-38-game-selection.md`, `plans/wp-39-code-and-angle.md`.
+- **D22** Daily Code (gameId 6, `#/g/code`): a four-digit code (0–9, repeats allowed),
+  procedural; Mastermind pegs only (● right place, ○ wrong place); no cap; `score` = guesses.
+- **D23** Daily Angle (gameId 7, `#/g/angle`): an angle of 1°–359°, procedural; each
+  guess gets So close (≤5°) / Hot (≤15°) / Warm (≤30°) / Cold and an up/down arrow; no
+  cap (D13, unlike Angledle's six); `score` = guesses.
 - **D20** `DailyScores` keeps a per-`(game_id, day)` histogram of **on-time** finishers,
   bucketed by an owner-set kind (Count 1..31+, Seconds in 15 s steps to 30 min+). "Top N%"
   = rank share with ties in the player's favour; the day percentile is the mean of the
