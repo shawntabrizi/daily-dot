@@ -120,7 +120,7 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
-                                "value": "tiles/count-2-of-3.png"
+                                "value": "tiles/count-2-of-4.png"
                               },
                               "fit": "Contain"
                             }
@@ -333,12 +333,88 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
-                                "value": "tiles/tile-word-done.png"
+                                "value": "tiles/tile-connections-idle.png"
                               },
                               "fit": "Contain"
                             }
                           }
                         },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-code-idle.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-word-done.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "tag": "Spacer",
+                    "value": {
+                      "modifiers": [
+                        {
+                          "tag": "Height",
+                          "value": 10
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "tag": "Row",
+                    "value": {
+                      "modifiers": [
+                        {
+                          "tag": "FillWidth",
+                          "value": true
+                        },
+                        {
+                          "tag": "Height",
+                          "value": 95
+                        }
+                      ],
+                      "props": {
+                        "verticalAlignment": "Center",
+                        "horizontalArrangement": "SpaceBetween"
+                      },
+                      "children": [
                         {
                           "tag": "Image",
                           "value": {
@@ -362,7 +438,7 @@
                           }
                         },
                         {
-                          "tag": "Image",
+                          "tag": "Spacer",
                           "value": {
                             "modifiers": [
                               {
@@ -373,14 +449,22 @@
                                 "tag": "Height",
                                 "value": 95
                               }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-connections-idle.png"
+                            ]
+                          }
+                        },
+                        {
+                          "tag": "Spacer",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
                               },
-                              "fit": "Contain"
-                            }
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ]
                           }
                         }
                       ]

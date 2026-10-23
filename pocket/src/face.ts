@@ -8,9 +8,10 @@
 //
 // Two columns. Left, 112 wide: the big "n/k" for the player's k picked games
 // (D21), "DONE TODAY" under it, and the streak (flame + days) at the bottom.
-// Right: the picked games in rows of three tiles, each baked whole as one PNG
-// (solid accent with ink glyph and label when done, dark with a ring when
-// not), spread across the column. A strip down the left edge is the day's
+// Right: up to six of the picked games in rows of three tiles (`cardTiles`:
+// unfinished first, then finished; five and a "+" when more than six are
+// unfinished), each baked whole as one PNG (solid accent with ink glyph and
+// label when done, dark with a ring when not), spread across the column. A strip down the left edge is the day's
 // state: grey before any game, green once one is played, gold when every pick
 // is done, red when the streak is about to lapse.
 // The renderer has nine theme colours, five text styles and no Fredoka or
@@ -40,10 +41,6 @@ export { CARD_ID };
 
 /** Two rows of three: the most tiles the 234dp frame holds. */
 export const MAX_TILES = 6;
-// The face draws every pick; a seventh roster game needs a new layout first (WP38).
-if (GAME_ROSTER.length > MAX_TILES) {
-  throw new Error(`The card face holds ${MAX_TILES} tiles; the roster has ${GAME_ROSTER.length}`);
-}
 
 /** The games a face draws when the player never picked: the starter set. */
 export const STARTER_GAMES: readonly Game[] = pickedGames(STARTER_PICKS);
@@ -239,9 +236,30 @@ export function stripState(
   return "grey";
 }
 
+/** A tile slot: a picked game, or the "+" that says more are waiting. */
+export type CardTile = Game | "more";
+
+/**
+ * The six tiles at most (D21): unfinished picks first, then finished ones to
+ * fill the rest, each group in roster order. With more than six unfinished,
+ * five of them and a "+": the card asks for what is left, and the launcher
+ * beneath it lists every pick.
+ */
+export function cardTiles(bits: CardBits, games: readonly Game[]): CardTile[] {
+  const open = games.filter((game) => !hasBit(bits.played, game.gameId));
+  const done = games.filter((game) => hasBit(bits.played, game.gameId));
+  if (open.length > MAX_TILES) {
+    return [...open.slice(0, MAX_TILES - 1), "more"];
+  }
+  return [...open, ...done].slice(0, MAX_TILES);
+}
+
 /** One game: its whole tile as a PNG, lit in the accent once done. The label
  *  is baked in; the renderer has no accessibility text for an image. */
-function tile(game: Game, played: boolean, options: FaceOptions): RendererNode {
+function tile(game: CardTile, played: boolean, options: FaceOptions): RendererNode {
+  if (game === "more") {
+    return image("tile-more.png", TILE_WIDTH, TILE_HEIGHT);
+  }
   if (options.rowButtons) {
     return {
       tag: "Button",
@@ -303,9 +321,10 @@ export function dailyFace(
     { verticalArrangement: "SpaceBetween" },
   );
 
+  const tiles = cardTiles(bits, games);
   const tileRows: RendererNode[] = [];
-  for (let i = 0; i < games.length; i += TILES_PER_ROW) {
-    const lineGames = games.slice(i, i + TILES_PER_ROW);
+  for (let i = 0; i < tiles.length; i += TILES_PER_ROW) {
+    const lineGames = tiles.slice(i, i + TILES_PER_ROW);
     // A short last row is padded with blank tiles, so its tiles stay under
     // the columns of a full one.
     const blanks = Array.from({ length: TILES_PER_ROW - lineGames.length }, () =>
@@ -313,7 +332,12 @@ export function dailyFace(
     );
     // Fixed-width tiles spread across whatever width the host gives the column.
     const line = row(
-      [...lineGames.map((game) => tile(game, hasBit(bits.played, game.gameId), options)), ...blanks],
+      [
+        ...lineGames.map((entry) =>
+          tile(entry, entry !== "more" && hasBit(bits.played, entry.gameId), options),
+        ),
+        ...blanks,
+      ],
       [{ tag: "FillWidth", value: true }, { tag: "Height", value: TILE_HEIGHT }],
       "SpaceBetween",
     );

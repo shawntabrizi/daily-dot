@@ -47,6 +47,8 @@ const ACCENT: Record<GameSlug, { fill: string; ink: string }> = {
   globe: { fill: "#4f7df3", ink: "#0b1a3a" },
   mini: { fill: "#d85a9e", ink: "#2b0a1c" },
   connections: { fill: "#9b59c9", ink: "#ffffff" },
+  code: { fill: "#e5534b", ink: "#2a0a08" },
+  angle: { fill: "#b5c934", ink: "#22270a" },
 };
 /** The idle tile and the ring around it. */
 const IDLE = { fill: "#202427", ink: "#8d9396", ring: "#2e3336" };
@@ -58,6 +60,8 @@ const LABEL: Record<GameSlug, string> = {
   globe: "GLOBE",
   mini: "MINI",
   connections: "CONNECTIONS",
+  code: "CODE",
+  angle: "ANGLE",
 };
 const WHITE = "#ffffff";
 const COUNT_MUTED = "#8d9396";
@@ -89,6 +93,10 @@ const GLYPH: Record<GameSlug, (ink: string) => string> = {
     `<rect x="3" y="3" width="20" height="20" rx="2" fill="none" stroke="${ink}" stroke-width="2"/><path d="M3 11h20M11 3v20" stroke="${ink}" stroke-width="2"/><rect x="15" y="15" width="8" height="8" fill="${ink}"/>`,
   connections: (ink) =>
     `<circle cx="7" cy="7" r="3.5" fill="${ink}"/><circle cx="19" cy="7" r="3.5" fill="${ink}"/><circle cx="7" cy="19" r="3.5" fill="${ink}"/><circle cx="19" cy="19" r="3.5" fill="${ink}"/>`,
+  code: (ink) =>
+    `<rect x="4" y="11" width="18" height="13" rx="2.5" fill="${ink}"/><path d="M8 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="${ink}" stroke-width="2.4"/>`,
+  angle: (ink) =>
+    `<path d="M3 23h20M3 23L16 5" fill="none" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/><path d="M11 23a8 8 0 0 0-3.2-6.4" fill="none" stroke="${ink}" stroke-width="2"/>`,
 };
 
 function svg(width: number, height: number, body: string): string {
@@ -104,6 +112,15 @@ function tile(id: GameSlug, done: boolean): string {
     `<div style="width:${TILE_WIDTH}px;height:${TILE_HEIGHT}px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:${TILE_RADIUS}px;background:${fill};color:${ink};${ring}">` +
     svg(26, 26, GLYPH[id](ink)) +
     `<span style="font-family:'Nunito';font-size:${LABEL[id].length > 8 ? "8.5px" : "11px"};font-weight:800;letter-spacing:${LABEL[id].length > 8 ? "0.01em" : "0.06em"};white-space:nowrap">${LABEL[id]}</span></div>`
+  );
+}
+
+/** The "+" tile: idle, a plus over MORE, when more picks wait than the card holds. */
+function moreTile(): string {
+  return (
+    `<div style="width:${TILE_WIDTH}px;height:${TILE_HEIGHT}px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:${TILE_RADIUS}px;background:${IDLE.fill};color:${IDLE.ink};box-shadow:inset 0 0 0 1.5px ${IDLE.ring}">` +
+    svg(26, 26, `<path d="M13 4v18M4 13h18" stroke="${IDLE.ink}" stroke-width="2.6" stroke-linecap="round"/>`) +
+    `<span style="font-family:'Nunito';font-size:11px;font-weight:800;letter-spacing:0.06em">MORE</span></div>`
   );
 }
 
@@ -148,6 +165,7 @@ const assets: Asset[] = [
   ),
   { name: "done-today", width: LABEL_WIDTH, height: LABEL_HEIGHT, html: doneToday() },
   { name: "flame", width: FLAME_WIDTH, height: FLAME_HEIGHT, html: flame() },
+  { name: "tile-more", width: TILE_WIDTH, height: TILE_HEIGHT, html: moreTile() },
   ...GAME_ROSTER.flatMap((game) => [
     { name: `tile-${game.id}-done`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, true) },
     { name: `tile-${game.id}-idle`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, false) },

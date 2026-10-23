@@ -68,7 +68,9 @@ const expectImage = (face: RendererNode, path: string, label: string): void => {
 const expectNoText = (face: RendererNode, text: string, label: string): void => {
   if (textsIn(face).includes(text)) fail(`${label}: "${text}" must not be on the card`);
 };
-const N = GAME_ROSTER.length;
+/** The six original games, one full card. */
+const SIX = GAME_ROSTER.slice(0, 6);
+const N = SIX.length;
 
 // The countdown repaints every second, so the clock is frozen at 12:00:00 UTC
 // today; each check moves it on purpose.
@@ -79,10 +81,10 @@ let frozen = (() => {
 })();
 Date.now = () => frozen;
 
-// The player picked every game (D21); a later step narrows the picks.
+// The player picked the six original games (D21); later steps change the picks.
 await (await getHostLocalStorage())!.writeString(
   PICKS_KEY,
-  serialisePicks(GAME_ROSTER.map((game) => game.gameId)),
+  serialisePicks(SIX.map((game) => game.gameId)),
 );
 
 await import("../pocket/src/worker.ts");
@@ -189,16 +191,32 @@ await sleep(2_600);
 if (sent.length !== 6) fail(`expected a repaint after the picks changed, got ${sent.length} faces`);
 expectImage(sent[5], "tiles/count-1-of-2.png", "two picks");
 const pickedTiles = imagePathsIn(sent[5]).filter((path) => path.startsWith("tiles/tile-"));
-if (pickedTiles.join() !== "tiles/tile-word-done.png,tiles/tile-mini-idle.png") {
+if (pickedTiles.join() !== "tiles/tile-mini-idle.png,tiles/tile-word-done.png") {
   fail(`two picks: expected the Word and Mini tiles only, got ${pickedTiles.join(", ")}`);
 }
 expectStrip(sent[5], "FgSuccess", "two picks");
 console.log("ok  picks narrowed to Word and Mini, Word played -> 1/2, two tiles, green strip");
 
+// Every game picked, only Word played: seven unfinished is more than the card
+// holds, so five of them and a "+".
+await (await getHostLocalStorage())!.writeString(
+  PICKS_KEY,
+  serialisePicks(GAME_ROSTER.map((game) => game.gameId)),
+);
+await sleep(2_600);
+if (sent.length !== 7) fail(`expected a repaint after every game was picked, got ${sent.length} faces`);
+expectImage(sent[6], `tiles/count-1-of-${GAME_ROSTER.length}.png`, "every pick");
+expectImage(sent[6], "tiles/tile-more.png", "every pick");
+const allTiles = imagePathsIn(sent[6]).filter((path) => path.startsWith("tiles/tile-"));
+if (allTiles.length !== 6 || allTiles.includes("tiles/tile-word-done.png")) {
+  fail(`every pick: expected five unfinished tiles and the +, got ${allTiles.join(", ")}`);
+}
+console.log(`ok  all ${GAME_ROSTER.length} games picked, one done -> five unfinished tiles and a +`);
+
 if (typeof cleanup === "function") cleanup();
 await writer.syncDay(today, { played: 1023n, solved: 1023n });
 await sleep(2_600);
-if (sent.length !== 6) fail("the card left the screen but the worker kept sending faces");
+if (sent.length !== 7) fail("the card left the screen but the worker kept sending faces");
 console.log("ok  card off screen -> polling stopped");
 Date.now = realNow;
 process.exit(0);

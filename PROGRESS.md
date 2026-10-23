@@ -95,6 +95,11 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     progress lines, routes, result-page rules; starter picks now include Code;
     `COUNT_WORDS` to Twelve. Test helper `pickSixGames` (was `pickAllGames`). Checked
     in Chromium at 360×780 and 1440×900 with 7–8 guesses: no page scroll.
+  - **Card done:** `cardTiles` (unfinished picks first, then finished, six at most; five
+    and `tile-more.png` past six unfinished), the roster guard removed; art for Code,
+    Angle, "+" and `count-<n>-of-<k>` up to 8 (existing PNGs left as committed).
+    `pnpm smoke` picks the six originals and adds an all-eight "+" step. Not verified
+    on a device.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

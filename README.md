@@ -114,10 +114,11 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   for the player's picked games (D21; the starter Word, Mini, Connections until
   they pick). Two columns: left (112dp) the baked `"n/k"` (picks done of picks)
   over `DONE TODAY`, and the flame + day-streak count at the bottom (only when
-  above zero); right the picks in rows of three 70x95 tiles (a short row padded
-  with blanks so the columns hold), each one baked PNG (the game's accent with
-  ink glyph and uppercase label when done, dark with a ring when not; the last
-  reads GROUPS). Six tiles at most: `face.ts` throws if the roster outgrows them.
+  above zero); right up to six picks in rows of three 70x95 tiles (`cardTiles`:
+  unfinished first, then finished; five and a `+` tile when more than six are
+  unfinished; a short row padded with blanks so the columns hold), each one baked
+  PNG (the game's accent with ink glyph and uppercase label when done, dark with
+  a ring when not; the last reads GROUPS).
   A strip down the left edge is grey before any game, green once any game is
   played (an unpicked one keeps the streak too), gold when every pick is done,
   or red when the streak is at risk (nothing played today, under 4 h to 00:00
@@ -129,7 +130,8 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   `BodyLargeRegular` in `FgWarning` (no 18px 800), and a narrow phone (288dp
   inner) clips the third tile column.
 - **The art** is PNG in `pocket/public/tiles/`: `count-<n>-of-<k>.png` for
-  every n of k picks, `done-today.png`, `flame.png`, `tile-<id>-{done,idle}.png`.
+  every n of k picks, `done-today.png`, `flame.png`, `tile-<id>-{done,idle}.png`,
+  `tile-more.png`.
   `pnpm pocket:art` (`tools/render-card-art.mts`) writes each as the board's
   own HTML/CSS and rasterises it at 3x with the app's Playwright Chromium
   (`CHROMIUM_PATH=<binary>` to use a preinstalled one). It
@@ -155,7 +157,7 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   whole-card tap already opens the launcher. Untested on a device either way.
 - **Tapping the card** opens the app beneath it in a half-height sheet at
   `?card=daily`; there the app renders the launcher (`app/src/card-launcher.ts`):
-  the picked games with today's ticks, no chain client or signer. The games open
+  every picked game with today's ticks, no chain client or signer. The games open
   in the full app: a tap writes an open intent (`localStorage` and host KV,
   `daily-on-dot:open-intent:v1`) and asks the host for the product; the full
   app's boot follows a fresh intent before its first route.
