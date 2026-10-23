@@ -113,6 +113,14 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     set-once and the 0-based histogram read are checked by review only. Left for later:
     `logic::better_count` / `top_percent` still assume lower-better (unused by the
     contract; the app ranks).
+  - **B done:** roster `better` + `buckets`; `percentile.ts` `scoreBucket(spec)` with the
+    parity test, direction-aware `betterCount` / `percentileFor` (tests fail if direction
+    flips, using a points stand-in game); `distribution.ts` is a smoothed SVG curve with
+    spec end labels, the player's tick, the better share shaded, an aria sentence;
+    `set-bucket-specs.ts` (`pnpm set:bucket-specs [-- --dry-run]`, checks all games before
+    writing; not run). 0-based buckets throughout. All app/pocket checks green.
+    Cosmetic, logged not fixed: on count games the hump sits in the left fifth of the
+    curve because the axis spans 1–31+.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 
