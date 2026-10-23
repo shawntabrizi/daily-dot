@@ -29,12 +29,12 @@ below, **stop and say so** rather than designing around it.
   commit**. Once live, changes ship as `v2` from a future start day. Before a game is live to
   players, `v1` may be rewritten in place — there is no history to protect.
 - **D12** The roster is open-ended and append-only, see `app/src/shared/roster.ts`: Word 0,
-  Sudoku 1, Chess 2, Globe 3, Mini 4, Connections 5, Code 6, Angle 7, Color 8 (Sound 9 next) today. A gameId is never reused or
+  Sudoku 1, Chess 2, Globe 3, Mini 4, Connections 5, Code 6, Angle 7, Color 8, Sound 9 today. A gameId is never reused or
   moved once a game is live; the D5 bitmaps cap the roster at 64.
 - **D13** `DailyScores` detail is `{score: u32, solved: bool}`; `score` is the game's own
   natural number, and each game says whether **lower or higher is better** (roster
   `better`): guesses, attempts, seconds and mistakes are lower-better; points (Daily
-  Color) are higher-better. `solved` means finished. No game has a loss state.
+  Color, Daily Sound) are higher-better. `solved` means finished. No game has a loss state.
 - **D14** **One chain write per game-day, at completion. Never per guess.**
 - **D15** In-progress ("Started") state is `localStorage` only.
 - **D16** Daily Word (gameId 0, route `#/g/word`) is one 6-letter word a day with no guess
