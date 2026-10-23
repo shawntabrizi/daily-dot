@@ -67,6 +67,9 @@ below, **stop and say so** rather than designing around it.
 - **D24** Daily Color (gameId 8, `#/g/color`): five procedural colours a day, each shown
   5 s then rebuilt with hue/saturation/brightness sliders; 10 × (1 − ΔE00/40) per colour;
   `score` = total in tenths of a point (0–500), higher better.
+- **D25** Daily Sound (gameId 9, `#/g/sound`): five procedural tones a day (110–880 Hz),
+  each heard once then found by dragging; 10 × (1 − ΔERB/0.5) per tone; `score` = total
+  in tenths (0–500), higher better. See `plans/wp-41-daily-sound.md`.
 - **D20** `DailyScores` keeps a per-`(game_id, day)` histogram of **on-time** finishers,
   bucketed by an owner-set, set-once, per-game **bucket spec** `{min, max, buckets ≤ 128}`:
   linear buckets over `[min, max)`, below `min` in the first, at or above `max` in the
