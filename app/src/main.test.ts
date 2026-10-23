@@ -193,8 +193,9 @@ it("routes an archived Daily Globe day into the procedural screen", async () => 
   });
   expect(root.querySelector(".site-title")?.textContent).toBe("Globe");
   expect(root.querySelector(".header-day")?.textContent).toBe("Day 0");
+  root.querySelector<HTMLInputElement>("#globe-country-input")?.focus();
   expect(
-    root.querySelectorAll("#globe-country-options option"),
+    root.querySelectorAll("#globe-country-options [role=option]"),
   ).toHaveLength(166);
   dispose();
 });

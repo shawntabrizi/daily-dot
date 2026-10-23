@@ -39,6 +39,15 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   chip stays in the heading row until the header takes a right slot (R1). Exceptions:
   the plum bar ink is `#06030a` (4.55:1; the board draws no plum bar), tiles drop one
   size under 375 px so eight letters fit, `--body` added to `tokens.css` for R1 to own.
+- **Globe country picker (2026-10-23):** the native `<datalist>` drew no suggestions in
+  the Polkadot app's webview, so players had no list to pick from. Replaced with an ARIA
+  combobox (`createCountryPicker` in `games/globe/view.ts`): tap/focus opens every
+  country A–Z, typing filters (`matchCountries`: prefix matches first, then contains),
+  guessed countries stay in place greyed with "guessed" and cannot be picked; arrows,
+  Enter and Escape work. Picking fills the input; Guess spends the guess. The list opens
+  upward over the globe so the phone keyboard never covers it, and scrolls inside itself
+  (D18 checked at 360×780 and 1440×900). `applyGlobeGuess` now refuses a repeat country
+  without spending a guess.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

@@ -23,6 +23,7 @@ import {
   applyGlobeGuess,
   countryByIso,
   loadGlobeProgress,
+  matchCountries,
   prepareGlobeSubmissionRetry,
   saveGlobeProgress,
   submitGlobeOnce,
@@ -92,15 +93,167 @@ function createGuessRow(guess: Country, answer: Country): HTMLElement {
   return row;
 }
 
-function createCountryOptions(): HTMLDataListElement {
-  const datalist = document.createElement("datalist");
-  datalist.id = "globe-country-options";
-  for (const country of GLOBE_COUNTRIES) {
-    const option = document.createElement("option");
-    option.value = country.name;
-    datalist.append(option);
-  }
-  return datalist;
+// A hand-built combobox: the Polkadot app's webview draws no <datalist>
+// suggestions, so the native list left players with nothing to pick from.
+function createCountryPicker(
+  input: HTMLInputElement,
+  guessed: ReadonlySet<string>,
+  onPick: () => void,
+): HTMLElement {
+  const picker = document.createElement("div");
+  picker.className = "globe-combobox";
+  const listbox = document.createElement("ul");
+  listbox.id = "globe-country-options";
+  listbox.className = "globe-options";
+  listbox.setAttribute("role", "listbox");
+  listbox.setAttribute("aria-label", "Countries");
+  listbox.hidden = true;
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "globe-options-toggle";
+  toggle.tabIndex = -1;
+  toggle.setAttribute("aria-label", "Show countries");
+  toggle.innerHTML =
+    '<svg viewBox="0 0 12 8" width="12" height="8" aria-hidden="true">'
+    + '<path d="M1 1.5 6 6.5 11 1.5" fill="none" stroke="currentColor" '
+    + 'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  input.setAttribute("role", "combobox");
+  input.setAttribute("aria-autocomplete", "list");
+  input.setAttribute("aria-controls", listbox.id);
+  input.setAttribute("aria-expanded", "false");
+
+  let options: HTMLLIElement[] = [];
+  let active = -1;
+
+  const setActive = (index: number): void => {
+    options[active]?.setAttribute("aria-selected", "false");
+    active = index;
+    const option = options[active];
+    if (option) {
+      option.setAttribute("aria-selected", "true");
+      input.setAttribute("aria-activedescendant", option.id);
+      option.scrollIntoView?.({ block: "nearest" });
+    } else {
+      input.removeAttribute("aria-activedescendant");
+    }
+  };
+  const close = (): void => {
+    listbox.hidden = true;
+    input.setAttribute("aria-expanded", "false");
+    setActive(-1);
+  };
+  const open = (): void => {
+    const matches = matchCountries(input.value);
+    options = matches.map((country, index) => {
+      const option = document.createElement("li");
+      option.id = `globe-country-option-${index}`;
+      option.className = "globe-option";
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-selected", "false");
+      option.textContent = country.name;
+      // Guessed countries stay in place, greyed, so the list keeps its order.
+      if (guessed.has(country.iso)) {
+        option.setAttribute("aria-disabled", "true");
+        const note = document.createElement("span");
+        note.className = "globe-option-note";
+        note.textContent = "guessed";
+        option.append(note);
+      }
+      return option;
+    });
+    active = -1;
+    if (options.length === 0) {
+      const empty = document.createElement("li");
+      empty.className = "globe-option globe-option--empty";
+      empty.textContent = "No country matches";
+      listbox.replaceChildren(empty);
+    } else {
+      listbox.replaceChildren(...options);
+    }
+    listbox.hidden = false;
+    input.setAttribute("aria-expanded", "true");
+    listbox.scrollTop = 0;
+    // Typing highlights the best open match, so Enter picks it.
+    if (input.value.trim()) {
+      setActive(options.findIndex((option) => !isDisabled(option)));
+    } else {
+      input.removeAttribute("aria-activedescendant");
+    }
+  };
+  const isDisabled = (option: HTMLLIElement): boolean =>
+    option.getAttribute("aria-disabled") === "true";
+  const pick = (option: HTMLLIElement): void => {
+    if (isDisabled(option)) {
+      return;
+    }
+    input.value = option.firstChild?.textContent ?? "";
+    input.removeAttribute("aria-invalid");
+    close();
+    onPick();
+  };
+  const step = (direction: 1 | -1): void => {
+    for (
+      let index = active + direction;
+      index >= 0 && index < options.length;
+      index += direction
+    ) {
+      if (!isDisabled(options[index]!)) {
+        setActive(index);
+        return;
+      }
+    }
+  };
+
+  input.addEventListener("focus", open);
+  input.addEventListener("click", () => {
+    if (listbox.hidden) {
+      open();
+    }
+  });
+  input.addEventListener("input", open);
+  input.addEventListener("blur", close);
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      event.preventDefault();
+      if (listbox.hidden) {
+        open();
+      }
+      step(event.key === "ArrowDown" ? 1 : -1);
+    } else if (event.key === "Enter" && !listbox.hidden && options[active]) {
+      event.preventDefault();
+      pick(options[active]!);
+    } else if (event.key === "Escape" && !listbox.hidden) {
+      event.preventDefault();
+      close();
+    }
+  });
+  // Keep focus on the input while a pointer is down on the list or the toggle,
+  // so blur does not close the list before the pick lands.
+  listbox.addEventListener("pointerdown", (event) => event.preventDefault());
+  listbox.addEventListener("mousedown", (event) => event.preventDefault());
+  toggle.addEventListener("pointerdown", (event) => event.preventDefault());
+  toggle.addEventListener("mousedown", (event) => event.preventDefault());
+  listbox.addEventListener("click", (event) => {
+    const option = (event.target as Element).closest<HTMLLIElement>("[role=option]");
+    if (option) {
+      pick(option);
+    }
+  });
+  toggle.addEventListener("click", () => {
+    if (listbox.hidden) {
+      if (document.activeElement === input) {
+        open();
+      } else {
+        input.focus();
+      }
+    } else {
+      close();
+    }
+  });
+
+  picker.append(input, toggle, listbox);
+  return picker;
 }
 
 export function renderGlobe(
@@ -235,10 +388,9 @@ export function renderGlobe(
       input.id = "globe-country-input";
       input.name = "country";
       input.type = "text";
-      input.setAttribute("list", "globe-country-options");
       input.setAttribute("autocomplete", "off");
       input.setAttribute("autocapitalize", "words");
-      input.placeholder = "Start typing a country";
+      input.placeholder = "Pick or type a country";
       const submit = document.createElement("button");
       submit.type = "submit";
       submit.textContent = "Guess";
@@ -247,8 +399,15 @@ export function renderGlobe(
       message.setAttribute("role", "status");
       message.setAttribute("aria-live", "polite");
       message.textContent = "Choose from the country list.";
-      inputRow.append(input, submit);
-      form.append(label, inputRow, createCountryOptions(), message);
+      const picker = createCountryPicker(
+        input,
+        new Set(progress.guesses),
+        () => {
+          message.textContent = "Choose from the country list.";
+        },
+      );
+      inputRow.append(picker, submit);
+      form.append(label, inputRow, message);
       form.addEventListener("submit", (event) => {
         event.preventDefault();
         if (!progress) {

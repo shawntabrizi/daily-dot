@@ -66,21 +66,92 @@ afterEach(() => {
 });
 
 describe("Globe view", () => {
-  it("renders autocomplete over every bundled country", async () => {
+  it("opens the full country list from an empty input", async () => {
     const view = renderGlobe(sourceFor(208), 208);
     document.body.append(view.element);
     await vi.waitFor(() => {
       expect(view.element.querySelector(".globe-form")).not.toBeNull();
     });
+    const input = view.element.querySelector<HTMLInputElement>("#globe-country-input")!;
+    const listbox = view.element.querySelector<HTMLElement>("#globe-country-options")!;
 
-    expect(
-      view.element.querySelector<HTMLInputElement>(
-        "#globe-country-input",
-      )?.getAttribute("list"),
-    ).toBe("globe-country-options");
-    expect(
-      view.element.querySelectorAll("#globe-country-options option"),
-    ).toHaveLength(GLOBE_COUNTRIES.length);
+    expect(listbox.hidden).toBe(true);
+    expect(input.getAttribute("aria-expanded")).toBe("false");
+    input.focus();
+
+    expect(listbox.hidden).toBe(false);
+    expect(input.getAttribute("aria-expanded")).toBe("true");
+    expect(listbox.querySelectorAll("[role=option]")).toHaveLength(GLOBE_COUNTRIES.length);
+    view.dispose();
+  });
+
+  it("filters the list to what has been typed", async () => {
+    const view = renderGlobe(sourceFor(208), 208);
+    document.body.append(view.element);
+    await vi.waitFor(() => {
+      expect(view.element.querySelector(".globe-form")).not.toBeNull();
+    });
+    const input = view.element.querySelector<HTMLInputElement>("#globe-country-input")!;
+    input.focus();
+    input.value = "fra";
+    input.dispatchEvent(new Event("input"));
+
+    const names = [...view.element.querySelectorAll("#globe-country-options [role=option]")]
+      .map((option) => option.textContent ?? "");
+    expect(names.length).toBeGreaterThan(0);
+    expect(names.length).toBeLessThan(GLOBE_COUNTRIES.length);
+    expect(names.every((name) => name.toLowerCase().includes("fra"))).toBe(true);
+    view.dispose();
+  });
+
+  it("greys out guessed countries and will not pick them", async () => {
+    const day = 208;
+    const answer = globeAnswer(day, "v1");
+    const guess = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const view = renderGlobe(sourceFor(day), day);
+    document.body.append(view.element);
+    await vi.waitFor(() => {
+      expect(view.element.querySelector(".globe-form")).not.toBeNull();
+    });
+    submitCountry(view.element, guess.name);
+
+    const input = view.element.querySelector<HTMLInputElement>("#globe-country-input")!;
+    input.focus();
+    const options = [...view.element.querySelectorAll<HTMLElement>(
+      "#globe-country-options [role=option]",
+    )];
+    const greyed = options.filter((option) => option.getAttribute("aria-disabled") === "true");
+    expect(greyed).toHaveLength(1);
+    expect(greyed[0]!.firstChild?.textContent).toBe(guess.name);
+
+    greyed[0]!.click();
+    expect(input.value).toBe("");
+    expect(view.element.querySelectorAll(".globe-guess-row")).toHaveLength(1);
+    view.dispose();
+  });
+
+  it("fills the input from a picked country and closes the list", async () => {
+    const day = 208;
+    const answer = globeAnswer(day, "v1");
+    const guess = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const view = renderGlobe(sourceFor(day), day);
+    document.body.append(view.element);
+    await vi.waitFor(() => {
+      expect(view.element.querySelector(".globe-form")).not.toBeNull();
+    });
+    const input = view.element.querySelector<HTMLInputElement>("#globe-country-input")!;
+    input.focus();
+    const option = [...view.element.querySelectorAll<HTMLElement>(
+      "#globe-country-options [role=option]",
+    )].find((candidate) => candidate.textContent === guess.name)!;
+    option.click();
+
+    expect(input.value).toBe(guess.name);
+    expect(view.element.querySelector<HTMLElement>("#globe-country-options")!.hidden).toBe(true);
+    // Picking only fills the input; the guess is spent on Guess.
+    expect(view.element.querySelectorAll(".globe-guess-row")).toHaveLength(0);
+    view.element.querySelector<HTMLButtonElement>(".globe-form button[type=submit]")!.click();
+    expect(view.element.querySelectorAll(".globe-guess-row")).toHaveLength(1);
     view.dispose();
   });
 
