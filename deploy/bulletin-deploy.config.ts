@@ -3,7 +3,6 @@
 //   pnpm pocket:build && pnpm --filter daily-on-dot-prototype build
 //   DEPLOY_DOMAIN=dailyondot.paseo bulletin-deploy --config deploy/bulletin-deploy.config.ts \
 //     app/dist dailyondot.paseo
-//   DEPLOY_DOMAIN=dailyondot.paseo MNEMONIC=... pnpm pocket:publish -- --env <env>
 //
 // Two executables: the app (the games, opened beneath the card) and the worker
 // (draws the card). `domain` must equal the CLI's positional domain verbatim,
@@ -11,14 +10,9 @@
 // bulletin-deploy auto-discovers a config by walking up from the build dir,
 // and must not pick this one up for a bare-label deploy.
 //
-// bulletin-deploy up to 0.22.0 writes the worker record's `$v`, `kind`,
-// `appVersion`, `entrypoint` and `includes`, and DROPS `pocket` without a
-// word (its composeExecutable; checked in 0.22.0's dist). A host asks the
-// worker to draw only once `worker.<label>.<tld>` lists the card, so
-// `tools/publish-pocket-cards.mts` adds `pocket.cards` back after a deploy.
-// 0.23.0 (2026-10-18) keeps `pocket` on the record and validates the cards;
-// the publish tool then reads back an already-complete record and writes
-// nothing. (Finding shared with paritytech/humanity-spa and Nemanja's pets.)
+// A host asks the worker to draw only once `worker.<label>.<tld>` lists the
+// card. bulletin-deploy 0.23.0 (the repo pin) writes `pocket` on the record
+// and validates the cards; 0.22.0 and older dropped it, so do not downgrade.
 const domain = process.env.DEPLOY_DOMAIN;
 if (!domain) {
   throw new Error("DEPLOY_DOMAIN is required, e.g. DEPLOY_DOMAIN=dailyondot.paseo");

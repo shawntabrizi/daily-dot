@@ -187,7 +187,7 @@ DEPLOY_DOMAIN=dailyondot.paseo MNEMONIC=<env> BULLETIN_DEPLOY_TELEMETRY=0 \
 ```
 
 bulletin-deploy 0.23.0 (the repo pin) keeps `pocket.cards` on the worker
-record; `pnpm pocket:publish` is only needed with an older CLI. The name is
+record; 0.22.0 and older dropped it. The name is
 `dailyondot.paseo` (https://dailyondot.paseo.li); the current CIDs and records
 are in `PROGRESS.md`. Bulletin retention is about two weeks, so republish
 before then.

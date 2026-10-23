@@ -79,6 +79,10 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     PNGs; the old `count-<n>.png` deleted). Strip: gold = every pick, green = any game.
     `pnpm smoke` gained a picks step. Not verified: the face on a device; the existing
     tile PNGs were not re-baked (this sandbox's Chromium renders them byte-different).
+  - **Legacy cleanup (no players yet, Shawn 2026-10-23):** removed the
+    `daily-on-dot:autosign:v1` removal on load and its test, and
+    `tools/publish-pocket-cards.mts` / `pnpm pocket:publish` (only needed with
+    bulletin-deploy <= 0.22; the repo pins 0.23.0).
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

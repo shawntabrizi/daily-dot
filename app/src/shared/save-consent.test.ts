@@ -174,18 +174,6 @@ describe("save consent", () => {
     window.localStorage.clear();
   });
 
-  // Why: devices hold "Allocated" from the old per-device flag; read as a grant
-  // it would skip the prompt after a restart.
-  it("removes the old stored grant and never reads it", async () => {
-    const storage = new MemoryStorage();
-    storage.setItem("daily-on-dot:autosign:v1", "Allocated");
-    const prompt = scriptedPrompt("later");
-    const source = withSaveConsent(fakeSource(async () => undefined), { inHost: async () => true, storage, ...prompt });
-    expect(storage.getItem("daily-on-dot:autosign:v1")).toBeNull();
-    await expect(source.record(0, 10, 4, true)).rejects.toBeInstanceOf(SaveDeclinedError);
-    expect(prompt.requests[0]?.ask).toBe("approve");
-  });
-
   // Why: the overlay headline and squares state the real day, not "first one" on a fifth game.
   it("passes the day's finished games, this one included, in roster order", async () => {
     const prompt = scriptedPrompt("later");
