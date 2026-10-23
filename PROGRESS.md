@@ -53,6 +53,10 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   archive's all-games rule (D17c, `hubCellState` "all"); gold stays "a game was played".
   Blue days join with a blue connector. A backfilled all-six day stays gold here, as it
   is not blue on the archive either.
+- **Hub headline while loading (2026-10-23):** the hub and archive day pages painted
+  "Six to play." before the day's bits arrived, then corrected it ("Four to go."), a
+  visible wrong count on every archive step. The headline now reads "Loading…" (muted)
+  until the read lands, and "Six games." if it fails (the read-error line explains).
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

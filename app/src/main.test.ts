@@ -34,7 +34,8 @@ it("boots the complete stub roster in test mode without opening a chain", () => 
   const dispose = bootApp(root);
 
   expect(root.querySelectorAll("[data-game-row]")).toHaveLength(GAME_ROSTER.length);
-  expect(root.textContent).toContain("Six to play.");
+  // The count is not guessed before the day is read.
+  expect(root.querySelector("[data-home-headline]")?.textContent).toBe("Loading…");
   expect(createChainClient).not.toHaveBeenCalled();
   // The hub header: hamburger, "Daily on Dot", the pill; the hamburger opens the drawer.
   expect(root.querySelector(".site-title")?.textContent).toBe("Daily on Dot");

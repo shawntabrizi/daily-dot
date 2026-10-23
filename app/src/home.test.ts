@@ -158,6 +158,31 @@ describe("home", () => {
     view.dispose();
   });
 
+  it("shows a loading headline, not a guessed count, until the day is read", async () => {
+    let resolveBits: (bits: { played: bigint; solved: bigint; ontime: bigint }) => void = () => undefined;
+    const dayBits = vi.fn(
+      () => new Promise<{ played: bigint; solved: bigint; ontime: bigint }>((resolve) => {
+        resolveBits = resolve;
+      }),
+    );
+    const view = renderHome(stubSource({ dayBits }), DAY - 3);
+    const headline = view.element.querySelector<HTMLElement>("[data-home-headline]")!;
+
+    expect(headline.textContent).toBe("Loading…");
+    expect(headline.hasAttribute("data-loading")).toBe(true);
+    await vi.waitFor(() => {
+      expect(dayBits).toHaveBeenCalled();
+    });
+    expect(headline.textContent).toBe("Loading…");
+
+    resolveBits({ played: 3n, solved: 3n, ontime: 3n });
+    await vi.waitFor(() => {
+      expect(headline.textContent).toBe("Four to go.");
+    });
+    expect(headline.hasAttribute("data-loading")).toBe(false);
+    view.dispose();
+  });
+
   it("keeps the rows and offers a retry after a failed read", async () => {
     const currentDay = vi
       .fn<() => Promise<number>>()
@@ -171,6 +196,8 @@ describe("home", () => {
     });
     expect(view.element.querySelectorAll("[data-game-row]")).toHaveLength(GAME_ROSTER.length);
     expect(view.element.querySelector("[data-row-action]")).toBeNull();
+    // A failed read shows no count rather than a guessed one.
+    expect(view.element.querySelector("[data-home-headline]")?.textContent).toBe("Six games.");
 
     view.element.querySelector<HTMLButtonElement>("[data-home-read-error] button")?.click();
     await vi.waitFor(() => {

@@ -40,6 +40,10 @@ export function greetingFor(hour: number): string {
   return "Good evening.";
 }
 
+// Until the day's bits arrive the count is unknown; a guessed "Six to play."
+// flashed and then corrected itself on every archive step.
+const HEADLINE_LOADING = "Loading…";
+
 /** The headline states the day: "Six to play." / "Three to go." / "All six done." */
 export function headlineFor(done: number, total = GAME_ROSTER.length): string {
   if (done === 0) {
@@ -111,7 +115,7 @@ function pastHead(day: number, today: number): string {
       ${step(day + 1, "forward", `Next day, ${next}`)}
     </nav>
     <div class="home-head home-head--past">
-      <h1><span data-home-headline>${headlineFor(0)}</span></h1>
+      <h1><span data-home-headline data-loading>${HEADLINE_LOADING}</span></h1>
       <a class="today-chip" href="#/">Today${icon("forward")}</a>
     </div>
   `;
@@ -134,7 +138,7 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
       : `<div class="home-head">
       <div class="home-lead">
         <p class="eyebrow" data-home-date>${dateEyebrow()}</p>
-        <h1><span data-home-greeting>${greetingFor(new Date().getHours())}</span><br><span data-home-headline>${headlineFor(0)}</span></h1>
+        <h1><span data-home-greeting>${greetingFor(new Date().getHours())}</span><br><span data-home-headline data-loading>${HEADLINE_LOADING}</span></h1>
       </div>
       <div class="home-countdown" aria-live="off">New set in<br><span data-countdown>${countdownText()}</span></div>
     </div>`}
@@ -211,7 +215,10 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
     );
     doneSection.hidden = done.length === 0;
 
-    headline.textContent = headlineFor(done.length);
+    if (dayBits) {
+      headline.textContent = headlineFor(done.length);
+      delete headline.dataset.loading;
+    }
     bar.setAttribute(
       "aria-label",
       `${past ? `Day ${pastDay}` : "Today"}: ${done.length} of ${GAME_ROSTER.length} done`,
@@ -289,6 +296,10 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
   const hydrateCompletion = async (): Promise<void> => {
     const request = ++readRequest;
     readError.hidden = true;
+    if (!dayBits) {
+      headline.textContent = HEADLINE_LOADING;
+      headline.dataset.loading = "";
+    }
     try {
       const today = await source.currentDay();
       if (pastDay !== null && pastDay >= today) {
@@ -310,6 +321,10 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
     } catch {
       if (!disposed && request === readRequest) {
         readError.hidden = false;
+        if (!dayBits) {
+          headline.textContent = `${WORDS[GAME_ROSTER.length]} games.`;
+          delete headline.dataset.loading;
+        }
       }
     }
   };
