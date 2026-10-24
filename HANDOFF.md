@@ -1,9 +1,9 @@
 # Handoff: get the live site up to date (2026-10-24)
 
-For the local agent. Read `AGENTS.md`, then `PROGRESS.md` (the WP38–WP41 entries at
-the top). Everything below is on branch `claude/wizardly-feynman-bla8pm`, open as
-PR shawntabrizi/daily-dot#1 against `main` (the repo's default branch; there is
-no `master`). Delete this file in the last commit once the steps are done.
+Everything since the initial release (`c47ac10`) is on `claude/wizardly-feynman-bla8pm`,
+PR shawntabrizi/daily-dot#1 into `main` (there is no `master`). Locked decisions changed:
+D6, D12, D13, D17b, D17c, D20, D21 amended; D22–D25 new (see `AGENTS.md`, briefs
+`plans/wp-38`…`wp-41`, `PROGRESS.md`). Delete this file in the last commit.
 
 ## What changed on the branch (21 commits on top of `main`)
 
@@ -31,15 +31,13 @@ no `master`). Delete this file in the last commit once the steps are done.
    ```
    Expected: 685 app tests, 25 pocket, 62 Rust, all green.
 
-3. **Build the new `DailyScores`.** Toolchain `nightly-2026-02-01` with `rust-src`, and
-   `cargo-pvm-contract` from `paritytech/cargo-pvm-contract` rev `d886ab2` (see
-   README "Contracts").
+3. **Build the new `DailyScores`** (same pinned toolchain as before).
    ```bash
    (cd contracts/scores && cargo pvm-contract build)
    ```
    The other four contracts did not change; do not rebuild or redeploy them.
 
-4. **Redeploy only `DailyScores`.** It needs the deployer key (dev account `//4`).
+4. **Redeploy only `DailyScores`** (deployer `//4`).
    ```bash
    cd app
    export DAILY_NETWORK=paseo-next-v2 DAILY_DEPLOY_DERIVATION=//4 DAILY_DEPLOY_MNEMONIC=<mnemonic>
