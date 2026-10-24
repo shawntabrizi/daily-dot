@@ -7,7 +7,53 @@
 /** How long the target plays, and its fades in and out. */
 export const TONE_SECONDS = 2;
 const FADE_SECONDS = 0.04;
-const LEVEL = 0.25;
+
+/**
+ * Equal loudness: the sound level (dB SPL) a tone needs to sound as loud as
+ * 1 kHz at 40 dB (ISO 226:2003, the 40-phon contour). The ear is far less
+ * sensitive low down, so one fixed level made 110 Hz near silent and 880 Hz
+ * loud. Linear in log-frequency between these points.
+ */
+const EQUAL_LOUDNESS_40_PHON: readonly (readonly [hz: number, db: number])[] = [
+  [100, 64.4], [125, 60.6], [160, 56.7], [200, 53.4], [250, 50.4], [315, 47.6],
+  [400, 45.0], [500, 43.1], [630, 41.3], [800, 40.1], [1000, 40.0],
+];
+
+/** Gain of the lowest, loudest-needing tone; everything else is scaled down from it. */
+export const PEAK_LEVEL = 0.45;
+/**
+ * How much of the contour to correct. All of it (about 23 dB across
+ * 110–880 Hz) would drive small phone speakers into distortion at the low end.
+ */
+const COMPENSATION = 0.75;
+
+function contourDb(hz: number): number {
+  const points = EQUAL_LOUDNESS_40_PHON;
+  if (hz <= points[0]![0]) return points[0]![1];
+  for (let index = 1; index < points.length; index += 1) {
+    const [hzHigh, dbHigh] = points[index]!;
+    if (hz <= hzHigh) {
+      const [hzLow, dbLow] = points[index - 1]!;
+      const t = Math.log(hz / hzLow) / Math.log(hzHigh / hzLow);
+      return dbLow + t * (dbHigh - dbLow);
+    }
+  }
+  return points[points.length - 1]![1];
+}
+
+/** The gain that makes `hz` sound about as loud as every other tone in 110–880 Hz. */
+export function levelFor(hz: number): number {
+  // The game's range starts at 110 Hz; never boost past its level.
+  const belowLowest = contourDb(Math.max(hz, 110)) - contourDb(110);
+  return PEAK_LEVEL * 10 ** ((COMPENSATION * belowLowest) / 20);
+}
+
+/**
+ * A soft tone: the fundamental with a little of the 2nd and 3rd harmonic.
+ * Phone speakers barely reproduce 110 Hz, but the ear hears the pitch from
+ * its harmonics; the pitch, and so the scoring, stays the fundamental.
+ */
+const HARMONICS = [0, 1, 0.3, 0.12];
 
 type AudioContextClass = typeof AudioContext;
 
@@ -55,12 +101,14 @@ function voice(hz: number): { oscillator: OscillatorNode; gain: GainNode; now: n
     return null;
   }
   const oscillator = context.createOscillator();
-  oscillator.type = "sine";
+  oscillator.setPeriodicWave(
+    context.createPeriodicWave(new Float32Array(HARMONICS), new Float32Array(HARMONICS.length)),
+  );
   oscillator.frequency.value = hz;
   const gain = context.createGain();
   const now = context.currentTime;
   gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(LEVEL, now + FADE_SECONDS);
+  gain.gain.linearRampToValueAtTime(levelFor(hz), now + FADE_SECONDS);
   oscillator.connect(gain).connect(context.destination);
   oscillator.start(now);
   return { oscillator, gain, now };
@@ -73,7 +121,7 @@ export function playTone(hz: number, seconds = TONE_SECONDS): Promise<void> {
     return Promise.resolve();
   }
   const { oscillator, gain, now } = played;
-  gain.gain.setValueAtTime(LEVEL, now + seconds - FADE_SECONDS);
+  gain.gain.setValueAtTime(levelFor(hz), now + seconds - FADE_SECONDS);
   gain.gain.linearRampToValueAtTime(0, now + seconds);
   oscillator.stop(now + seconds + 0.01);
   return new Promise((resolve) => {
@@ -103,7 +151,9 @@ export function startTone(hz: number): LiveTone {
   return {
     set(next) {
       if (!stopped && context) {
+        // The level follows the pitch, so a drag stays even in loudness.
         oscillator.frequency.setTargetAtTime(next, context.currentTime, 0.01);
+        gain.gain.setTargetAtTime(levelFor(next), context.currentTime, 0.02);
       }
     },
     stop() {

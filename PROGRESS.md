@@ -172,6 +172,12 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   Start" board first (Sound already waits for its Listen tap). Checked in Chromium at
   360×780 and 1440×900, no page scroll. Not checked on a device. The rename to
   `dailydot` is dropped (Shawn); the name stays `dailyondot.paseo`.
+- **Sound loudness (2026-10-24, Shawn: low tones too quiet, high too loud):** the gain now
+  follows 75% of the ISO 226 40-phon equal-loudness contour (`levelFor` in
+  `games/sound/audio.ts`: 0.45 at 110 Hz down to 0.06 at 880 Hz, was a flat 0.25), and
+  the live drag tone follows it as the pitch moves. The tone gains soft 2nd and 3rd
+  harmonics so phone speakers, which barely play 110 Hz, still carry the pitch; scoring
+  is unchanged. Not yet heard on a device: tune `COMPENSATION` / `PEAK_LEVEL` by ear.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 
