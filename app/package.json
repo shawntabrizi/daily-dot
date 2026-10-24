@@ -31,7 +31,7 @@
     "seed:chess": "node --import tsx scripts/seed-chess.ts",
     "seed:mini": "node --import tsx scripts/seed-mini.ts",
     "seed:connections": "node --import tsx scripts/seed-connections.ts",
-    "set:game-kinds": "node --import tsx scripts/set-game-kinds.ts",
+    "set:bucket-specs": "node --import tsx scripts/set-bucket-specs.ts",
     "generate:guesses": "node --import tsx scripts/generate-guesses.ts"
   },
   "devDependencies": {

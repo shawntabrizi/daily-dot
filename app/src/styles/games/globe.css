@@ -131,7 +131,7 @@
   width: 100%;
   min-width: 0;
   height: 44px;
-  padding: 0 12px;
+  padding: 0 40px 0 12px;
   border: 1px solid var(--neutral);
   border-radius: 6px;
   outline: 0;
@@ -151,7 +151,7 @@
   box-shadow: 0 0 0 1px var(--wrong);
 }
 
-.globe-input-row button {
+.globe-input-row > button {
   min-height: 44px;
   padding: 0;
   border: 0;
@@ -161,6 +161,87 @@
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
+}
+
+/* The list opens upward over the globe: below the input it would sit under
+   the phone keyboard. It scrolls inside itself, so the page never does (D18). */
+.globe-combobox {
+  position: relative;
+  min-width: 0;
+}
+
+.globe-options-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: grid;
+  width: 40px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  place-items: center;
+}
+
+.globe-combobox input[aria-expanded="true"] + .globe-options-toggle svg {
+  transform: rotate(180deg);
+}
+
+.globe-options {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: calc(100% + 4px);
+  left: 0;
+  max-height: min(264px, 38dvh);
+  margin: 0;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--neutral);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  box-shadow: 0 -8px 24px rgb(0 0 0 / 0.45);
+  list-style: none;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--neutral) var(--surface-raised);
+  scrollbar-width: thin;
+}
+
+.globe-option {
+  display: flex;
+  min-height: 40px;
+  padding: 0 10px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 4px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.globe-option[aria-selected="true"] {
+  background: var(--surface);
+}
+
+@media (hover: hover) {
+  .globe-option:not([aria-disabled="true"]):hover {
+    background: var(--surface);
+  }
+}
+
+.globe-option[aria-disabled="true"],
+.globe-option--empty {
+  color: var(--neutral);
+  cursor: default;
+}
+
+.globe-option-note {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 .globe-message {

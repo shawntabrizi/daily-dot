@@ -24,9 +24,9 @@ struct DetailView {
     solved: bool,
 }
 
-/// One non-empty histogram bucket: `bucket` is the exact count (1..=31, 31 =
-/// "31+") for Count games or the 15-second step (0..=120, 120 = "30 min+")
-/// for Seconds games; `count` is how many on-time finishers landed in it.
+/// One non-empty histogram bucket: `bucket` is the 0-based index under the
+/// game's bucket spec (`0..buckets`); `count` is how many on-time finishers
+/// landed in it.
 #[derive(pvm::SolAbi)]
 struct BucketCount {
     bucket: u8,
@@ -41,16 +41,27 @@ struct HistogramView {
     buckets: alloc::vec::Vec<BucketCount>,
 }
 
+/// A game's bucket spec as read back; `set` is false when the owner has not
+/// set one and the game reads as `BucketSpec::DEFAULT`.
+#[derive(pvm::SolAbi)]
+struct BucketSpecView {
+    min: u32,
+    max: u32,
+    buckets: u8,
+    set: bool,
+}
+
 #[pvm::storage]
 struct Storage {
     played_bits: pvm::storage::Mapping<([u8; 20], u32), u64>,
     solved_bits: pvm::storage::Mapping<([u8; 20], u32), u64>,
     ontime_bits: pvm::storage::Mapping<([u8; 20], u32), u64>,
     detail: pvm::storage::Mapping<([u8; 20], u32, u8), Detail>,
-    /// The deployer; the only account that may set a game's kind.
+    /// The deployer; the only account that may set a game's bucket spec.
     owner: [u8; 20],
-    /// `game_id -> GameKind` byte; unset reads as Count.
-    game_kind: pvm::storage::Mapping<u8, u8>,
+    /// `game_id -> (min, max, buckets)`, set once; unset reads as
+    /// `BucketSpec::DEFAULT`.
+    bucket_spec: pvm::storage::Mapping<u8, (u32, u32, u8)>,
     /// `(game_id, day, bucket) -> count` of on-time finishers (D20).
     bucket_count: pvm::storage::Mapping<(u8, u32, u8), u32>,
     /// `(game_id, day) -> total` on-time finishers.
@@ -96,22 +107,27 @@ fn day_view(who: [u8; 20], day: u32) -> DayBits {
     }
 }
 
-fn stored_game_kind(game_id: u8) -> logic::GameKind {
-    Storage::game_kind()
+/// Stored specs passed `BucketSpec::new` when set; revalidating on read keeps
+/// the invalid-spec case impossible to reach `bucket` without trusting that.
+fn stored_bucket_spec(game_id: u8) -> Option<logic::BucketSpec> {
+    Storage::bucket_spec()
         .get(&game_id)
-        .and_then(logic::GameKind::from_u8)
-        .unwrap_or(logic::GameKind::Count)
+        .and_then(|(min, max, buckets)| logic::BucketSpec::new(min, max, buckets).ok())
+}
+
+fn bucket_spec_or_default(game_id: u8) -> logic::BucketSpec {
+    stored_bucket_spec(game_id).unwrap_or(logic::BucketSpec::DEFAULT)
 }
 
 fn histogram_view(game_id: u8, day: u32) -> HistogramView {
     if game_id >= logic::GAME_COUNT {
         fail("GameOutOfRange");
     }
-    let kind = stored_game_kind(game_id);
+    let spec = bucket_spec_or_default(game_id);
     let total = Storage::bucket_total().get(&(game_id, day)).unwrap_or(0);
     let mut buckets = alloc::vec::Vec::new();
     if total > 0 {
-        for bucket in 0..=kind.bucket_max() {
+        for bucket in 0..spec.buckets() {
             if let Some(count) = Storage::bucket_count().get(&(game_id, day, bucket)) {
                 if count > 0 {
                     buckets.push(BucketCount { bucket, count });
@@ -134,9 +150,9 @@ fn detail_view(who: [u8; 20], day: u32, game_id: u8) -> Option<DetailView> {
 #[pvm::contract]
 mod daily_scores {
     use super::{
-        DayBits, Detail, DetailView, HistogramView, Storage, caller20, current_day_index,
-        day_view, detail_view, fail, histogram_view, logic, pvm, stored_day_bits,
-        stored_game_kind,
+        BucketSpecView, DayBits, Detail, DetailView, HistogramView, Storage,
+        bucket_spec_or_default, caller20, current_day_index, day_view, detail_view, fail,
+        histogram_view, logic, pvm, stored_bucket_spec, stored_day_bits,
     };
     use alloc::vec::Vec;
 
@@ -146,29 +162,40 @@ mod daily_scores {
         Ok(())
     }
 
-    /// Owner only. `kind` is `GAME_KIND_COUNT` (0) or `GAME_KIND_SECONDS`
-    /// (1); an unset game reads as Count. Changing a kind after a day has
-    /// recorded re-labels that day's buckets, so set kinds before launch.
+    /// Owner only, once per game: a spec set after a day has recorded would
+    /// re-label that day's buckets, so specs cannot change (D20).
     #[pvm::method]
-    pub fn set_game_kind(game_id: u8, kind: u8) {
+    pub fn set_bucket_spec(game_id: u8, min: u32, max: u32, buckets: u8) {
         if Storage::owner().get() != Some(caller20()) {
             fail("NotOwner");
         }
         if game_id >= logic::GAME_COUNT {
             fail("GameOutOfRange");
         }
-        if logic::GameKind::from_u8(kind).is_none() {
-            fail("InvalidKind");
+        if Storage::bucket_spec().get(&game_id).is_some() {
+            fail("BucketSpecAlreadySet");
         }
-        Storage::game_kind().insert(&game_id, &kind);
+        let spec = match logic::BucketSpec::new(min, max, buckets) {
+            Ok(spec) => spec,
+            Err(logic::BucketSpecError::BucketCount) => fail("InvalidBucketCount"),
+            Err(logic::BucketSpecError::EmptyRange) => fail("InvalidBucketRange"),
+        };
+        Storage::bucket_spec().insert(&game_id, &(spec.min(), spec.max(), spec.buckets()));
     }
 
     #[pvm::method]
-    pub fn game_kind(game_id: u8) -> u8 {
+    pub fn bucket_spec(game_id: u8) -> BucketSpecView {
         if game_id >= logic::GAME_COUNT {
             fail("GameOutOfRange");
         }
-        stored_game_kind(game_id).to_u8()
+        let stored = stored_bucket_spec(game_id);
+        let spec = stored.unwrap_or(logic::BucketSpec::DEFAULT);
+        BucketSpecView {
+            min: spec.min(),
+            max: spec.max(),
+            buckets: spec.buckets(),
+            set: stored.is_some(),
+        }
     }
 
     #[pvm::method]
@@ -201,7 +228,7 @@ mod daily_scores {
         // The day's distribution counts on-time finishers only (D20): a
         // backfill sees it and never changes it.
         if let Some(bucket) = logic::histogram_bucket_for_record(
-            stored_game_kind(game_id),
+            bucket_spec_or_default(game_id),
             score,
             day,
             current_day,

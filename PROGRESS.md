@@ -39,6 +39,131 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   chip stays in the heading row until the header takes a right slot (R1). Exceptions:
   the plum bar ink is `#06030a` (4.55:1; the board draws no plum bar), tiles drop one
   size under 375 px so eight letters fit, `--body` added to `tokens.css` for R1 to own.
+- **Globe country picker (2026-10-23):** the native `<datalist>` drew no suggestions in
+  the Polkadot app's webview, so players had no list to pick from. Replaced with an ARIA
+  combobox (`createCountryPicker` in `games/globe/view.ts`): tap/focus opens every
+  country A–Z, typing filters (`matchCountries`: prefix matches first, then contains),
+  guessed countries stay in place greyed with "guessed" and cannot be picked; arrows,
+  Enter and Escape work. Picking fills the input; Guess spends the guess. The list opens
+  upward over the globe so the phone keyboard never covers it, and scrolls inside itself
+  (D18 checked at 360×780 and 1440×900). `applyGlobeGuess` now refuses a repeat country
+  without spending a guess.
+- **Drawer activity colours (2026-10-23):** the hamburger's activity strip now draws a
+  day blue (`--streak-blue`) when every roster game was finished on the day itself, the
+  archive's all-games rule (D17c, `hubCellState` "all"); gold stays "a game was played".
+  Blue days join with a blue connector. A backfilled all-six day stays gold here, as it
+  is not blue on the archive either.
+- **Hub headline while loading (2026-10-23):** the hub and archive day pages painted
+  "Six to play." before the day's bits arrived, then corrected it ("Four to go."), a
+  visible wrong count on every archive step. The headline now reads "Loading…" (muted)
+  until the read lands, and "Six games." if it fails (the read-error line explains).
+- **WP38 (game selection, one streak), in progress 2026-10-23:** decisions D6, D12,
+  D17b, D17c amended and D21 added (Shawn); brief `plans/wp-38-game-selection.md`.
+  Order: A remove the all-games streak, B selection + Customize + More games, C card.
+  - **A done:** `HubStreaks` is `{any, longestAny, finished}`; the gem, `streakAll`,
+    perfect days and the all-games run are gone from the pill, badges, archive, streaks
+    page (second tile is now "Games finished"), day summary, share text, launcher, card
+    face, smoke tool and art (`gem.png` deleted). The pill's ring is gold now.
+  - **B done:** `shared/picks.ts` (key `daily-on-dot:picks:v1`, starter Word/Mini/
+    Connections, host KV + `localStorage` mirror, `syncPicksWithHost` on boot; host
+    wins), `shared/host-store.ts` (the KV helper the card store now uses too),
+    `#/customize` (drawer link; last pick cannot be unticked). Hub: picks, then Done
+    (any finished game), then a collapsed "More games" (open state per device); the
+    headline, bar and day-done panel count picks. Calendars and the drawer strip: blue =
+    every pick played, on time or later (`hubCellState` "complete"), gold = any game on
+    the day. Result Next and "n of N", share slots, save overlay tiles, launcher rows
+    use picks. Visual check at 360 and 1440: hub, Customize, drawer; no horizontal scroll.
+  - **C done:** the worker reads `daily-on-dot:picks:v1` beside the checklist and the
+    face draws the picks (rows of three, short row padded with blanks; six at most,
+    `face.ts` throws if the roster outgrows that) with `count-<n>-of-<k>.png` (27 new
+    PNGs; the old `count-<n>.png` deleted). Strip: gold = every pick, green = any game.
+    `pnpm smoke` gained a picks step. Not verified: the face on a device; the existing
+    tile PNGs were not re-baked (this sandbox's Chromium renders them byte-different).
+  - **Legacy cleanup (no players yet, Shawn 2026-10-23):** removed the
+    `daily-on-dot:autosign:v1` removal on load and its test, and
+    `tools/publish-pocket-cards.mts` / `pnpm pocket:publish` (only needed with
+    bulletin-deploy <= 0.22; the repo pins 0.23.0).
+- **WP39 (Daily Code, Daily Angle, card overflow), in progress 2026-10-23:** D12/D21
+  amended, D22/D23 added (Shawn); brief `plans/wp-39-code-and-angle.md`. Angle ships
+  without Angledle's six-guess cap (D13: no loss state) unless Shawn changes D13.
+  - **Games done:** `games/code` (engine with multiplicity-correct pegs, seeded v1
+    generator via the new `shared/seeded.ts`, progress, view with a number pad and
+    physical keys) and `games/angle` (hints at 5/15/30°, v1 generator with a daily
+    rotation, SVG drawing with the reflex arc the long way, `noValidate` form so the
+    game's message shows instead of the webview bubble). Roster entries, accents
+    (Code coral `#e5534b`, Angle lime `#b5c934`, both theme blocks), glyphs, hub hooks,
+    progress lines, routes, result-page rules; starter picks now include Code;
+    `COUNT_WORDS` to Twelve. Test helper `pickSixGames` (was `pickAllGames`). Checked
+    in Chromium at 360×780 and 1440×900 with 7–8 guesses: no page scroll.
+  - **Card done:** `cardTiles` (unfinished picks first, then finished, six at most; five
+    and `tile-more.png` past six unfinished), the roster guard removed; art for Code,
+    Angle, "+" and `count-<n>-of-<k>` up to 8 (existing PNGs left as committed).
+    `pnpm smoke` picks the six originals and adds an all-eight "+" step. Not verified
+    on a device.
+- **WP40 (bucket specs, score direction, Daily Color), in progress 2026-10-23:** D13 and
+  D20 amended, D24 added (Shawn: "we shouldn't force that every game aims to zero");
+  brief `plans/wp-40-bucket-specs.md`; parity vectors `shared/bucket-test-vectors.json`.
+  Run by subagents: A contract, B app, then C Daily Color. Needs Shawn: `DailyScores`
+  redeploy and `set-bucket-specs`.
+  - **A done (`dc3376f`):** `contracts/logic` `BucketSpec` (private fields, `new` validates
+    1–128 buckets and max > min, `DEFAULT` {1, 32, 31}, `bucket`), `GameKind` gone;
+    `DailyScores` `setBucketSpec` (owner, set-once) / `bucketSpec` view, 0-based buckets.
+    62 host tests incl. the parity file; `cargo pvm-contract build` succeeds with
+    nightly-2026-02-01 (28,698 bytes). No runtime test harness for the contract: owner,
+    set-once and the 0-based histogram read are checked by review only. Left for later:
+    `logic::better_count` / `top_percent` still assume lower-better (unused by the
+    contract; the app ranks).
+  - **B done:** roster `better` + `buckets`; `percentile.ts` `scoreBucket(spec)` with the
+    parity test, direction-aware `betterCount` / `percentileFor` (tests fail if direction
+    flips, using a points stand-in game); `distribution.ts` is a smoothed SVG curve with
+    spec end labels, the player's tick, the better share shaded, an aria sentence;
+    `set-bucket-specs.ts` (`pnpm set:bucket-specs [-- --dry-run]`, checks all games before
+    writing; not run). 0-based buckets throughout. All app/pocket checks green.
+    Cosmetic, logged not fixed: on count games the hump sits in the left fifth of the
+    curve because the axis spans 1–31+.
+  - **C done (Daily Color, gameId 8, `#/g/color`):** `games/color` engine (HSB→sRGB,
+    sRGB→CIELAB D65, CIEDE2000, `scoreForDelta` 10 × max(0, 1 − ΔE00/40) in tenths),
+    seeded v1 generator (own salt; hue 0–359, S 25–100, B 30–100), progress (rounds
+    done + guesses; the round in hand is not stored, so a reload restarts its 5 s look),
+    view (5 s full-board look with a countdown; three `role="slider"` columns with
+    aria-valuetext, drag by pointer capture, arrows/PageUp/PageDown/Home/End; reveal
+    beside the guess with x / 10; total / 50 with the five pairs; the one write fires on
+    "See your total", or on load if the day is complete and unsaved). Roster `points`,
+    `higher`, `{0, 500, 100}`; not a starter pick. Accent sky `#2fb1e4` (both theme
+    blocks), glyphs, hook, "n of 5 colours", route, home/launcher/result rules, card
+    tiles and `count-<n>-of-9` (existing PNGs restored). Tests: all 34 Sharma pairs,
+    Lab/HSB values, score rounding and clamp, frozen v1 days, ranges, progress, view with
+    fake timers. Roster-size tests updated (chips, More games, picks, headline Nine,
+    day-summary means, card tiles). README game table now lists Code, Angle and Color.
+    Checked in Chromium at 360×780 and 1440×900 (look, sliders, reveal: no page scroll;
+    final result scrolls as the result page does). Not verified: on a device or in the
+    host; the read-only state was checked by unit test only, not in the browser.
+- **WP41 done (Daily Sound, gameId 9, `#/g/sound`, D25), 2026-10-23:** `games/sound`
+  engine (ERB-rate `21.4·log10(1 + 0.00437 f)`, per tone `10 × max(0, 1 − ΔERB/0.5)`
+  shown to hundredths; recorded score = the five shown hundredths summed, then rounded
+  half up to tenths, 0–500), seeded v1 generator (own salt; log-uniform 110–880 Hz to
+  the hundredth), progress (tones done as Hz; the round in hand is not stored, so a
+  reload restarts that tone's one listen), `audio.ts` (the only Web Audio code: context
+  made on the first tap and resumed when suspended; 2 s sine with 40 ms fades; a live
+  tone for drag and keys), view (Listen plays the target once; the whole black board is
+  a `role="slider"` pitch control, aria-valuetext "220.00 Hz", log-scale vertical, tone
+  live while held; arrows ±1 cent, Shift ±50; Submit; dialed.gg-style reveal: "n / 5",
+  score to two decimals, verdict, TARGET and YOURS in Hz, arrow to go on; total / 50 with
+  the five tones; the one write fires on leaving the fifth reveal, or on load if the day
+  is complete and unsaved; a recorded-elsewhere day lists the five targets read-only;
+  a message instead of the board when Web Audio is missing or blocked). Roster `points`,
+  `higher`, `POINTS_BUCKETS`; not a starter pick. Accent indigo `#7f6df2` (text
+  `#988af5` dark / `#5243c4` light), both theme blocks, glyphs, hook "Five tones by ear",
+  "n of 5 tones", route, home/launcher/result rules, card tiles and `count-<n>-of-10`
+  (existing PNGs restored). Tests: ERB and score at known points (173.83 vs 190.36 Hz →
+  2.52), clamp and exact match, rounding, cents/log mapping, frozen v1 days and range
+  over 2000 days, progress, view with the audio module mocked. Roster-size tests now
+  count ten games. Checked in Chromium (real Web Audio, headless) at 360×780 and
+  1440×900: listen, find (drag + keys), reveal: no page scroll; the final result
+  scrolls as every result page does. Not verified: actual audible output (headless has
+  no speakers), a real device or the host, iOS's silent switch; read-only state by unit
+  test only. Logged, not fixed: the 0.5 ERB tolerance is the brief's round choice
+  (dialed.gg's looks nearer 0.515) — tune before first play.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

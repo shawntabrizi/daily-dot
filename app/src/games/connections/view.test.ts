@@ -1,5 +1,5 @@
 import { headerTitle } from "../../shared/ui/header";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { DataSource } from "../../shared/data-source";
 import { PUZZLE } from "./engine.test";
@@ -11,6 +11,12 @@ import {
   toggleConnectionsWord,
 } from "./progress";
 import { renderConnections } from "./view";
+import { pickSixGames } from "../../test/picks";
+
+// The six original games picked: the share text counts all six (D21).
+beforeEach(() => {
+  pickSixGames();
+});
 
 function sourceFor(
   day: number,
@@ -25,7 +31,7 @@ function sourceFor(
     dayBitsRange: async () => [],
     record,
     // Three finishers today: two clean boards and one with two mistakes.
-    histogram: async () => ({ total: 3, buckets: [{ bucket: 1, count: 2 }, { bucket: 2, count: 1 }] }),
+    histogram: async () => ({ total: 3, buckets: [{ bucket: 0, count: 2 }, { bucket: 1, count: 1 }] }),
   };
 }
 
@@ -184,7 +190,7 @@ describe("Connections view", () => {
     });
     expect(record).toHaveBeenCalledOnce();
     expect(record).toHaveBeenCalledWith(5, 208, 1, true);
-    // One mistake: bucket 1, tied with one other for best of three.
+    // One mistake: bucket 0, tied with one other for best of three.
     await vi.waitFor(() => {
       expect(view.element.querySelector("[data-result-rank-tile] .result-tile-value")?.textContent).toBe("33%");
     });

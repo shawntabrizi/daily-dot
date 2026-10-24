@@ -28,11 +28,16 @@ function sourceWith(overrides: Partial<DataSource> = {}): DataSource {
 }
 
 describe("dayComplete", () => {
-  it("needs every roster game's played bit, on time or not", () => {
-    expect(dayComplete(FULL)).toBe(true);
-    expect(dayComplete({ played: MASK, solved: 0n, ontime: 0n })).toBe(true);
+  it("needs every given game's played bit, on time or not, and nothing else", () => {
+    expect(dayComplete(FULL, GAME_ROSTER)).toBe(true);
+    expect(dayComplete({ played: MASK, solved: 0n, ontime: 0n }, GAME_ROSTER)).toBe(true);
     const first = GAME_ROSTER[0]!.gameId;
-    expect(dayComplete({ played: MASK & ~(1n << BigInt(first)), solved: 0n, ontime: 0n })).toBe(false);
+    expect(dayComplete({ played: MASK & ~(1n << BigInt(first)), solved: 0n, ontime: 0n }, GAME_ROSTER)).toBe(false);
+    // Only the picks count (D17c): the other games may stay unplayed.
+    const picks = GAME_ROSTER.slice(1, 3);
+    const played = picks.reduce((bits, game) => bits | (1n << BigInt(game.gameId)), 0n);
+    expect(dayComplete({ played, solved: 0n, ontime: 0n }, picks)).toBe(true);
+    expect(dayComplete({ played, solved: 0n, ontime: 0n }, GAME_ROSTER)).toBe(false);
   });
 });
 
@@ -40,7 +45,7 @@ describe("loadDaySummary", () => {
   it("reads every game's histogram and the account's details in one call each", async () => {
     const gameIds = GAME_ROSTER.map((game) => game.gameId);
     const histograms = vi.fn(async (_day: number, ids: readonly number[]) =>
-      ids.map(() => ({ total: 4, buckets: [{ bucket: 1, count: 1 }, { bucket: 3, count: 3 }] })),
+      ids.map(() => ({ total: 4, buckets: [{ bucket: 1, count: 1 }, { bucket: 2, count: 3 }] })),
     );
     const details = vi.fn(async (_day: number, ids: readonly number[]) =>
       ids.map((id) => ({ score: id === 1 ? 20 : 3, solved: true })),
@@ -67,7 +72,7 @@ describe("loadDaySummary", () => {
     const bits: DayBits = { played: 1n << BigInt(first.gameId), solved: 1n << BigInt(first.gameId), ontime: 0n };
     const summary = await loadDaySummary(
       sourceWith({
-        histograms: async (_day, ids) => ids.map(() => ({ total: 1, buckets: [{ bucket: 2, count: 1 }] })),
+        histograms: async (_day, ids) => ids.map(() => ({ total: 1, buckets: [{ bucket: 1, count: 1 }] })),
         details: async (_day, ids) => ids.map((id) => ({ score: id === first.gameId ? 2 : 0, solved: id === first.gameId })),
       }),
       99,
@@ -120,7 +125,7 @@ describe("readDays and readStreakWindow", () => {
     const days = await readStreakWindow(sourceWith({ dayBitsRange: endless }), 200, MASK);
     expect(days).toHaveLength(201);
     expect(endless.mock.calls.map(([from]) => from)).toEqual([137, 73, 9, 0]);
-    expect((await loadHubStreaks(sourceWith({ dayBitsRange: endless }), 200)).all).toBe(201);
+    expect((await loadHubStreaks(sourceWith({ dayBitsRange: endless }), 200)).any).toBe(201);
   });
 });
 
@@ -128,22 +133,17 @@ describe("renderDaySummary", () => {
   it("lists each game's score and percentile and the day's mean", async () => {
     const summary = await loadDaySummary(
       sourceWith({
-        histograms: async (_day, ids) => ids.map(() => ({ total: 10, buckets: [{ bucket: 2, count: 10 }] })),
-        // Every game in the one bucket (2 guesses, or 30 s = bucket 2) except
-        // Sudoku at 45 s (bucket 3), behind all ten finishers.
-        details: async (_day, ids) => ids.map((id) => ({ score: id === 1 ? 45 : id === 10 ? 30 : 2, solved: true })),
+        histograms: async (_day, ids) => ids.map(() => ({ total: 10, buckets: [{ bucket: 1, count: 10 }] })),
+        // Every game in the one bucket (2 guesses = bucket 1; Color's and
+        // Sound's 0.7 points = bucket 1 of their half-point steps) except Sudoku at 45 s
+        // (bucket 3), behind all ten finishers.
+        details: async (_day, ids) =>
+          ids.map((id) => ({ score: id === 1 ? 45 : id === 8 || id === 9 ? 7 : id === 10 ? 30 : 2, solved: true })),
       }),
       100,
       FULL,
     );
-    const panel = renderDaySummary(summary, {
-      any: 3,
-      all: 1,
-      longestAny: 6,
-      longestAll: 4,
-      finished: 12,
-      perfectDays: 2,
-    });
+    const panel = renderDaySummary(summary, { any: 3, longestAny: 6, finished: 12 });
     // Mean of Sudoku's 100 and 10 for every other roster game.
     const mean = Math.round((100 + 10 * (GAME_ROSTER.length - 1)) / GAME_ROSTER.length);
     expect(panel.querySelector("[data-day-rank]")?.textContent).toBe(`Top ${mean}% today`);
@@ -153,7 +153,7 @@ describe("renderDaySummary", () => {
     expect(panel.querySelector('[data-summary-game="word"]')?.textContent).toBe("Word2 guessesTop 10%");
     expect(panel.querySelector('[data-summary-game="chess"]')?.textContent).toBe("Chess2 attemptsTop 10%");
     expect(panel.querySelector('[data-summary-game="sudoku"]')?.textContent).toBe("Sudoku0:45Top 100%");
-    // The streaks live in the header pill, not here; the counts are tiles,
+    // The streak lives in the header pill, not here; the counts are tiles,
     // each a number over its label.
     expect(panel.querySelector("[data-streak-any]")).toBeNull();
     const tiles = [...panel.querySelectorAll(".day-summary-stat")].map((tile) => [
@@ -162,8 +162,7 @@ describe("renderDaySummary", () => {
     ]);
     expect(tiles).toEqual([
       ["12", "Games finished"],
-      ["2", "Perfect days"],
-      ["4", "Best perfect run"],
+      ["6", "Best streak"],
     ]);
   });
 

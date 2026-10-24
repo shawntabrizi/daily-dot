@@ -782,57 +782,158 @@ fn a_connections_set_must_have_a_puzzle_before_it_can_be_sealed() {
 }
 
 mod histogram {
+    use std::collections::BTreeMap;
+
+    use serde::Deserialize;
+
     use crate::{
-        better_count, histogram_bucket_for_record, score_bucket, top_percent, GameKind,
-        COUNT_BUCKET_MAX, GAME_KIND_COUNT, GAME_KIND_SECONDS, SECONDS_BUCKET_MAX,
+        better_count, histogram_bucket_for_record, top_percent, BucketSpec, BucketSpecError,
+        MAX_BUCKETS,
     };
 
-    #[test]
-    fn game_kinds_round_trip_through_their_storage_byte() {
-        assert_eq!(GameKind::from_u8(GAME_KIND_COUNT), Some(GameKind::Count));
-        assert_eq!(GameKind::from_u8(GAME_KIND_SECONDS), Some(GameKind::Seconds));
-        assert_eq!(GameKind::from_u8(2), None);
-        assert_eq!(GameKind::Count.to_u8(), GAME_KIND_COUNT);
-        assert_eq!(GameKind::Seconds.to_u8(), GAME_KIND_SECONDS);
+    #[derive(Deserialize)]
+    struct BucketVectors {
+        specs: BTreeMap<String, SpecVector>,
+        vectors: Vec<BucketVector>,
+    }
+
+    #[derive(Deserialize)]
+    struct SpecVector {
+        min: u32,
+        max: u32,
+        buckets: u8,
+    }
+
+    #[derive(Deserialize)]
+    struct BucketVector {
+        spec: String,
+        score: u32,
+        bucket: u8,
+    }
+
+    fn bucket_vectors() -> BucketVectors {
+        serde_json::from_str(include_str!("../../../shared/bucket-test-vectors.json"))
+            .expect("shared bucket vectors must be valid JSON")
     }
 
     #[test]
-    fn count_scores_bucket_exactly_from_1_to_30_and_31_plus() {
-        for score in 1..=30u32 {
-            assert_eq!(score_bucket(GameKind::Count, score), score as u8, "score {score}");
+    fn shared_bucket_vectors_match() {
+        let file = bucket_vectors();
+        assert!(!file.vectors.is_empty(), "the parity file must carry vectors");
+        for vector in &file.vectors {
+            let named = file
+                .specs
+                .get(&vector.spec)
+                .unwrap_or_else(|| panic!("vector names unknown spec {}", vector.spec));
+            let spec = BucketSpec::new(named.min, named.max, named.buckets)
+                .unwrap_or_else(|err| panic!("spec {} is invalid: {err:?}", vector.spec));
+            assert_eq!(
+                spec.bucket(vector.score),
+                vector.bucket,
+                "spec {} score {}",
+                vector.spec,
+                vector.score
+            );
         }
-        assert_eq!(score_bucket(GameKind::Count, 31), COUNT_BUCKET_MAX);
-        assert_eq!(score_bucket(GameKind::Count, 400), COUNT_BUCKET_MAX);
-        assert_eq!(score_bucket(GameKind::Count, u32::MAX), COUNT_BUCKET_MAX);
-        assert_eq!(score_bucket(GameKind::Count, 0), 1, "a finish takes at least one guess");
-        assert_eq!(GameKind::Count.bucket_max(), 31);
     }
 
     #[test]
-    fn seconds_bucket_in_fifteen_second_steps_up_to_thirty_minutes() {
-        assert_eq!(score_bucket(GameKind::Seconds, 0), 0);
-        assert_eq!(score_bucket(GameKind::Seconds, 14), 0);
-        assert_eq!(score_bucket(GameKind::Seconds, 15), 1);
-        assert_eq!(score_bucket(GameKind::Seconds, 201), 13);
-        assert_eq!(score_bucket(GameKind::Seconds, 1799), 119);
-        assert_eq!(score_bucket(GameKind::Seconds, 1800), SECONDS_BUCKET_MAX);
-        assert_eq!(score_bucket(GameKind::Seconds, u32::MAX), SECONDS_BUCKET_MAX);
-        assert_eq!(GameKind::Seconds.bucket_max(), 120);
+    fn the_default_spec_is_the_count_spec_of_the_parity_file() {
+        let file = bucket_vectors();
+        let count = &file.specs["count"];
+        assert_eq!(
+            BucketSpec::DEFAULT,
+            BucketSpec::new(count.min, count.max, count.buckets).unwrap()
+        );
+        assert_eq!(
+            (
+                BucketSpec::DEFAULT.min(),
+                BucketSpec::DEFAULT.max(),
+                BucketSpec::DEFAULT.buckets()
+            ),
+            (1, 32, 31)
+        );
+    }
+
+    #[test]
+    fn default_spec_buckets_exact_counts_1_to_30_then_31_plus() {
+        let spec = BucketSpec::DEFAULT;
+        for score in 1..=30u32 {
+            assert_eq!(spec.bucket(score), (score - 1) as u8, "score {score}");
+        }
+        assert_eq!(spec.bucket(31), 30);
+        assert_eq!(spec.bucket(400), 30);
+        assert_eq!(spec.bucket(u32::MAX), 30);
+        assert_eq!(spec.bucket(0), 0, "below min shares the first bucket");
+    }
+
+    #[test]
+    fn a_spec_needs_one_to_128_buckets() {
+        assert_eq!(BucketSpec::new(0, 10, 0), Err(BucketSpecError::BucketCount));
+        assert_eq!(
+            BucketSpec::new(0, 10, MAX_BUCKETS + 1),
+            Err(BucketSpecError::BucketCount)
+        );
+        assert_eq!(BucketSpec::new(0, 10, u8::MAX), Err(BucketSpecError::BucketCount));
+        assert!(BucketSpec::new(0, 10, 1).is_ok());
+        assert!(BucketSpec::new(0, 10, MAX_BUCKETS).is_ok());
+        assert_eq!(MAX_BUCKETS, 128);
+    }
+
+    #[test]
+    fn a_spec_needs_max_above_min() {
+        assert_eq!(BucketSpec::new(5, 5, 4), Err(BucketSpecError::EmptyRange));
+        assert_eq!(BucketSpec::new(6, 5, 4), Err(BucketSpecError::EmptyRange));
+        assert_eq!(BucketSpec::new(0, 0, 1), Err(BucketSpecError::EmptyRange));
+        assert!(BucketSpec::new(5, 6, 4).is_ok());
+        assert!(BucketSpec::new(0, u32::MAX, MAX_BUCKETS).is_ok());
+    }
+
+    #[test]
+    fn a_single_bucket_spec_puts_every_score_in_bucket_zero() {
+        let spec = BucketSpec::new(10, 20, 1).unwrap();
+        for score in [0, 9, 10, 15, 19, 20, u32::MAX] {
+            assert_eq!(spec.bucket(score), 0, "score {score}");
+        }
+    }
+
+    #[test]
+    fn more_buckets_than_scores_never_exceeds_the_last_bucket() {
+        // Width 3 over 128 buckets: scores spread out, the top edge is clamped.
+        let spec = BucketSpec::new(0, 3, MAX_BUCKETS).unwrap();
+        assert_eq!(spec.bucket(0), 0);
+        assert_eq!(spec.bucket(1), 42);
+        assert_eq!(spec.bucket(2), 85);
+        assert_eq!(spec.bucket(3), 127);
+    }
+
+    #[test]
+    fn the_widest_spec_does_not_overflow() {
+        let spec = BucketSpec::new(0, u32::MAX, MAX_BUCKETS).unwrap();
+        assert_eq!(spec.bucket(u32::MAX - 1), 127);
+        assert_eq!(spec.bucket(u32::MAX / 2), 63);
+        assert_eq!(spec.bucket(u32::MAX), 127);
     }
 
     #[test]
     fn only_on_time_solved_records_enter_the_histogram() {
+        let seconds = BucketSpec::new(0, 1815, 121).unwrap();
         assert_eq!(
-            histogram_bucket_for_record(GameKind::Count, 4, 10, 10, true),
-            Some(4)
+            histogram_bucket_for_record(BucketSpec::DEFAULT, 4, 10, 10, true),
+            Some(3)
         );
         assert_eq!(
-            histogram_bucket_for_record(GameKind::Count, 4, 9, 10, true),
+            histogram_bucket_for_record(seconds, 30, 10, 10, true),
+            Some(2),
+            "the record is bucketed by the spec it is given"
+        );
+        assert_eq!(
+            histogram_bucket_for_record(BucketSpec::DEFAULT, 4, 9, 10, true),
             None,
             "a backfilled day is counted for completion, never in the day's distribution"
         );
         assert_eq!(
-            histogram_bucket_for_record(GameKind::Count, 4, 10, 10, false),
+            histogram_bucket_for_record(BucketSpec::DEFAULT, 4, 10, 10, false),
             None,
             "the distribution is of finishers"
         );

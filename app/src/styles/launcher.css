@@ -1,6 +1,6 @@
 /* Launcher: the half-height sheet beneath the Pocket card (WP29; the hub board's rows, WP37 R1).
-   Head and foot stay put; the six rows fit the half sheet in two columns, and the
-   list scrolls only as the safety net on a shorter sheet. A row's icon tile lights
+   Head and foot stay put; the picks fill two columns (six fit the half sheet) and the
+   list scrolls when there are more, or on a shorter sheet. A row's icon tile lights
    in the game's accent once the game is done; the Play button fills in the selected
    game's accent. */
 
@@ -44,19 +44,15 @@
   white-space: nowrap;
 }
 
-.launcher__streaks {
-  display: flex;
-  gap: 12px;
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
 .launcher__streak {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  color: var(--streak-gold);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
 }
 
 .launcher__streak svg {
@@ -64,16 +60,8 @@
   height: 15px;
 }
 
-.launcher__streak--any {
-  color: var(--streak-gold);
-}
-
-.launcher__streak--all {
-  color: var(--streak-blue);
-}
-
 .launcher__list {
-  /* Two columns of three: six games fit a half-height sheet without scrolling. */
+  /* Two columns: six picks fit a half-height sheet; more scroll here, not the sheet. */
   display: grid;
   flex: 1 1 auto;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -142,6 +130,30 @@
 .launcher[data-launcher-selected="connections"] .launcher__play {
   --accent: var(--accent-connections);
   --accent-ink: var(--accent-connections-ink);
+}
+
+.launcher-row[data-launcher-game="code"],
+.launcher[data-launcher-selected="code"] .launcher__play {
+  --accent: var(--accent-code);
+  --accent-ink: var(--accent-code-ink);
+}
+
+.launcher-row[data-launcher-game="angle"],
+.launcher[data-launcher-selected="angle"] .launcher__play {
+  --accent: var(--accent-angle);
+  --accent-ink: var(--accent-angle-ink);
+}
+
+.launcher-row[data-launcher-game="color"],
+.launcher[data-launcher-selected="color"] .launcher__play {
+  --accent: var(--accent-color);
+  --accent-ink: var(--accent-color-ink);
+}
+
+.launcher-row[data-launcher-game="sound"],
+.launcher[data-launcher-selected="sound"] .launcher__play {
+  --accent: var(--accent-sound);
+  --accent-ink: var(--accent-sound-ink);
 }
 
 .launcher-row__icon {

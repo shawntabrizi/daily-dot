@@ -18,7 +18,9 @@ below, **stop and say so** rather than designing around it.
 - **D4** One shared `DailyScores` contract for all games.
 - **D5** Streaks are derived, never stored. Three `u64` bitmaps per `(account, day)`:
   `played_bits`, `solved_bits`, `ontime_bits`.
-- **D6** Favourites and hidden games are `localStorage` only.
+- **D6** Player settings are device-local, never on-chain: the game selection (D21) lives
+  in the product's host KV store (so the Pocket card can read it), mirrored to
+  `localStorage` for synchronous reads and for hosts without one.
 - **D7** No hub-index contract. The game roster is client-side data; home renders with zero RPC.
 - **D8** Mobile-first. Desktop is the same layout widened.
 - **D9** Guess dictionaries ship in the bundle; only answers live on-chain.
@@ -26,11 +28,13 @@ below, **stop and say so** rather than designing around it.
 - **D11** Procedural generators are frozen and versioned **from first public play, not first
   commit**. Once live, changes ship as `v2` from a future start day. Before a game is live to
   players, `v1` may be rewritten in place — there is no history to protect.
-- **D12** Six games, see `app/src/shared/roster.ts`: Word 0, Sudoku 1, Chess 2, Globe 3,
-  Mini 4, Connections 5. The roster order and the gameIds are frozen from first public play.
-- **D13** `DailyScores` detail is `{score: u32, solved: bool}`; `score` is per-game and
-  **minimised** (guesses, attempts, seconds, mistakes); `solved` means finished. No game
-  has a loss state.
+- **D12** The roster is open-ended and append-only, see `app/src/shared/roster.ts`: Word 0,
+  Sudoku 1, Chess 2, Globe 3, Mini 4, Connections 5, Code 6, Angle 7, Color 8, Sound 9 today. A gameId is never reused or
+  moved once a game is live; the D5 bitmaps cap the roster at 64.
+- **D13** `DailyScores` detail is `{score: u32, solved: bool}`; `score` is the game's own
+  natural number, and each game says whether **lower or higher is better** (roster
+  `better`): guesses, attempts, seconds and mistakes are lower-better; points (Daily
+  Color, Daily Sound) are higher-better. `solved` means finished. No game has a loss state.
 - **D14** **One chain write per game-day, at completion. Never per guess.**
 - **D15** In-progress ("Started") state is `localStorage` only.
 - **D16** Daily Word (gameId 0, route `#/g/word`) is one 6-letter word a day with no guess
@@ -42,15 +46,37 @@ below, **stop and say so** rather than designing around it.
 - **D17** Streaks get a one-day grace: the backward walk starts at today if today qualifies,
   otherwise at yesterday; 0 only if neither does. The compact badge hides below a streak
   of 2. See `PLAN.md` §8.2.
-- **D17b** Any-game hub streak (gold flame): a day qualifies when one roster game was
-  finished on the day itself; D17's grace applies. Mirrored to the Pocket card as `streakAny`.
-- **D17c** All-games hub streak (blue gem): a day qualifies when every roster game was
-  finished on the day itself; D17's grace applies. Mirrored as `streakAll`. A backfill
-  counts for completion, never for either streak.
+- **D17b** The one hub streak (gold flame): a day qualifies when any roster game, selected
+  or not, was finished on the day itself; D17's grace applies. Mirrored to the Pocket card
+  as `streakAny`. A backfill never counts for it.
+- **D17c** No all-games streak. A day is **complete** (blue) when every game in the
+  player's *current* selection was finished, on time or later. It is a status, not a
+  streak: changing the selection may turn past days from blue to gold, and that is the
+  intended nudge. No perfect-day counts.
+- **D21** Each player picks the games they play daily (starter set: Word, Mini,
+  Connections, Code). Picked games lead the hub and are all the Pocket card, the drawer,
+  the headline and the share text count; unpicked games stay playable under "More games".
+  At least one game is always picked; there is no upper limit. The card shows six tiles:
+  unfinished picks first, then finished; with more than six unfinished, five and a **+**.
+  See `plans/wp-38-game-selection.md`, `plans/wp-39-code-and-angle.md`.
+- **D22** Daily Code (gameId 6, `#/g/code`): a four-digit code (0–9, repeats allowed),
+  procedural; Mastermind pegs only (● right place, ○ wrong place); no cap; `score` = guesses.
+- **D23** Daily Angle (gameId 7, `#/g/angle`): an angle of 1°–359°, procedural; each
+  guess gets So close (≤5°) / Hot (≤15°) / Warm (≤30°) / Cold and an up/down arrow; no
+  cap (D13, unlike Angledle's six); `score` = guesses.
+- **D24** Daily Color (gameId 8, `#/g/color`): five procedural colours a day, each shown
+  5 s then rebuilt with hue/saturation/brightness sliders; 10 × (1 − ΔE00/40) per colour;
+  `score` = total in tenths of a point (0–500), higher better.
+- **D25** Daily Sound (gameId 9, `#/g/sound`): five procedural tones a day (110–880 Hz),
+  each heard once then found by dragging; 10 × (1 − ΔERB/0.5) per tone; `score` = total
+  in tenths (0–500), higher better. See `plans/wp-41-daily-sound.md`.
 - **D20** `DailyScores` keeps a per-`(game_id, day)` histogram of **on-time** finishers,
-  bucketed by an owner-set kind (Count 1..31+, Seconds in 15 s steps to 30 min+). "Top N%"
-  = rank share with ties in the player's favour; the day percentile is the mean of the
-  game percentiles. See `PLAN.md` D20.
+  bucketed by an owner-set, set-once, per-game **bucket spec** `{min, max, buckets ≤ 128}`:
+  linear buckets over `[min, max)`, below `min` in the first, at or above `max` in the
+  last. The contract never knows the direction. "Top N%" = rank share counted from the
+  game's better end, ties in the player's favour; the distribution is drawn as a smooth
+  curve; the day percentile is the mean of the game percentiles. Parity vectors:
+  `shared/bucket-test-vectors.json`. See `PLAN.md` D20, `plans/wp-40-bucket-specs.md`.
 
 ## Working loop
 

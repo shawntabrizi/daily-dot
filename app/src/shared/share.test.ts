@@ -1,9 +1,19 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { globeAnswer } from "../games/globe/generate";
 import { InMemoryDataSource } from "./data-source";
 import { GAME_ROSTER } from "./roster";
 import { connectionsRows, shareText, type ShareGame } from "./share";
+import { pickSixGames } from "../test/picks";
+
+// The six original games picked, except where a test passes its own (D21).
+beforeEach(() => {
+  pickSixGames();
+});
+
+afterEach(() => {
+  window.localStorage.clear();
+});
 
 const DAY = 208;
 
@@ -32,6 +42,36 @@ const ALL_PLAYED: ShareGame[] = [
 ];
 
 describe("shareText", () => {
+  it("slots and counts the picks, with a line for an unpicked game that was finished too", () => {
+    const picks = ["word", "mini", "connections"].map((id) => GAME_ROSTER.find((entry) => entry.id === id)!);
+    const text = shareText(
+      {
+        day: DAY,
+        games: [game("word", { score: 4 }), game("globe", { score: 3, percentile: 44 })],
+        streaks: { any: 3 },
+        dayPercentile: 31,
+      },
+      picks,
+    );
+    expect(text).toBe(
+      [
+        "Daily on Dot #208 · 1/3",
+        "✅⬜⬜",
+        "Word 4 guesses · Top 18%",
+        "Globe 3 guesses · Top 44%",
+        "✦ 3",
+      ].join("\n"),
+    );
+
+    // Every pick played: the day percentile joins the footer, whatever else is unplayed.
+    const done = shareText(
+      { day: DAY, games: ALL_PLAYED.filter((entry) => ["word", "mini", "connections"].includes(entry.id)), streaks: null, dayPercentile: 9 },
+      picks,
+    );
+    expect(done.split("\n")[0]).toBe("Daily on Dot #208 · 3/3");
+    expect(done.split("\n").at(-1)).toBe("Top 9% today");
+  });
+
   it("never contains any game's answer for a day it knows", async () => {
     const source = new InMemoryDataSource();
     const word = await source.wordAnswer(DAY);
@@ -53,7 +93,7 @@ describe("shareText", () => {
     const text = shareText({
       day: DAY,
       games: ALL_PLAYED,
-      streaks: { any: 14, all: 3 },
+      streaks: { any: 14 },
       dayPercentile: 18,
     });
     const lower = text.toLowerCase();
@@ -64,11 +104,11 @@ describe("shareText", () => {
     expect(text).not.toMatch(/[🟩🟨⬛]{6}/u);
   });
 
-  it("writes the day, six slots in roster order, one line per played game and the streaks", () => {
+  it("writes the day, six slots in roster order, one line per played game and the streak", () => {
     const text = shareText({
       day: DAY,
       games: [game("word", { score: 4 }), game("globe", { score: 3, percentile: 44 })],
-      streaks: { any: 14, all: 3 },
+      streaks: { any: 14 },
       dayPercentile: 31,
     });
     expect(text).toBe(
@@ -77,7 +117,7 @@ describe("shareText", () => {
         "✅⬜⬜✅⬜⬜",
         "Word 4 guesses · Top 18%",
         "Globe 3 guesses · Top 44%",
-        "✦ 14 · ◆ 3",
+        "✦ 14",
       ].join("\n"),
     );
   });
@@ -101,7 +141,7 @@ describe("shareText", () => {
     const five = shareText({
       day: DAY,
       games: ALL_PLAYED.slice(0, 5),
-      streaks: { any: 2, all: 0 },
+      streaks: { any: 2 },
       dayPercentile: 18,
     });
     expect(five).not.toContain("today");
@@ -110,30 +150,29 @@ describe("shareText", () => {
     const six = shareText({
       day: DAY,
       games: ALL_PLAYED,
-      streaks: { any: 2, all: 1 },
+      streaks: { any: 2 },
       dayPercentile: 18,
     });
-    expect(six.split("\n").at(-1)).toBe("✦ 2 · ◆ 1 · Top 18% today");
+    expect(six.split("\n").at(-1)).toBe("✦ 2 · Top 18% today");
     expect(six).toContain("Connections 0 mistakes · Top 12%\n🟨🟨🟨🟨\n🟩🟩🟩🟩");
     expect(six).toContain("Sudoku 3:05 · Top 20%");
     expect(six).toContain("Chess 1 attempt · Top 5%");
   });
 
-  it("omits zero streaks and the footer when there is nothing to say", () => {
+  it("omits a zero streak and the footer when there is nothing to say", () => {
     const text = shareText({
       day: DAY,
       games: [game("word")],
-      streaks: { any: 0, all: 0 },
+      streaks: { any: 0 },
       dayPercentile: 50,
     });
     expect(text.split("\n")).toHaveLength(3);
     expect(text).not.toContain("✦");
-    expect(text).not.toContain("◆");
 
     const anyOnly = shareText({
       day: DAY,
       games: [game("word")],
-      streaks: { any: 7, all: 0 },
+      streaks: { any: 7 },
       dayPercentile: null,
     });
     expect(anyOnly.split("\n").at(-1)).toBe("✦ 7");

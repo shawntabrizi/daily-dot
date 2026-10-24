@@ -11,20 +11,23 @@ import { imagePathsIn, stripTokenIn, textsIn } from "../../tools/face-text.mts";
 import {
   COUNT_HEIGHT,
   COUNT_WIDTH,
+  cardTiles,
   countdownText,
   countdownToken,
   dailyFace,
   EMPTY_BITS,
-  GAME_COUNT,
   LEFT_WIDTH,
   msToRollover,
   RED_WINDOW_MS,
+  STARTER_GAMES,
   stripState,
   TILE_HEIGHT,
   TILE_WIDTH,
 } from "../src/face";
 
 const HOUR = 60 * 60 * 1_000;
+/** The picks most face tests run with: the six original games, one full card. */
+const SIX = GAME_ROSTER.slice(0, 6);
 const ALL = GAME_ROSTER.reduce((bits, game) => bits | (1n << BigInt(game.gameId)), 0n);
 const full = { played: ALL, solved: ALL };
 const three = { played: 0b111n, solved: 0b001n };
@@ -48,26 +51,37 @@ const modifier = (node: Node, tag: string) => node.value?.modifiers?.find((m) =>
 const imagePath = (node: Node) => (node.value?.props?.source as { value: string } | undefined)?.value;
 
 describe("stripState", () => {
+  it("is gold once every pick is done, with other games unplayed", () => {
+    const picks = GAME_ROSTER.slice(0, 2);
+    expect(stripState({ played: 0b11n, solved: 0n }, 0, 10 * HOUR, picks)).toBe("gold");
+    expect(stripState({ played: 0b01n, solved: 0n }, 0, 10 * HOUR, picks)).toBe("green");
+  });
+
+  it("is green, never red, when only an unpicked game is played: the streak is safe", () => {
+    const picks = GAME_ROSTER.slice(0, 2);
+    expect(stripState({ played: 1n << 5n, solved: 0n }, 7, HOUR, picks)).toBe("green");
+  });
+
   it("is gold at 6/6 whatever the streak or the clock", () => {
-    expect(stripState(full, 0, 10 * HOUR)).toBe("gold");
-    expect(stripState(full, 5, HOUR)).toBe("gold");
+    expect(stripState(full, 0, 10 * HOUR, GAME_ROSTER)).toBe("gold");
+    expect(stripState(full, 5, HOUR, GAME_ROSTER)).toBe("gold");
   });
 
   it("is green while some games are done, whatever the streak or the clock", () => {
-    expect(stripState({ played: 1n, solved: 0n }, 0, 10 * HOUR)).toBe("green");
-    expect(stripState({ played: 1n, solved: 0n }, 7, HOUR)).toBe("green");
-    expect(stripState(three, 7, 10 * HOUR)).toBe("green");
+    expect(stripState({ played: 1n, solved: 0n }, 0, 10 * HOUR, GAME_ROSTER)).toBe("green");
+    expect(stripState({ played: 1n, solved: 0n }, 7, HOUR, GAME_ROSTER)).toBe("green");
+    expect(stripState(three, 7, 10 * HOUR, GAME_ROSTER)).toBe("green");
   });
 
   it("is red only with a streak, nothing played, and under four hours left", () => {
-    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS - 1)).toBe("red");
-    expect(stripState(EMPTY_BITS, 1, 1)).toBe("red");
+    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS - 1, GAME_ROSTER)).toBe("red");
+    expect(stripState(EMPTY_BITS, 1, 1, GAME_ROSTER)).toBe("red");
   });
 
   it("stays grey at 0/6 at exactly four hours or with no streak", () => {
-    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS)).toBe("grey");
-    expect(stripState(EMPTY_BITS, 0, HOUR)).toBe("grey");
-    expect(stripState(EMPTY_BITS, 0, 10 * HOUR)).toBe("grey");
+    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS, GAME_ROSTER)).toBe("grey");
+    expect(stripState(EMPTY_BITS, 0, HOUR, GAME_ROSTER)).toBe("grey");
+    expect(stripState(EMPTY_BITS, 0, 10 * HOUR, GAME_ROSTER)).toBe("grey");
   });
 });
 
@@ -79,28 +93,27 @@ describe("msToRollover", () => {
 });
 
 describe("dailyFace layout", () => {
-  const face = dailyFace(three, {}, { streakAny: 14, streakAll: 3 }, noon);
+  const face = dailyFace(three, {}, { streakAny: 14 }, noon, SIX);
   const nodes = nodesIn(face);
 
-  it("has a left column of fixed width 112 that holds the count and the streaks", () => {
+  it("has a left column of fixed width 112 that holds the count and the streak", () => {
     const left = nodes.filter((n) => n.tag === "Column" && modifier(n, "Width") === LEFT_WIDTH);
     expect(left).toHaveLength(1);
     const inside = nodesIn(left[0]);
-    expect(inside.map(imagePath)).toContain("tiles/count-3.png");
+    expect(inside.map(imagePath)).toContain("tiles/count-3-of-6.png");
     expect(inside.map(imagePath)).toContain("tiles/done-today.png");
     expect(inside.map(imagePath)).toContain("tiles/flame.png");
-    expect(inside.map(imagePath)).toContain("tiles/gem.png");
     expect(left[0].value?.props?.verticalArrangement).toBe("SpaceBetween");
     expect(LEFT_WIDTH).toBe(112);
   });
 
   it("draws the count as a 112 x 64 image with the label under it", () => {
-    const count = nodes.find((n) => imagePath(n) === "tiles/count-3.png")!;
+    const count = nodes.find((n) => imagePath(n) === "tiles/count-3-of-6.png")!;
     expect(modifier(count, "Width")).toBe(COUNT_WIDTH);
     expect(modifier(count, "Height")).toBe(COUNT_HEIGHT);
     expect([COUNT_WIDTH, COUNT_HEIGHT]).toEqual([112, 64]);
     const paths = imagePathsIn(face);
-    expect(paths.indexOf("tiles/done-today.png")).toBe(paths.indexOf("tiles/count-3.png") + 1);
+    expect(paths.indexOf("tiles/done-today.png")).toBe(paths.indexOf("tiles/count-3-of-6.png") + 1);
   });
 
   it("spreads the tiles in two rows of three with SpaceBetween, fixed size", () => {
@@ -121,7 +134,9 @@ describe("dailyFace layout", () => {
       }
     }
     expect(rows.flatMap((r) => r.value!.children!.map(imagePath))).toEqual(
-      GAME_ROSTER.map((game) => `tiles/tile-${game.id}-${(three.played & (1n << BigInt(game.gameId))) !== 0n ? "done" : "idle"}.png`),
+      // Unfinished first (D21): Globe, Mini, Connections, then the three done.
+      ["globe", "mini", "connections"].map((id) => `tiles/tile-${id}-idle.png`)
+        .concat(["word", "sudoku", "chess"].map((id) => `tiles/tile-${id}-done.png`)),
     );
   });
 
@@ -137,25 +152,49 @@ describe("dailyFace layout", () => {
 });
 
 describe("dailyFace", () => {
-  it("draws one tile per roster game, lit when played", () => {
-    const paths = imagePathsIn(dailyFace(three, {}, {}, noon));
+  it("draws one tile per pick, lit when played", () => {
+    const paths = imagePathsIn(dailyFace(three, {}, {}, noon, SIX));
     const tiles = paths.filter((path) => /^tiles\/tile-[a-z]+-(done|idle)\.png$/.test(path));
-    expect(tiles).toHaveLength(GAME_ROSTER.length);
-    for (const game of GAME_ROSTER) {
+    expect(tiles).toHaveLength(SIX.length);
+    for (const game of SIX) {
       const played = (three.played & (1n << BigInt(game.gameId))) !== 0n;
       expect(paths).toContain(`tiles/tile-${game.id}-${played ? "done" : "idle"}.png`);
       expect(paths).not.toContain(`tiles/tile-${game.id}-${played ? "idle" : "done"}.png`);
     }
   });
 
-  it("heads with the baked n/6 count", () => {
-    expect(imagePathsIn(dailyFace(three, {}, {}, noon))).toContain("tiles/count-3.png");
-    expect(imagePathsIn(dailyFace(full, {}, {}, noon))).toContain(`tiles/count-${GAME_COUNT}.png`);
-    expect(imagePathsIn(dailyFace(EMPTY_BITS, {}, null, noon))).toContain("tiles/count-0.png");
+  it("heads with the baked n/k count of picks done", () => {
+    expect(imagePathsIn(dailyFace(three, {}, {}, noon, SIX))).toContain("tiles/count-3-of-6.png");
+    expect(imagePathsIn(dailyFace(full, {}, {}, noon, SIX))).toContain("tiles/count-6-of-6.png");
+    expect(imagePathsIn(dailyFace(EMPTY_BITS, {}, null, noon))).toContain("tiles/count-0-of-4.png");
+    // Word, Sudoku, Chess played; of the starter picks only Word.
+    expect(imagePathsIn(dailyFace(three, {}, {}, noon))).toContain("tiles/count-1-of-4.png");
+  });
+
+  it("draws the picks only, padding a short row with blanks that keep the columns", () => {
+    const face = dailyFace(three, {}, {}, noon, STARTER_GAMES);
+    const tiles = imagePathsIn(face).filter((path) => path.startsWith("tiles/tile-"));
+    expect(tiles).toEqual([
+      "tiles/tile-mini-idle.png",
+      "tiles/tile-connections-idle.png",
+      "tiles/tile-code-idle.png",
+      "tiles/tile-word-done.png",
+    ]);
+
+    const four = GAME_ROSTER.slice(0, 4);
+    const rows = nodesIn(dailyFace(EMPTY_BITS, {}, {}, noon, four)).filter(
+      (n) => n.tag === "Row" && (n.value?.children ?? []).some((c) => /^tiles\/tile-/.test(imagePath(c) ?? "")),
+    );
+    expect(rows.map((row) => row.value!.children!.length)).toEqual([3, 3]);
+    const blanks = rows[1]!.value!.children!.filter((c) => c.tag === "Spacer");
+    expect(blanks).toHaveLength(2);
+    for (const blank of blanks) {
+      expect(modifier(blank, "Width")).toBe(TILE_WIDTH);
+    }
   });
 
   it("never shows the percentile", () => {
-    const texts = textsIn(dailyFace(full, {}, { streakAny: 4, streakAll: 2, dayPercentile: 12 }, noon));
+    const texts = textsIn(dailyFace(full, {}, { streakAny: 4, dayPercentile: 12 }, noon));
     expect(texts.some((text) => /%|Top/.test(text))).toBe(false);
   });
 
@@ -183,19 +222,14 @@ describe("dailyFace", () => {
     expect(textsIn(dailyFace(EMPTY_BITS, {}, {}, noon))).not.toContain("Tap to play");
   });
 
-  it("shows a streak count only when it is above zero, gold for days and white for perfect", () => {
-    const none = dailyFace(three, {}, { streakAny: 0, streakAll: 0 }, noon);
+  it("shows the streak count only when it is above zero, in gold", () => {
+    const none = dailyFace(three, {}, { streakAny: 0 }, noon);
     expect(imagePathsIn(none)).not.toContain("tiles/flame.png");
-    expect(imagePathsIn(none)).not.toContain("tiles/gem.png");
-    const both = dailyFace(three, {}, { streakAny: 14, streakAll: 3 }, noon);
-    expect(imagePathsIn(both)).toContain("tiles/flame.png");
-    expect(imagePathsIn(both)).toContain("tiles/gem.png");
-    const texts = nodesIn(both).filter((n) => n.tag === "Text" && !/^(NEW SET IN|\d\d:\d\d:\d\d)$/.test(textsIn(n)[0] ?? ""));
+    const some = dailyFace(three, {}, { streakAny: 14 }, noon);
+    expect(imagePathsIn(some)).toContain("tiles/flame.png");
+    const texts = nodesIn(some).filter((n) => n.tag === "Text" && !/^(NEW SET IN|\d\d:\d\d:\d\d)$/.test(textsIn(n)[0] ?? ""));
     const colours = texts.map((n) => [textsIn(n)[0], n.value?.props?.color, n.value?.props?.style]);
-    expect(colours).toEqual([
-      ["14", "FgWarning", "BodyLargeRegular"],
-      ["3", "FgPrimary", "BodyLargeRegular"],
-    ]);
+    expect(colours).toEqual([["14", "FgWarning", "BodyLargeRegular"]]);
   });
 
   it("draws the strip that stripState names: grey, green, gold, red", () => {
@@ -203,6 +237,7 @@ describe("dailyFace", () => {
     expect(strip(dailyFace(three, {}, {}, noon))).toBe("FgSuccess");
     expect(strip(dailyFace({ played: 1n, solved: 0n }, {}, {}, noon))).toBe("FgSuccess");
     expect(strip(dailyFace(full, {}, {}, noon))).toBe("FgWarning");
+    expect(strip(dailyFace(three, {}, {}, noon, GAME_ROSTER.slice(0, 3)))).toBe("FgWarning");
     const late = Date.UTC(2026, 9, 22, 23, 30, 0);
     expect(strip(dailyFace(EMPTY_BITS, {}, { streakAny: 3 }, late))).toBe("FgError");
     expect(strip(dailyFace(three, {}, { streakAny: 3 }, late))).toBe("FgSuccess");
@@ -210,7 +245,37 @@ describe("dailyFace", () => {
   });
 
   it("keeps the open action on each tile when buttons are asked for", () => {
-    const face = JSON.stringify(dailyFace(three, { rowButtons: true }, {}, noon));
-    for (const game of GAME_ROSTER) expect(face).toContain(`"clickAction":"open:${game.id}"`);
+    const face = JSON.stringify(dailyFace(three, { rowButtons: true }, {}, noon, SIX));
+    for (const game of SIX) expect(face).toContain(`"clickAction":"open:${game.id}"`);
+  });
+});
+
+describe("cardTiles (D21)", () => {
+  const bits = (...ids: number[]) => {
+    const played = ids.reduce((mask, id) => mask | (1n << BigInt(id)), 0n);
+    return { played, solved: played };
+  };
+  const names = (tiles: ReturnType<typeof cardTiles>) =>
+    tiles.map((tile) => (tile === "more" ? "+" : tile.id));
+
+  it("shows every pick when six or fewer, unfinished first", () => {
+    const four = GAME_ROSTER.slice(0, 4);
+    expect(names(cardTiles(bits(0, 2), four))).toEqual(["sudoku", "globe", "word", "chess"]);
+  });
+
+  it("fills six from the finished picks when fewer than six are unfinished", () => {
+    // Ten picks, six done: the four open ones, then the first two done.
+    expect(names(cardTiles(bits(0, 1, 2, 3, 4, 5), GAME_ROSTER))).toEqual(["code", "angle", "color", "sound", "word", "sudoku"]);
+    // Exactly six open: no "+".
+    expect(names(cardTiles(bits(0, 1, 2, 3), GAME_ROSTER))).toEqual(["mini", "connections", "code", "angle", "color", "sound"]);
+  });
+
+  it("shows five unfinished picks and a + when more than six are unfinished", () => {
+    expect(names(cardTiles(bits(), GAME_ROSTER))).toEqual(["word", "sudoku", "chess", "globe", "mini", "+"]);
+    expect(names(cardTiles(bits(0), GAME_ROSTER))).toEqual(["sudoku", "chess", "globe", "mini", "connections", "+"]);
+    const paths = imagePathsIn(dailyFace(EMPTY_BITS, {}, {}, noon, GAME_ROSTER));
+    expect(paths).toContain("tiles/tile-more.png");
+    expect(paths).toContain("tiles/count-0-of-10.png");
+    expect(paths.filter((path) => path.startsWith("tiles/tile-"))).toHaveLength(6);
   });
 });

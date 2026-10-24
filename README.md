@@ -11,7 +11,7 @@ A hub of daily puzzle games on Polkadot. `AGENTS.md` is the short rule set,
 `PLAN.md` the design, `PROGRESS.md` the ledger.
 
 ```
-app/        Vite + TypeScript. The hub and the six games.
+app/        Vite + TypeScript. The hub, the games and the player's picks.
 pocket/     The Pocket worker. Streams the daily checklist card face to the host.
 contracts/  The PolkaVM contracts: DailyScores and the four content registries.
 shared/     Content sources (Word answers, chess puzzles, Mini grids and clues,
@@ -47,6 +47,10 @@ one source of ids, slugs and score kinds.
 | 3 | Daily Globe | guesses | bundled reference data (`shared/countries`) |
 | 4 | Daily Mini | seconds | MiniRegistry (400 authored 5×5 crosswords, `shared/mini`) |
 | 5 | Daily Connections | mistakes | ConnectionsRegistry (370 authored 4×4 group puzzles, `shared/connections`) |
+| 6 | Daily Code | guesses | procedural, frozen `v1` generator |
+| 7 | Daily Angle | guesses | procedural, frozen `v1` generator |
+| 8 | Daily Color | points in tenths, higher better (0–500) | procedural, frozen `v1` generator: five colours a day, each scored 10 × max(0, 1 − ΔE00/40) |
+| 9 | Daily Sound | points in tenths, higher better (0–500) | procedural, frozen `v1` generator: five tones a day (110–880 Hz), each scored 10 × max(0, 1 − ΔERB/0.5) |
 
 Third-party content: Daily Word's answers are the six-letter words with a
 wordfreq Zipf frequency ≥ 4.0 (wordfreq 3.1.1, data CC BY-SA 4.0 crediting
@@ -66,8 +70,9 @@ woff2 subsets self-hosted in `app/public/fonts/`, licences in `OFL-fredoka.txt` 
 See `shared/sources/README.md` for every source and licence.
 
 Every game writes one `DailyScores.record(gameId, day, score, solved)` at
-completion; `score` is minimised and the contract keeps a per-day histogram of
-on-time finishers for the "Top N%" view.
+completion; `score` is the game's own number (lower or higher is better per game,
+roster `better`) and the contract keeps a per-day histogram of on-time finishers,
+bucketed by each game's set-once bucket spec, for the "Top N%" view.
 
 ## Contracts
 
@@ -81,14 +86,14 @@ build them, see `PROGRESS.md`):
 (cd contracts/word && cargo-pvm-contract pvm-contract build)   # and scores, chess, mini, connections
 ```
 
-Deploy, set the score kinds, seed and verify on Paseo Next v2 (every write waits
+Deploy, set the bucket specs, seed and verify on Paseo Next v2 (every write waits
 for finality; the seeds resume from the on-chain count):
 
 ```bash
 cd app
 export DAILY_NETWORK=paseo-next-v2 DAILY_DEPLOY_DERIVATION=//4 DAILY_DEPLOY_MNEMONIC=<env>
 pnpm deploy:contracts            # all five, one fresh record in src/deployments/
-pnpm set:game-kinds              # Seconds for Sudoku and Mini, from the roster
+pnpm set:bucket-specs            # each game's bucket spec, from the roster (set once; --dry-run first)
 pnpm seed:word && pnpm seed:chess && pnpm seed:mini && pnpm seed:connections
 ```
 
@@ -110,25 +115,31 @@ Streamed-tree Pocket (RFC #609 / host-rust-core #706), the same shape as
 paritytech/humanity-spa's Humanity card and Nemanja's pets.
 
 - **The face** is `pocket/src/face.ts`, the approved board
-  (`plans/wp-36-boards/Main.dc.html`, "Proposed: scoreboard"; WP37 R5). Two
-  columns: left (112dp) the baked `"N/6"` over `DONE TODAY`, and the flame +
-  day-streak count and the gem + perfect-day count at the bottom (each only
-  when above zero); right a 3 x 2 grid of 70x95 tiles, each one baked PNG
-  (the game's accent with ink glyph and uppercase label when done, dark with
-  a ring when not; the last reads GROUPS). A strip down the left edge is grey
-  at 0/6, green while playing, gold at 6/6, or red when a streak is at risk
-  (nothing played today, under 4 h to 00:00 UTC; `stripState()` is pure). No
-  percentile. A device that never recorded shows `"0/6"` and "Tap to play".
-  Plain `RendererNode` literals; sized for the host's 234dp frame by
-  arithmetic (18 + 95 + 10 + 95 + 16 tall; 112 + 14 + 3 x 70 + 2 x 8 = 352 wide
-  of a Pixel's 355), not measurement. The renderer has nine theme colours and
-  five text styles: the streak counts are `BodyLargeRegular` in `FgWarning`
-  and `FgPrimary` (no 18px 800, no blue), and a narrow phone (288dp inner)
-  clips the third tile column.
-- **The art** is PNG in `pocket/public/tiles/`: `count-0..6.png`,
-  `done-today.png`, `flame.png`, `gem.png`, `tile-<id>-{done,idle}.png`.
+  (`plans/wp-36-boards/Main.dc.html`, "Proposed: scoreboard"; WP37 R5), drawn
+  for the player's picked games (D21; the starter Word, Mini, Connections until
+  they pick). Two columns: left (112dp) the baked `"n/k"` (picks done of picks)
+  over `DONE TODAY`, and the flame + day-streak count at the bottom (only when
+  above zero); right up to six picks in rows of three 70x95 tiles (`cardTiles`:
+  unfinished first, then finished; five and a `+` tile when more than six are
+  unfinished; a short row padded with blanks so the columns hold), each one baked
+  PNG (the game's accent with ink glyph and uppercase label when done, dark with
+  a ring when not; the last reads GROUPS).
+  A strip down the left edge is grey before any game, green once any game is
+  played (an unpicked one keeps the streak too), gold when every pick is done,
+  or red when the streak is at risk (nothing played today, under 4 h to 00:00
+  UTC; `stripState()` is pure). No percentile. A device that never recorded
+  shows `"0/3"` and "Tap to play". Plain `RendererNode` literals; sized for the
+  host's 234dp frame by arithmetic (18 + 95 + 10 + 95 + 16 tall; 112 + 14 + 3 x
+  70 + 2 x 8 = 352 wide of a Pixel's 355), not measurement. The renderer has
+  nine theme colours and five text styles: the streak count is
+  `BodyLargeRegular` in `FgWarning` (no 18px 800), and a narrow phone (288dp
+  inner) clips the third tile column.
+- **The art** is PNG in `pocket/public/tiles/`: `count-<n>-of-<k>.png` for
+  every n of k picks, `done-today.png`, `flame.png`, `tile-<id>-{done,idle}.png`,
+  `tile-more.png`.
   `pnpm pocket:art` (`tools/render-card-art.mts`) writes each as the board's
-  own HTML/CSS and rasterises it at 3x with the app's Playwright Chromium. It
+  own HTML/CSS and rasterises it at 3x with the app's Playwright Chromium
+  (`CHROMIUM_PATH=<binary>` to use a preinstalled one). It
   needs Fredoka 700 and Nunito 800 latin woff2 in `app/public/fonts/` (or
   `CARD_ART_FONTS=<dir>`). The PNGs are committed; Vite copies `pocket/public`
   into the worker archive.
@@ -138,10 +149,12 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   so a record from another day draws 0/N.
 - **App → worker** goes through the product's host KV store, the only thing
   the two executables share. The app writes `daily-on-dot:card:v1` =
-  `{ version: 1, day, played, solved }` (bitmaps as decimal u64 strings) on
-  the home's hydrate read and right after every successful `record`
-  (`app/src/shared/card-state.ts`, one wrapper around the DataSource). The
-  store has no change notification, so a visible card polls every 2 s.
+  `{ version: 1, day, played, solved, streakAny?, dayPercentile? }` (bitmaps as
+  decimal u64 strings) on the home's hydrate read and right after every
+  successful `record` (`app/src/shared/card-state.ts`, one wrapper around the
+  DataSource), and `daily-on-dot:picks:v1` = `{ version: 1, games }` whenever
+  the player changes their picks (`app/src/shared/picks.ts`). The store has no
+  change notification, so a visible card polls every second.
 - **Tile buttons** are off. A `Button` per tile with `clickAction: "open:<slug>"`
   exists (`dailyFace(bits, { rowButtons: true })`), validates, and the worker maps
   the action to `navigateTo("polkadotapp://<productId>/#/g/<slug>")`. It ships
@@ -149,7 +162,7 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   whole-card tap already opens the launcher. Untested on a device either way.
 - **Tapping the card** opens the app beneath it in a half-height sheet at
   `?card=daily`; there the app renders the launcher (`app/src/card-launcher.ts`):
-  the roster's games with today's ticks, no chain client or signer. The games open
+  every picked game with today's ticks, no chain client or signer. The games open
   in the full app: a tap writes an open intent (`localStorage` and host KV,
   `daily-on-dot:open-intent:v1`) and asks the host for the product; the full
   app's boot follows a fresh intent before its first route.
@@ -163,9 +176,10 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   browser). Share it as https://dailyondot.paseo.li/#/card; Dotli forwards the
   hash into the product frame. Linked from the home page and the offer sheet.
 - **Assets:** `pnpm pocket:assets` writes `pocket/public/faces/daily.json`
-  (3/6 with streaks 5 and 2, the add-sheet preview) from the face module,
-  ASCII-escaped, and validates nine faces (0/6 never recorded, 0/6 recorded,
-  3/6, 6/6, with and without streaks, 0/6 red, tile buttons) against the Android
+  (the starter picks at 2/3 with a streak of 5, the add-sheet preview) from the
+  face module, ASCII-escaped, and validates a face for every number of picks
+  (none done, one done, all done, with and without the streak, tile buttons),
+  plus never recorded, red, and an unpicked game alone, against the Android
   host's limits (depth 32, 256 KiB) on the text that is written, and checks that
   every image a face names exists under `pocket/public`. `pnpm pocket:build`
   ends with `tools/check-worker-ascii.mts` on the bundle.
@@ -180,7 +194,7 @@ DEPLOY_DOMAIN=dailyondot.paseo MNEMONIC=<env> BULLETIN_DEPLOY_TELEMETRY=0 \
 ```
 
 bulletin-deploy 0.23.0 (the repo pin) keeps `pocket.cards` on the worker
-record; `pnpm pocket:publish` is only needed with an older CLI. The name is
+record; 0.22.0 and older dropped it. The name is
 `dailyondot.paseo` (https://dailyondot.paseo.li); the current CIDs and records
 are in `PROGRESS.md`. Bulletin retention is about two weeks, so republish
 before then.
@@ -189,11 +203,12 @@ before then.
 
 Verified: unit tests for the card state and the offer (`app/src/shared/*.test.ts`)
 and for the face (`pocket/test/face.test.ts`: the strip rule and its boundaries,
-tile count and labels from the roster, done and idle icons, no percentile);
+tiles and the n/k count from the picks, done and idle icons, no percentile);
 the worker against the SDK's fake host (`pnpm smoke`: 0/N with "Tap to play",
-3/N with three lit tiles after three records, no repaint on no change, streaks
-shown and the percentile not, 0/N on a stale day, a red strip for a streak of 3
-with nothing played at 23:30 UTC, no faces off screen); every face against
+3/N with three lit tiles after three records, no repaint on no change, the
+streak shown and the percentile not, 0/N on a stale day, a red strip for a
+streak of 3 with nothing played at 23:30 UTC, 1/2 with two tiles after the
+picks narrow, no faces off screen); every face against
 `androidLimits`; the publish on Paseo Next v2
 (worker record with `includes.pocket` and `pocket.cards`); the page served
 by Dotli (headless Chromium renders the home from the published CID); the

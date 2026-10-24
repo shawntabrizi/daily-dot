@@ -17,8 +17,6 @@ let runOutcome: AutoSignOutcome | null = null;
 export const SAVE_PROMPTED_KEY = "daily-on-dot:save-prompt:v1";
 /** Set once a grant came back Allocated on this device: later prompts warn it may be asked again. */
 export const GRANTED_BEFORE_KEY = "daily-on-dot:autosign-granted:v1";
-/** The old per-device grant flag; removed on load (a restart drops the grant). */
-const LEGACY_AUTOSIGN_KEY = "daily-on-dot:autosign:v1";
 
 export type AutoSignOutcome = "Allocated" | "Rejected" | "NotAvailable" | "Failed";
 
@@ -146,11 +144,6 @@ export interface SaveConsentDeps {
  */
 export function withSaveConsent(source: DataSource, deps: SaveConsentDeps): DataSource {
   const storage = deps.storage === undefined ? defaultStorage() : deps.storage;
-  try {
-    storage?.removeItem(LEGACY_AUTOSIGN_KEY);
-  } catch {
-    // Nothing reads it any more.
-  }
   const record: DataSource["record"] = async (gameId, day, score, solved) => {
     const outcome = runOutcome;
     const game = GAME_ROSTER.find((entry) => entry.gameId === gameId);

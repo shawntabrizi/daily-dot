@@ -206,28 +206,17 @@ h1 {
   gap: 6px;
   border-radius: 18px;
   background: var(--streak-gold-tint);
-  box-shadow: inset 0 0 0 2px var(--streak-blue);
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--streak-gold) 45%, transparent);
   color: var(--streak-gold);
   font-size: 15px;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
 }
 
-.streak-pill-any,
-.streak-pill-all {
+.streak-pill-any {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-}
-
-.streak-pill-all {
-  margin-left: 2px;
-  color: var(--streak-blue);
-  font-size: 12px;
-}
-
-.streak-pill-all[hidden] {
-  display: none;
 }
 
 .streak-pill-any svg {
@@ -353,6 +342,15 @@ h1 {
   text-transform: uppercase;
 }
 
+.drawer-games {
+  display: contents;
+}
+
+.drawer-nav a.drawer-customize {
+  color: var(--muted);
+  font-size: 13px;
+}
+
 .drawer-completion-check {
   display: inline-grid;
   flex: 0 0 22px;
@@ -441,6 +439,11 @@ h1 {
   color: var(--streak-ink);
 }
 
+.activity-day--complete {
+  background: var(--streak-blue);
+  color: var(--streak-ink);
+}
+
 .activity-day--unplayed {
   background: var(--tile-empty);
   color: var(--muted);
@@ -458,6 +461,10 @@ h1 {
 
 .activity-connector--played {
   background: var(--streak-gold);
+}
+
+.activity-connector--complete {
+  background: var(--streak-blue);
 }
 
 .activity-loading {

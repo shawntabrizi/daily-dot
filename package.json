@@ -11,7 +11,6 @@
     "pocket:art": "node --import tsx tools/render-card-art.mts",
     "pocket:assets": "node --import tsx tools/write-pocket-assets.mts",
     "pocket:build": "pnpm pocket:assets && pnpm --filter daily-on-dot-pocket build && node --import tsx tools/check-worker-ascii.mts",
-    "pocket:publish": "node --import tsx tools/publish-pocket-cards.mts",
     "pocket:test": "pnpm --filter daily-on-dot-prototype exec vitest run --root ../pocket",
     "smoke": "node --import tsx tools/smoke-worker.mts",
     "smoke:host": "node --import tsx tools/host-smoke.mts",

@@ -7,6 +7,7 @@ import { bootApp, renderBootFailure } from "./main";
 import { NETWORKS } from "./networks";
 import { GenesisMismatchError } from "./shared/genesis";
 import { OPEN_INTENT_KEY } from "./shared/open-intent";
+import { PICKS_KEY, parsePicks } from "./shared/picks";
 import { GAME_ROSTER } from "./shared/roster";
 
 afterEach(() => {
@@ -34,7 +35,8 @@ it("boots the complete stub roster in test mode without opening a chain", () => 
   const dispose = bootApp(root);
 
   expect(root.querySelectorAll("[data-game-row]")).toHaveLength(GAME_ROSTER.length);
-  expect(root.textContent).toContain("Six to play.");
+  // The count is not guessed before the day is read.
+  expect(root.querySelector("[data-home-headline]")?.textContent).toBe("Loading…");
   expect(createChainClient).not.toHaveBeenCalled();
   // The hub header: hamburger, "Daily on Dot", the pill; the hamburger opens the drawer.
   expect(root.querySelector(".site-title")?.textContent).toBe("Daily on Dot");
@@ -43,8 +45,9 @@ it("boots the complete stub roster in test mode without opening a chain", () => 
   expect(drawer?.hidden).toBe(true);
   root.querySelector<HTMLButtonElement>('[aria-label="Menu"]')?.click();
   expect(drawer?.hidden).toBe(false);
+  // A fresh device: the starter picks, then Customize.
   expect([...root.querySelectorAll(".drawer-nav a")].map((link) => link.getAttribute("href")))
-    .toEqual(["#/", "#/history", "#/streaks", "#/card", ...GAME_ROSTER.map((game) => game.route)]);
+    .toEqual(["#/", "#/history", "#/streaks", "#/card", "#/g/word", "#/g/mini", "#/g/connections", "#/g/code", "#/customize"]);
   root.querySelector<HTMLButtonElement>(".drawer-backdrop")?.click();
   expect(drawer?.hidden).toBe(true);
   dispose();
@@ -59,7 +62,8 @@ it("beneath the Pocket card (?card=daily) renders the launcher, not the hub, and
 
   const dispose = bootApp(root);
 
-  expect(root.querySelectorAll("[data-launcher-game]")).toHaveLength(GAME_ROSTER.length);
+  // The starter picks, as the card draws them.
+  expect(root.querySelectorAll("[data-launcher-game]")).toHaveLength(4);
   expect(root.querySelector("[data-launcher-open]")?.textContent).toBe("Open Daily on Dot");
   expect(root.querySelector("[data-game-row]")).toBeNull();
   expect(root.querySelector("main")).toBeNull();
@@ -146,6 +150,32 @@ it("routes #/streaks to the streaks page behind the header pill", async () => {
   dispose();
 });
 
+it("routes #/customize, where a tick picks a game and the hub leads with it", async () => {
+  window.location.hash = "#/customize";
+  vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+  const root = document.createElement("div");
+  root.id = "app";
+  document.body.append(root);
+
+  const dispose = bootApp(root);
+  expect(root.querySelector(".site-title")?.textContent).toBe("Customize");
+  const boxes = [...root.querySelectorAll<HTMLInputElement>(".customize-check")];
+  expect(boxes).toHaveLength(GAME_ROSTER.length);
+  expect(boxes.filter((box) => box.checked).map((box) => Number(box.value))).toEqual([0, 4, 5, 6]);
+
+  const globe = boxes.find((box) => box.value === "3")!;
+  globe.click();
+  expect(parsePicks(window.localStorage.getItem(PICKS_KEY))).toEqual([0, 3, 4, 5, 6]);
+
+  window.location.hash = "#/";
+  await vi.waitFor(() => {
+    expect(
+      [...root.querySelectorAll("[data-open-games] [data-game-row]")].map((row) => row.getAttribute("data-game-row")),
+    ).toEqual(["word", "globe", "mini", "connections", "code"]);
+  });
+  dispose();
+});
+
 it("routes an archived Daily Sudoku day into the playable screen", async () => {
   window.location.hash = "#/g/sudoku?day=0";
   vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
@@ -193,8 +223,9 @@ it("routes an archived Daily Globe day into the procedural screen", async () => 
   });
   expect(root.querySelector(".site-title")?.textContent).toBe("Globe");
   expect(root.querySelector(".header-day")?.textContent).toBe("Day 0");
+  root.querySelector<HTMLInputElement>("#globe-country-input")?.focus();
   expect(
-    root.querySelectorAll("#globe-country-options option"),
+    root.querySelectorAll("#globe-country-options [role=option]"),
   ).toHaveLength(166);
   dispose();
 });

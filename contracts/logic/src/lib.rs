@@ -33,16 +33,9 @@ pub const MAX_CONNECTIONS_WORD_BYTES: usize = 24;
 pub const MAX_CONNECTIONS_PUZZLES_PER_BATCH: usize = 8;
 pub const MAX_CONNECTIONS_SET_PAGE: u8 = 24;
 
-/// Score kinds a game id can be set to (`DailyScores::set_game_kind`).
-pub const GAME_KIND_COUNT: u8 = 0;
-pub const GAME_KIND_SECONDS: u8 = 1;
-/// Count-type scores (guesses, attempts, mistakes) bucket as the exact score
-/// 1..=30; 31 holds every score of 31 and above ("31+").
-pub const COUNT_BUCKET_MAX: u8 = 31;
-/// Seconds-type scores bucket in 15-second steps: bucket 0 is 0–14 s, 119 is
-/// 1785–1799 s, and 120 holds everything from 30 minutes up ("30 min+").
-pub const SECONDS_BUCKET_STEP: u32 = 15;
-pub const SECONDS_BUCKET_MAX: u8 = 120;
+/// The most buckets a spec may have: bounds a histogram read to 128 storage
+/// lookups per game.
+pub const MAX_BUCKETS: u8 = 128;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum DayIndexError {
@@ -80,37 +73,74 @@ pub enum DayBatchError {
     TooLarge,
 }
 
-/// How a game's `score` is minimised (D13, amended 2026-10-21): a count of
-/// guesses/attempts/mistakes, or elapsed seconds. The contract stores one
-/// kind per game id; it never knows which game is which.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum GameKind {
-    Count,
-    Seconds,
+pub enum BucketSpecError {
+    /// `buckets` is 0 or above `MAX_BUCKETS`.
+    BucketCount,
+    /// `max` is not above `min`.
+    EmptyRange,
 }
 
-impl GameKind {
-    pub fn from_u8(value: u8) -> Option<GameKind> {
-        match value {
-            GAME_KIND_COUNT => Some(GameKind::Count),
-            GAME_KIND_SECONDS => Some(GameKind::Seconds),
-            _ => None,
+/// How a game's scores are bucketed for its day histogram (D20, amended
+/// 2026-10-23): `buckets` linear buckets over `[min, max)`, scores below
+/// `min` in the first and at or above `max` in the last. The contract stores
+/// one spec per game id and never knows which end is better; the app ranks.
+///
+/// Fields are private so every spec in use has passed `new`: `bucket` relies
+/// on `max > min` and `buckets >= 1`.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct BucketSpec {
+    min: u32,
+    max: u32,
+    buckets: u8,
+}
+
+impl BucketSpec {
+    /// What a game without a set spec reads as: exact counts 1..=30, then 31+.
+    pub const DEFAULT: BucketSpec = BucketSpec {
+        min: 1,
+        max: 32,
+        buckets: 31,
+    };
+
+    pub fn new(min: u32, max: u32, buckets: u8) -> Result<BucketSpec, BucketSpecError> {
+        if buckets == 0 || buckets > MAX_BUCKETS {
+            return Err(BucketSpecError::BucketCount);
         }
+        if max <= min {
+            return Err(BucketSpecError::EmptyRange);
+        }
+        Ok(BucketSpec { min, max, buckets })
     }
 
-    pub fn to_u8(self) -> u8 {
-        match self {
-            GameKind::Count => GAME_KIND_COUNT,
-            GameKind::Seconds => GAME_KIND_SECONDS,
-        }
+    pub fn min(self) -> u32 {
+        self.min
     }
 
-    /// The highest bucket index for this kind (the open-ended "and above" one).
-    pub fn bucket_max(self) -> u8 {
-        match self {
-            GameKind::Count => COUNT_BUCKET_MAX,
-            GameKind::Seconds => SECONDS_BUCKET_MAX,
+    pub fn max(self) -> u32 {
+        self.max
+    }
+
+    pub fn buckets(self) -> u8 {
+        self.buckets
+    }
+
+    /// The 0-based bucket `score` lands in, pinned by
+    /// `shared/bucket-test-vectors.json`. The product is taken in u64 so a
+    /// `u32::MAX` score cannot overflow; the final `min` guards rounding at
+    /// the top edge.
+    pub fn bucket(self, score: u32) -> u8 {
+        let last = self.buckets - 1;
+        if score < self.min {
+            return 0;
         }
+        if score >= self.max {
+            return last;
+        }
+        let offset = (score - self.min) as u64;
+        let width = (self.max - self.min) as u64;
+        let index = offset * self.buckets as u64 / width;
+        index.min(last as u64) as u8
     }
 }
 
@@ -350,25 +380,13 @@ pub fn record_day_bits(
     })
 }
 
-/// The histogram bucket a minimised score lands in.
-///
-/// Count scores below 1 cannot come from a finished game (a finish takes at
-/// least one guess); they are clamped up to bucket 1 rather than given a
-/// bucket of their own, so the bucket set stays 1..=31.
-pub fn score_bucket(kind: GameKind, score: u32) -> u8 {
-    match kind {
-        GameKind::Count => score.clamp(1, COUNT_BUCKET_MAX as u32) as u8,
-        GameKind::Seconds => (score / SECONDS_BUCKET_STEP).min(SECONDS_BUCKET_MAX as u32) as u8,
-    }
-}
-
 /// Which histogram bucket, if any, one `record` increments.
 ///
 /// The day's distribution is of finishers who played on the day itself: a
 /// backfilled (archive) record and an unsolved record return `None`, so a
 /// late finisher can see the day's distribution but never changes it.
 pub fn histogram_bucket_for_record(
-    kind: GameKind,
+    spec: BucketSpec,
     score: u32,
     day: u32,
     current_day: u32,
@@ -377,7 +395,7 @@ pub fn histogram_bucket_for_record(
     if day != current_day || !solved {
         return None;
     }
-    Some(score_bucket(kind, score))
+    Some(spec.bucket(score))
 }
 
 /// Finishers with a strictly better (lower) bucket than `bucket`.

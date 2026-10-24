@@ -1,9 +1,19 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { DataSource, DayBits } from "./shared/data-source";
 import { GAME_ROSTER } from "./shared/roster";
 import { rosterMask } from "./shared/streaks";
 import { monthLine, renderStreaks } from "./streaks";
+import { pickSixGames } from "./test/picks";
+
+// The six original games picked: blue here means all six (D17c, D21).
+beforeEach(() => {
+  pickSixGames();
+});
+
+afterEach(() => {
+  window.localStorage.clear();
+});
 
 const MASK = rosterMask(GAME_ROSTER.map((game) => game.gameId));
 const FIRST = 1n << BigInt(GAME_ROSTER[0]!.gameId);
@@ -56,12 +66,12 @@ const text = (root: Element, selector: string): string =>
   root.querySelector(selector)?.textContent?.trim() ?? "";
 
 describe("streaks page", () => {
-  it("shows both streaks with their bests on the tiles, number before label", async () => {
+  it("shows the streak with its best and the games finished, number before label", async () => {
     const view = await mount();
     expect(text(view.element, "[data-streak-any]")).toBe("14");
     expect(text(view.element, "[data-longest-any]")).toBe("25");
-    expect(text(view.element, "[data-streak-all]")).toBe("2");
-    expect(text(view.element, "[data-longest-all]")).toBe("2");
+    // One game on each of days 10–34, 36 and 37–48, all six on 49 and 50.
+    expect(text(view.element, "[data-finished]")).toBe(String(25 + 1 + 12 + 2 * GAME_ROSTER.length));
     // The board's order inside a tile: mark, number, label, note.
     const order = [...view.element.querySelector("[data-tile-any]")!.children].map(
       (child) => child.className,
@@ -73,9 +83,9 @@ describe("streaks page", () => {
       "streak-tile-note",
     ]);
     expect(text(view.element, "[data-tile-any] .streak-tile-label")).toBe("Day streak");
-    expect(text(view.element, "[data-tile-all] .streak-tile-label")).toBe("Perfect days");
+    expect(text(view.element, "[data-tile-finished] .streak-tile-label")).toBe("Games finished");
     expect(view.element.textContent).toContain("Any one game, any day. Best 25.");
-    expect(view.element.textContent).toContain("All six in a row. Best 2.");
+    expect(view.element.querySelector("[data-streak-all]")).toBeNull();
     view.dispose();
     view.element.remove();
   });
@@ -88,7 +98,6 @@ describe("streaks page", () => {
       }),
     );
     expect(text(view.element, "[data-streak-any]")).toBe("1");
-    expect(text(view.element, "[data-streak-all]")).toBe("0");
     for (const tile of view.element.querySelectorAll(".streak-tile")) {
       expect(tile.getAttribute("data-lit")).toBeNull();
       expect(tile.className).not.toMatch(/lit/);
@@ -97,11 +106,11 @@ describe("streaks page", () => {
     view.element.remove();
   });
 
-  it("opens on today's month, named without the year, with the played and perfect counts on one line", async () => {
+  it("opens on today's month, named without the year, with the played count on one line", async () => {
     const view = await mount();
     expect(text(view.element, "[data-month-label]")).toBe("February");
-    // February 1–20: 19 days with a game (the 5th has none), two with all six.
-    expect(text(view.element, "[data-month-line]")).toBe("19 played · 2 perfect");
+    // February 1–20: 19 days with a game (the 5th has none).
+    expect(text(view.element, "[data-month-line]")).toBe("19 played");
     expect(
       view.element.querySelector(".streak-month-head")?.contains(
         view.element.querySelector("[data-month-line]"),
@@ -111,9 +120,9 @@ describe("streaks page", () => {
     view.element.remove();
   });
 
-  it("colours cells by state: all six blue, any gold, a backfilled day gold with a tick", async () => {
+  it("colours cells by state: every pick blue, any gold, a backfilled day gold with a tick", async () => {
     const view = await mount();
-    expect(cell(view.element, 50)?.className).toContain("calendar-day--all");
+    expect(cell(view.element, 50)?.className).toContain("calendar-day--complete");
     expect(cell(view.element, 40)?.className).toContain("calendar-day--any");
     const backfilled = cell(view.element, 36);
     expect(backfilled?.className).toContain("calendar-day--backfill");
@@ -182,7 +191,7 @@ describe("streaks page", () => {
     view.element.remove();
   });
 
-  it("keeps all-six days blue inside a perfect week", async () => {
+  it("keeps complete days blue inside a perfect week", async () => {
     // Days 39–45 all six on 42 (February 12).
     const view = await mount(
       stubSource({
@@ -195,8 +204,8 @@ describe("streaks page", () => {
     const bar = view.element.querySelector(".calendar-week--perfect")!;
     const blue = cell(view.element, 42)!;
     expect(bar.contains(blue)).toBe(true);
-    expect(blue.className).toContain("calendar-day--all");
-    expect(text(view.element, "[data-month-line]")).toBe("19 played · 3 perfect");
+    expect(blue.className).toContain("calendar-day--complete");
+    expect(text(view.element, "[data-month-line]")).toBe("19 played");
     view.dispose();
     view.element.remove();
   });
@@ -210,8 +219,8 @@ describe("streaks page", () => {
 
     previous.click();
     expect(text(view.element, "[data-month-label]")).toBe("January");
-    // Days 10–30 are January 11–31, any game: 21 played, none perfect; 2026-01-01 is a Thursday.
-    expect(text(view.element, "[data-month-line]")).toBe("21 played · 0 perfect");
+    // Days 10–30 are January 11–31, any game: 21 played; 2026-01-01 is a Thursday.
+    expect(text(view.element, "[data-month-line]")).toBe("21 played");
     expect(view.element.querySelectorAll(".calendar-spacer")).toHaveLength(3);
     expect(view.element.querySelector(".calendar-day--blank")).toBeNull();
     // January 12–18 and 19–25 are bars; January 26 to February 1 straddles the month, so it is not.
@@ -303,11 +312,11 @@ describe("streaks page", () => {
 });
 
 describe("monthLine", () => {
-  it("counts days with a game and days with all six, on time or later, as the board words it", () => {
+  it("counts days with a game, on time or later, as the board words it", () => {
     expect(monthLine([ONE, BACKFILL, ALL, EMPTY, { played: MASK, solved: MASK, ontime: 0n }])).toBe(
-      "4 played · 2 perfect",
+      "4 played",
     );
-    expect(monthLine([ALL])).toBe("1 played · 1 perfect");
-    expect(monthLine([])).toBe("0 played · 0 perfect");
+    expect(monthLine([ALL])).toBe("1 played");
+    expect(monthLine([])).toBe("0 played");
   });
 });

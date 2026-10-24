@@ -1,3 +1,4 @@
+import { pickedGames } from "../picks";
 import { COUNT_WORDS, GAME_ROSTER } from "../roster";
 import type { SavePrompt, SaveRequest } from "../save-consent";
 
@@ -12,31 +13,36 @@ const SHEET_LEDE: Record<SaveRequest["ask"], string> = {
   each: EACH_SAVE,
 };
 
-/** "First one done!" for the day's first finish, else the count: "Five done!", "All six done!". */
-export function overlayHeadline(finished: number, total = GAME_ROSTER.length): string {
+/** "First one done!" for the day's first finish, else the count: "Two done!", "All three done!". */
+export function overlayHeadline(finished: number, total: number): string {
   if (finished <= 1) {
     return "First one done!";
   }
   if (finished >= total) {
-    return `All ${COUNT_WORDS[total]!.toLowerCase()} done!`;
+    return total === 2 ? "Both done!" : `All ${COUNT_WORDS[total]!.toLowerCase()} done!`;
   }
   return `${COUNT_WORDS[finished]} done!`;
 }
 
 /**
  * The first prompt on a device (Save-Overlay board): the whole screen, the
- * six games with this one lit, what saving does and what the Polkadot app
- * will ask.
+ * picked games (and any other game finished today) with the finished ones
+ * lit, what saving does and what the Polkadot app will ask.
  */
 function overlayBody(request: SaveRequest): string {
-  const tiles = GAME_ROSTER.map((game) =>
+  const picks = pickedGames();
+  const shown = GAME_ROSTER.filter(
+    (game) => picks.includes(game) || request.finished.includes(game.id),
+  );
+  const finishedPicks = picks.filter((game) => request.finished.includes(game.id)).length;
+  const tiles = shown.map((game) =>
     request.finished.includes(game.id)
       ? `<span class="save-tile save-tile--lit" style="--tile-accent: var(--accent-${game.id})"></span>`
       : `<span class="save-tile"></span>`,
   ).join("");
   return `
     <div class="save-tiles" aria-hidden="true">${tiles}</div>
-    <h2 class="save-title" id="save-title">${overlayHeadline(request.finished.length)}<br>Keep your scores?</h2>
+    <h2 class="save-title" id="save-title">${overlayHeadline(finishedPicks, picks.length)}<br>Keep your scores?</h2>
     <p class="save-lede">Saved scores build your streak and your calendar, and show how you did against everyone each day.</p>
     <ol class="save-steps">
       <li><span class="save-step-number">1</span><span>Your Polkadot app opens and asks to let Daily on Dot save scores for you.</span></li>

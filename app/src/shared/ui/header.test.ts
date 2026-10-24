@@ -59,25 +59,20 @@ describe("header", () => {
     expect(headerTitle()).toBeNull();
   });
 
-  it("links the pill to the streaks route: gold flame and count, the blue gem count only above 0", () => {
+  it("links the pill to the streaks route: gold flame and the streak", () => {
     const header = createHeader();
     const pill = header.element.querySelector<HTMLAnchorElement>("[data-streak-pill]");
     expect(pill?.getAttribute("href")).toBe("#/streaks");
-    // A 36 px pill inside a 44 px target, gold tint, blue inset ring.
+    // A 36 px pill inside a 44 px target, gold tint.
     expect(SHELL_CSS).toMatch(/\.streak-pill \{[^}]*height: 44px;/);
     expect(SHELL_CSS).toMatch(
-      /\.streak-pill-body \{[^}]*height: 36px;[^}]*background: var\(--streak-gold-tint\);[^}]*box-shadow: inset 0 0 0 2px var\(--streak-blue\);/,
+      /\.streak-pill-body \{[^}]*height: 36px;[^}]*background: var\(--streak-gold-tint\);/,
     );
 
-    header.setStreaks({ any: 14, all: 3 });
+    header.setStreaks({ any: 14 });
     expect(pill?.querySelector("[data-streak-any]")?.textContent).toBe("14");
-    expect(pill?.querySelector("[data-streak-all]")?.textContent).toBe("3");
-    expect(pill?.querySelector(".streak-pill-all")?.textContent).toBe("◆3");
-    expect(pill?.querySelector<HTMLElement>(".streak-pill-all")?.hidden).toBe(false);
-
-    header.setStreaks({ any: 2, all: 0 });
-    expect(pill?.querySelector("[data-streak-any]")?.textContent).toBe("2");
-    expect(pill?.querySelector<HTMLElement>(".streak-pill-all")?.hidden).toBe(true);
+    expect(pill?.getAttribute("aria-label")).toBe("Streaks: 14-day streak");
+    expect(pill?.textContent).not.toContain("◆");
   });
 });
 

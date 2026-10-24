@@ -21,6 +21,10 @@
   margin-top: 4px;
 }
 
+[data-home-headline][data-loading] {
+  color: var(--muted);
+}
+
 .home-countdown {
   flex: none;
   color: var(--muted);
@@ -59,6 +63,10 @@
 .day-bar-segment[data-done="true"][data-segment="globe"] { background: var(--accent-globe); }
 .day-bar-segment[data-done="true"][data-segment="mini"] { background: var(--accent-mini); }
 .day-bar-segment[data-done="true"][data-segment="connections"] { background: var(--accent-connections); }
+.day-bar-segment[data-done="true"][data-segment="code"] { background: var(--accent-code); }
+.day-bar-segment[data-done="true"][data-segment="angle"] { background: var(--accent-angle); }
+.day-bar-segment[data-done="true"][data-segment="color"] { background: var(--accent-color); }
+.day-bar-segment[data-done="true"][data-segment="sound"] { background: var(--accent-sound); }
 
 .game-rows {
   display: flex;
@@ -74,6 +82,10 @@
 .game-row[data-game-row="globe"] { --accent: var(--accent-globe); --accent-ink: var(--accent-globe-ink); --accent-text: var(--accent-globe-text); --surface-tint: var(--surface-globe); }
 .game-row[data-game-row="mini"] { --accent: var(--accent-mini); --accent-ink: var(--accent-mini-ink); --accent-text: var(--accent-mini-text); --surface-tint: var(--surface-mini); }
 .game-row[data-game-row="connections"] { --accent: var(--accent-connections); --accent-ink: var(--accent-connections-ink); --accent-text: var(--accent-connections-text); --surface-tint: var(--surface-connections); }
+.game-row[data-game-row="code"] { --accent: var(--accent-code); --accent-ink: var(--accent-code-ink); --accent-text: var(--accent-code-text); --surface-tint: var(--surface-code); }
+.game-row[data-game-row="angle"] { --accent: var(--accent-angle); --accent-ink: var(--accent-angle-ink); --accent-text: var(--accent-angle-text); --surface-tint: var(--surface-angle); }
+.game-row[data-game-row="color"] { --accent: var(--accent-color); --accent-ink: var(--accent-color-ink); --accent-text: var(--accent-color-text); --surface-tint: var(--surface-color); }
+.game-row[data-game-row="sound"] { --accent: var(--accent-sound); --accent-ink: var(--accent-sound-ink); --accent-text: var(--accent-sound-text); --surface-tint: var(--surface-sound); }
 
 /* The whole row is the link: 72 px tall, radius 18, on the surface. */
 .game-row {
@@ -185,6 +197,124 @@
   display: none;
 }
 
+/* "More games" (D21): the unpicked games, collapsed under a full-width toggle at the foot. */
+.home-more {
+  margin-top: 10px;
+}
+
+.home-more[hidden] {
+  display: none;
+}
+
+.home-more-toggle {
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 10px;
+  padding: 8px 4px;
+  align-items: center;
+  justify-content: space-between;
+  border: 0;
+  background: none;
+  color: var(--dim);
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.home-more-toggle svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 160ms ease;
+}
+
+.home-more-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.home-more-toggle:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.home-more .game-rows[hidden] {
+  display: none;
+}
+
+/* Customize (D21): the hub's rows as checkboxes; a picked row lights its tile. */
+.customize-page {
+  width: min(100%, 520px);
+}
+
+.customize-head h1 {
+  margin: 8px 0 6px;
+}
+
+.customize-lead {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.customize-list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 10px;
+  border: 0;
+}
+
+.customize-legend {
+  margin-bottom: 10px;
+  padding: 0 4px;
+  color: var(--dim);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.customize-row {
+  cursor: pointer;
+}
+
+.customize-row.is-picked .game-row-tile {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.customize-check {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.customize-check:disabled {
+  cursor: not-allowed;
+}
+
+.customize-row:has(.customize-check:focus-visible) {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.customize-note {
+  min-height: 18px;
+  margin: 14px 4px 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 /* "DONE TODAY": the board's #6c7275 fails 4.5:1 at 11 px, so the closest grey that passes. */
 .home-done-heading {
   margin: 0 0 10px;
@@ -227,12 +357,7 @@
   font-weight: 800;
 }
 
-/* WP34: hub streak badges (gold flame: any game; blue gem: all games). */
-.streak-badges {
-  display: inline-flex;
-  gap: 6px;
-}
-
+/* WP34: the hub streak badge (gold flame, D17b). */
 .streak-badge {
   display: inline-flex;
   align-items: center;
@@ -240,6 +365,7 @@
   padding: 4px 9px 4px 6px;
   border-radius: 100px;
   background: var(--surface-raised);
+  color: var(--streak-gold);
   font-size: 13px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
@@ -253,14 +379,6 @@
 .streak-badge svg {
   width: 16px;
   height: 16px;
-}
-
-.streak-badge--any {
-  color: var(--streak-gold);
-}
-
-.streak-badge--all {
-  color: var(--streak-blue);
 }
 
 .streak-badge strong {
@@ -345,10 +463,10 @@
   text-align: right;
 }
 
-/* Three tiles, as on the result screen: the number large, the label small under it. */
+/* Two tiles, as on the result screen: the number large, the label small under it. */
 .day-summary-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -381,7 +499,7 @@
 }
 
 .stats-panel--hub {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .stats-panel--hub .hub-streak-stat {
@@ -399,12 +517,6 @@
 
 .stats-panel[hidden] {
   display: none;
-}
-
-@media (min-width: 560px) {
-  .stats-panel--hub {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 /* A past day's hub (Archive board): a day stepper in place of the greeting and the countdown, the headline with a gold Today chip, and the note at the foot. */

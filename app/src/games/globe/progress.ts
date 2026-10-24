@@ -31,6 +31,9 @@ const COUNTRY_BY_ISO = new Map(
 const COUNTRY_BY_NAME = new Map(
   GLOBE_COUNTRIES.map((country) => [country.name.toLowerCase(), country]),
 );
+const COUNTRIES_BY_NAME = [...GLOBE_COUNTRIES].sort((a, b) =>
+  a.name.localeCompare(b.name, "en"),
+);
 
 function progressKey(day: number): string {
   return `${GLOBE_PROGRESS_PREFIX}${day}`;
@@ -95,6 +98,26 @@ export function countryByIso(identity: string): Country | undefined {
 
 export function countryFromGuess(value: string): Country | undefined {
   return COUNTRY_BY_NAME.get(value.trim().toLowerCase());
+}
+
+// The picker's list: every country for an empty query, otherwise names that
+// start with it ahead of names that only contain it ("Korea" finds both Koreas).
+export function matchCountries(query: string): readonly Country[] {
+  const needle = query.trim().toLowerCase();
+  if (!needle) {
+    return COUNTRIES_BY_NAME;
+  }
+  const starts: Country[] = [];
+  const contains: Country[] = [];
+  for (const country of COUNTRIES_BY_NAME) {
+    const name = country.name.toLowerCase();
+    if (name.startsWith(needle)) {
+      starts.push(country);
+    } else if (name.includes(needle)) {
+      contains.push(country);
+    }
+  }
+  return [...starts, ...contains];
 }
 
 export function createGlobeProgress(
@@ -184,6 +207,14 @@ export function applyGlobeGuess(
       accepted: false,
       progress,
       message: "Choose a country from the list.",
+    };
+  }
+  // A repeat tells the player nothing new, so it must not cost a guess.
+  if (progress.guesses.includes(country.iso)) {
+    return {
+      accepted: false,
+      progress,
+      message: `You already guessed ${country.name}.`,
     };
   }
 

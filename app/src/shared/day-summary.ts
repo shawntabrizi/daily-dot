@@ -6,6 +6,7 @@ import {
   type Histogram,
   type ScoreUnit,
 } from "./percentile";
+import { pickedGames } from "./picks";
 import { GAME_ROSTER, type Game } from "./roster";
 import { deriveHubStreaks, hasGameBit, rosterMask, type HubStreaks } from "./streaks";
 
@@ -31,15 +32,16 @@ export interface GameSummary {
 
 export interface DaySummary {
   day: number;
-  /** Every roster game has its played bit. */
+  /** Every picked game has its played bit (D17c). */
   complete: boolean;
   games: GameSummary[];
   /** The mean of the game percentiles (see `dayPercentile`). */
   dayPercentile: number | null;
 }
 
-export function dayComplete(bits: DayBits, roster: readonly Game[] = GAME_ROSTER): boolean {
-  return roster.every((game) => hasGameBit(bits.played, game.gameId));
+/** Every one of `games` (the picks, D17c) has its played bit, on time or later. */
+export function dayComplete(bits: DayBits, games: readonly Game[]): boolean {
+  return games.every((game) => hasGameBit(bits.played, game.gameId));
 }
 
 /**
@@ -69,12 +71,12 @@ export async function loadDaySummary(
     const percentile =
       score === null || histogram === null
         ? null
-        : percentileFor(histogram, game.kind, score, !late);
+        : percentileFor(histogram, game, score, !late);
     return { game, played, late, score, percentile, finishers: histogram?.total ?? null };
   });
   return {
     day,
-    complete: dayComplete(bits, roster),
+    complete: dayComplete(bits, pickedGames()),
     games,
     dayPercentile: dayPercentile(games.map((game) => game.percentile)),
   };
@@ -98,9 +100,9 @@ export async function readDays(
 }
 
 /**
- * Enough recent days to derive the hub streaks exactly: pages back from
- * today until a page starts with a day no roster game was played on (both
- * streaks end there) or day 0.
+ * Enough recent days to derive the hub streak exactly: pages back from
+ * today until a page starts with a day no roster game was played on (the
+ * streak ends there) or day 0.
  */
 export async function readStreakWindow(
   source: DataSource,
@@ -134,7 +136,7 @@ function percentText(percentile: number | null): string {
 /**
  * The "Day done" panel: the day's overall percentile, each game's score and
  * percentile (unless `games: false`: the hub's rows already show them), and,
- * when given, the completionist counts as three tiles.
+ * when given, the lifetime count and the best streak as two tiles.
  */
 export function renderDaySummary(
   summary: DaySummary,
@@ -190,15 +192,14 @@ export function renderDaySummary(
     panel.append(list);
   }
 
-  // The streaks live in the header pill; the card adds the lifetime counts,
+  // The streak lives in the header pill; the card adds the lifetime counts,
   // each a big number over its label.
   if (streaks) {
     const stats = document.createElement("div");
     stats.className = "day-summary-stats";
     for (const [label, value] of [
       ["Games finished", streaks.finished],
-      ["Perfect days", streaks.perfectDays],
-      ["Best perfect run", streaks.longestAll],
+      ["Best streak", streaks.longestAny],
     ] as const) {
       const tile = document.createElement("div");
       tile.className = "day-summary-stat";

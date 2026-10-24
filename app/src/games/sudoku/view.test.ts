@@ -186,7 +186,7 @@ describe("Sudoku view", () => {
     await vi.waitFor(() => {
       expect(view.element.querySelector(".game-heading")?.hasAttribute("hidden")).toBe(true);
     });
-    expect(view.element.querySelector("[data-distribution]")?.getAttribute("aria-label")).toBe("4 finishers today by minutes");
+    expect(view.element.querySelector("[data-distribution]")?.getAttribute("aria-label")).toBe("You are in the top 25% of 4 finishers");
 
     window.dispatchEvent(new KeyboardEvent("keydown", { key: "9" }));
     expect(record).toHaveBeenCalledOnce();

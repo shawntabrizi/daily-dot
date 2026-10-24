@@ -1,6 +1,5 @@
-import { getHostLocalStorage } from "@parity/product-sdk-host";
-
 import type { DataSource, DayBits } from "./data-source";
+import { detectKeyStore, storageKeyStore, type KeyStore } from "./host-store";
 import type { StorageLike } from "./storage";
 
 /**
@@ -30,12 +29,11 @@ export interface CardState {
   solved: string;
   /** The day's overall percentile once every roster game is recorded (WP34). */
   dayPercentile?: number;
-  /** The hub streaks (D17b, D17c), whenever the home derives them. */
+  /** The hub streak (D17b), whenever the app derives it. */
   streakAny?: number;
-  streakAll?: number;
 }
 
-export type CardSummary = Partial<Pick<CardState, "dayPercentile" | "streakAny" | "streakAll">>;
+export type CardSummary = Partial<Pick<CardState, "dayPercentile" | "streakAny">>;
 
 export type CardBits = Pick<DayBits, "played" | "solved">;
 
@@ -53,9 +51,6 @@ function summaryOf(state: Partial<CardState>): CardSummary {
   }
   if (isCount(state.streakAny)) {
     summary.streakAny = state.streakAny;
-  }
-  if (isCount(state.streakAll)) {
-    summary.streakAll = state.streakAll;
   }
   return summary;
 }
@@ -143,7 +138,7 @@ export function withDayBits(
 }
 
 /**
- * The day's percentile and the hub streaks ride on the same record. Same
+ * The day's percentile and the hub streak ride on the same record. Same
  * rules as the bits: a newer day replaces, the same day merges, an older
  * day is ignored.
  */
@@ -174,46 +169,15 @@ export function withResult(
   });
 }
 
-/** The one key, behind whichever store this runtime has. */
-export interface CardStore {
-  read(): Promise<string | null>;
-  write(value: string): Promise<void>;
-}
+/** The checklist key, behind whichever store this runtime has. */
+export type CardStore = KeyStore;
 
 export function storageCardStore(storage: StorageLike): CardStore {
-  return {
-    async read() {
-      return storage.getItem(CARD_STATE_KEY);
-    },
-    async write(value) {
-      storage.setItem(CARD_STATE_KEY, value);
-    },
-  };
+  return storageKeyStore(storage, CARD_STATE_KEY);
 }
 
-/**
- * Host KV inside a host container, `localStorage` outside it so the dev
- * preview still writes something the worker-shaped code can read back.
- */
-export async function detectCardStore(
-  fallback?: StorageLike,
-): Promise<CardStore> {
-  try {
-    const host = await getHostLocalStorage();
-    if (host) {
-      return {
-        async read() {
-          const value = await host.readString(CARD_STATE_KEY);
-          return value === "" ? null : value;
-        },
-        write: (value) => host.writeString(CARD_STATE_KEY, value),
-      };
-    }
-  } catch {
-    // Not a host: fall through.
-  }
-  // Resolved late: a worker or a Node tool has no window at all.
-  return storageCardStore(fallback ?? window.localStorage);
+export function detectCardStore(fallback?: StorageLike): Promise<CardStore> {
+  return detectKeyStore(CARD_STATE_KEY, fallback);
 }
 
 /**

@@ -1,6 +1,7 @@
 import type { DataSource, DayBits } from "./shared/data-source";
 import { DAY_SECONDS, EPOCH_SECONDS, dateFromDayIndex, dayIndexFromTimestamp } from "./shared/day";
 import { readDays } from "./shared/day-summary";
+import { picksMask } from "./shared/picks";
 import { hasStarted } from "./shared/progress";
 import { GAME_ROSTER, type Game } from "./shared/roster";
 import {
@@ -15,7 +16,7 @@ import {
   type CalendarCellState,
   type CalendarEntry,
 } from "./shared/ui/calendar";
-import { createStreakBadges } from "./shared/ui/streak-badges";
+import { createStreakBadge } from "./shared/ui/streak-badges";
 import type { ViewHandle } from "./home";
 
 /** The select's first option: the all-games calendar (D17b, D17c). */
@@ -72,8 +73,7 @@ export function renderHistory(source: DataSource): ViewHandle {
     <div class="stats-panel stats-panel--hub" aria-live="polite" data-hub-stats hidden>
       <div class="hub-streak-stat" data-hub-streaks></div>
       <div><strong data-finished>—</strong><span>GAMES FINISHED</span></div>
-      <div><strong data-perfect>—</strong><span>PERFECT DAYS</span></div>
-      <div><strong data-longest-all>—</strong><span>BEST ALL-GAMES STREAK</span></div>
+      <div><strong data-longest-any>—</strong><span>BEST STREAK</span></div>
     </div>
     <div class="month-panel">
       <div class="month-controls">
@@ -89,7 +89,7 @@ export function renderHistory(source: DataSource): ViewHandle {
         <span><i class="legend-dot legend-dot--empty"></i>Empty</span>
       </div>
       <div class="calendar-legend" aria-label="Calendar legend" data-hub-legend>
-        <span><i class="legend-dot legend-dot--all"></i>All games</span>
+        <span><i class="legend-dot legend-dot--complete"></i>Complete</span>
         <span><i class="legend-dot legend-dot--any"></i>Any game</span>
         <span><i class="legend-dot legend-dot--backfill"></i>Played later</span>
         <span><i class="legend-dot legend-dot--empty"></i>Empty</span>
@@ -103,8 +103,7 @@ export function renderHistory(source: DataSource): ViewHandle {
   const hubStats = page.querySelector<HTMLElement>("[data-hub-stats]");
   const hubStreaksNode = page.querySelector<HTMLElement>("[data-hub-streaks]");
   const finishedNode = page.querySelector<HTMLElement>("[data-finished]");
-  const perfectNode = page.querySelector<HTMLElement>("[data-perfect]");
-  const longestAllNode = page.querySelector<HTMLElement>("[data-longest-all]");
+  const longestAnyNode = page.querySelector<HTMLElement>("[data-longest-any]");
   const gameLegend = page.querySelector<HTMLElement>("[data-game-legend]");
   const hubLegend = page.querySelector<HTMLElement>("[data-hub-legend]");
   const playedNode = page.querySelector<HTMLElement>("[data-played]");
@@ -120,8 +119,7 @@ export function renderHistory(source: DataSource): ViewHandle {
     !hubStats ||
     !hubStreaksNode ||
     !finishedNode ||
-    !perfectNode ||
-    !longestAllNode ||
+    !longestAnyNode ||
     !gameLegend ||
     !hubLegend ||
     !playedNode ||
@@ -198,8 +196,8 @@ export function renderHistory(source: DataSource): ViewHandle {
 
   /**
    * The all-games calendar: every day since the epoch in one pass (five
-   * reads in the first year), so the lifetime counts and the longest
-   * all-games streak are exact.
+   * reads in the first year), so the lifetime count and the best streak are
+   * exact.
    */
   const hydrateHub = async (request: number, count: number, firstDay: number | null): Promise<void> => {
     const days = await readDays(source, 0, today);
@@ -207,18 +205,18 @@ export function renderHistory(source: DataSource): ViewHandle {
       return;
     }
     const streaks = deriveHubStreaks(days, ROSTER_MASK);
-    hubStreaksNode.replaceChildren(createStreakBadges(streaks, { always: true }));
+    hubStreaksNode.replaceChildren(createStreakBadge(streaks, { always: true }));
     finishedNode.textContent = String(streaks.finished);
-    perfectNode.textContent = String(streaks.perfectDays);
-    longestAllNode.textContent = String(streaks.longestAll);
+    longestAnyNode.textContent = String(streaks.longestAny);
 
     const empty: DayBits = { played: 0n, solved: 0n, ontime: 0n };
+    const picks = picksMask();
     finishCalendar(
       monthEntries(
         count,
         0,
         (offset) => (firstDay === null ? empty : days[firstDay + offset] ?? empty),
-        (bits) => hubCellState(bits, ROSTER_MASK),
+        (bits) => hubCellState(bits, picks, ROSTER_MASK),
         (bits, day) => ((bits.played & ROSTER_MASK) !== 0n ? `#/day?day=${day}` : undefined),
       ),
     );

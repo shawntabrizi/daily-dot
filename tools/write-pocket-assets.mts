@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 import { androidLimits, assertFaceValid, type RendererNode } from "@parity/product-sdk-renderer";
 
 import { GAME_ROSTER } from "../app/src/shared/roster.ts";
-import { dailyFace, EMPTY_BITS, GAME_COUNT, RED_WINDOW_MS, msToRollover } from "../pocket/src/face.ts";
+import { dailyFace, EMPTY_BITS, RED_WINDOW_MS, STARTER_GAMES, msToRollover } from "../pocket/src/face.ts";
 import { imagePathsIn, stripTokenIn } from "./face-text.mts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -37,35 +37,51 @@ export function asciiJson(value: unknown): string {
 const noon = Date.UTC(2026, 9, 22, 12, 0, 0);
 const late = noon + 24 * 60 * 60 * 1_000 - msToRollover(noon) - RED_WINDOW_MS / 2;
 
-// The sheet shows a sample day: three games done, with both streaks.
-const preview = dailyFace({ played: 0b111n, solved: 0b010n }, {}, { streakAny: 5, streakAll: 2 }, noon);
+// The sheet shows a sample day for a new player: the starter picks, two of
+// three done (Word and Mini), with a streak.
+const bit = (gameId: number): bigint => 1n << BigInt(gameId);
+const preview = dailyFace({ played: bit(0) | bit(4), solved: bit(0) }, {}, { streakAny: 5 }, noon, STARTER_GAMES);
 const json = asciiJson(preview);
 assertFaceValid(json, { host: androidLimits });
 
 mkdirSync(out, { recursive: true });
 writeFileSync(resolve(out, "daily.json"), json);
 
-// Every live face must pass too, and draw the strip its state names. "All"
-// is the roster's bits.
-const all = GAME_ROSTER.reduce((bits, game) => bits | (1n << BigInt(game.gameId)), 0n);
-const three = { played: 0b111n, solved: 0b111n };
-const full = { played: all, solved: all };
-const streaks = { streakAny: 999, streakAll: 999, dayPercentile: 100 };
+// Every live face must pass too, and draw the strip its state names, for
+// every number of picks: none of them done, some, and all.
+const streaks = { streakAny: 999, dayPercentile: 100 };
 const faces: Record<string, { face: RendererNode; strip: string }> = {
-  "0/6 never recorded": { face: dailyFace(EMPTY_BITS, {}, null, noon), strip: "FgTertiary" },
-  "0/6 never recorded, late": { face: dailyFace(EMPTY_BITS, {}, null, late), strip: "FgTertiary" },
-  "0/6 grey": { face: dailyFace(EMPTY_BITS, {}, {}, noon), strip: "FgTertiary" },
-  "0/6 grey, streaks": { face: dailyFace(EMPTY_BITS, {}, streaks, noon), strip: "FgTertiary" },
-  "0/6 red": { face: dailyFace(EMPTY_BITS, {}, streaks, late), strip: "FgError" },
-  "0/6 late, no streak": { face: dailyFace(EMPTY_BITS, {}, {}, late), strip: "FgTertiary" },
-  "3/6 green": { face: dailyFace(three, {}, {}, noon), strip: "FgSuccess" },
-  "3/6 green, streaks": { face: dailyFace(three, {}, streaks, noon), strip: "FgSuccess" },
-  "3/6 green, late": { face: dailyFace(three, {}, streaks, late), strip: "FgSuccess" },
-  "6/6 gold": { face: dailyFace(full, {}, {}, noon), strip: "FgWarning" },
-  "6/6 gold, streaks": { face: dailyFace(full, {}, streaks, noon), strip: "FgWarning" },
-  "6/6 gold, late": { face: dailyFace(full, {}, streaks, late), strip: "FgWarning" },
-  "6/6 buttons": { face: dailyFace(full, { rowButtons: true }, streaks, noon), strip: "FgWarning" },
+  "starter, never recorded": { face: dailyFace(EMPTY_BITS, {}, null, noon), strip: "FgTertiary" },
+  "starter, never recorded, late": { face: dailyFace(EMPTY_BITS, {}, null, late), strip: "FgTertiary" },
+  "starter, red": { face: dailyFace(EMPTY_BITS, {}, streaks, late), strip: "FgError" },
+  "starter, late, no streak": { face: dailyFace(EMPTY_BITS, {}, {}, late), strip: "FgTertiary" },
+  // Only an unpicked game (Globe) played: the streak is safe, the strip green.
+  "starter, unpicked game only, late": {
+    face: dailyFace({ played: bit(3), solved: bit(3) }, {}, streaks, late),
+    strip: "FgSuccess",
+  },
 };
+for (let count = 1; count <= GAME_ROSTER.length; count += 1) {
+  const games = GAME_ROSTER.slice(0, count);
+  const all = games.reduce((bits, game) => bits | bit(game.gameId), 0n);
+  const first = bit(games[0]!.gameId);
+  faces[`0/${count} grey`] = { face: dailyFace(EMPTY_BITS, {}, {}, noon, games), strip: "FgTertiary" };
+  faces[`0/${count} grey, streaks`] = { face: dailyFace(EMPTY_BITS, {}, streaks, noon, games), strip: "FgTertiary" };
+  if (count > 1) {
+    faces[`1/${count} green, late`] = {
+      face: dailyFace({ played: first, solved: first }, {}, streaks, late, games),
+      strip: "FgSuccess",
+    };
+  }
+  faces[`${count}/${count} gold, streaks`] = {
+    face: dailyFace({ played: all, solved: all }, {}, streaks, noon, games),
+    strip: "FgWarning",
+  };
+  faces[`${count}/${count} buttons`] = {
+    face: dailyFace({ played: all, solved: all }, { rowButtons: true }, streaks, noon, games),
+    strip: "FgWarning",
+  };
+}
 let largest = { name: "", bytes: 0 };
 for (const [name, { face, strip }] of Object.entries(faces)) {
   const text = asciiJson(face);
@@ -82,5 +98,5 @@ for (const [name, { face, strip }] of Object.entries(faces)) {
 }
 
 process.stdout.write(
-  `pocket/public/faces/daily.json: ${json.length} bytes, 3/${GAME_COUNT} preview; ${Object.keys(faces).length} faces validated, largest "${largest.name}" ${largest.bytes} bytes of ${androidLimits.maxBytes}\n`,
+  `pocket/public/faces/daily.json: ${json.length} bytes, 2/${STARTER_GAMES.length} preview; ${Object.keys(faces).length} faces validated, largest "${largest.name}" ${largest.bytes} bytes of ${androidLimits.maxBytes}\n`,
 );

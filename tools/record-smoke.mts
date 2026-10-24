@@ -210,8 +210,8 @@ if (landed) {
       await sleep(2_000);
     }
   });
-  // 6b. An on-time record counts one more finisher in its bucket (score 1 = bucket 1
-  // for a Count game, bucket 0 for a Seconds game); a backfill (RECORD_SMOKE_DAY in
+  // 6b. An on-time record counts one more finisher in its bucket (score 1 is bucket 0
+  // under both the count and the seconds spec); a backfill (RECORD_SMOKE_DAY in
   // the past) must leave the histogram unchanged.
   {
     await step(`histogram(${GAME_ID}, ${day}) after the write`, async () => {

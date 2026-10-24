@@ -5,10 +5,12 @@ import {
   formatScore,
   holdsPlayer,
   percentileFor,
+  scoreValue,
   withPlayer,
   type Histogram,
   type ScoreUnit,
 } from "../percentile";
+import { pickedGames } from "../picks";
 import { GAME_ROSTER, type Game } from "../roster";
 import { shareText, type ShareGame, type ShareInput } from "../share";
 import {
@@ -30,36 +32,37 @@ const FLAME =
 const EMPTY_BITS: DayBits = { played: 0n, solved: 0n, ontime: 0n };
 
 export interface ResultNext {
-  /** The first unplayed game after the current one in roster order; null when none. */
+  /** The first unplayed picked game after the current one; null when none. */
   game: Game | null;
-  /** Games done today, the current one included. */
+  /** Picked games done today, the current one included when it is picked. */
   done: number;
   total: number;
 }
 
 /**
- * Where the main button goes: the first unplayed game after `current` in
- * roster order, wrapping; the current game always counts as done (the write
- * landed; a lagging read may not show it yet).
+ * Where the main button goes: the first unplayed game of `picks` (D21) after
+ * `current`, wrapping; from an unpicked game, the first unplayed pick. The
+ * current game always counts as done (the write landed; a lagging read may
+ * not show it yet).
  */
 export function nextGame(
   current: Game,
   played: bigint,
-  roster: readonly Game[] = GAME_ROSTER,
+  picks: readonly Game[] = pickedGames(),
 ): ResultNext {
   const bits = played | (1n << BigInt(current.gameId));
-  const start = roster.findIndex((game) => game.id === current.id);
+  const start = picks.findIndex((game) => game.id === current.id);
   let game: Game | null = null;
-  for (let step = 1; step <= roster.length && game === null; step += 1) {
-    const candidate = roster[(start + step) % roster.length]!;
+  for (let step = 1; step <= picks.length && game === null; step += 1) {
+    const candidate = picks[(start + step) % picks.length]!;
     if (!hasGameBit(bits, candidate.gameId)) {
       game = candidate;
     }
   }
   return {
     game,
-    done: popcount(bits & rosterMask(roster.map((entry) => entry.gameId))),
-    total: roster.length,
+    done: popcount(bits & rosterMask(picks.map((entry) => entry.gameId))),
+    total: picks.length,
   };
 }
 
@@ -176,10 +179,10 @@ export function renderResultPanel(
   const pastDay = options.pastDay ?? null;
   const unsaved = options.unsaved ?? null;
   const percentile =
-    histogram === null || unsaved ? null : percentileFor(histogram, game.kind, score, !late);
+    histogram === null || unsaved ? null : percentileFor(histogram, game, score, !late);
   // A saved score is one of the day's finishers, in the count and the chart,
   // even where the chain does not count it (late) or the read lags.
-  const shown = histogram === null || unsaved ? histogram : withPlayer(histogram, game.kind, score, late);
+  const shown = histogram === null || unsaved ? histogram : withPlayer(histogram, game, score, late);
   const finishers = shown === null ? 0 : shown.total;
   const scoreWords = formatScore(game.kind, score, options.unit);
 
@@ -238,9 +241,10 @@ export function renderResultPanel(
   if (shown !== null) {
     panel.append(
       createDistribution({
-        kind: game.kind,
+        game,
         histogram: shown,
         playerScore: unsaved ? null : score,
+        percentile,
         finished: finishers,
         late,
       }),
@@ -349,9 +353,9 @@ function saveBar(unsaved: { saving: boolean; onSave: () => void }): HTMLElement 
   return bar;
 }
 
-/** The score as the tiles write it: the number, or the time. */
+/** The score as the tiles write it: the number, the time, or the points. */
 function shortScore(game: Pick<Game, "kind">, score: number): string {
-  return game.kind === "seconds" ? formatScore(game.kind, score) : String(score);
+  return scoreValue(game.kind, score);
 }
 
 export interface ResultPanelState {
@@ -454,7 +458,7 @@ async function shareOut(text: string): Promise<void> {
 
 /**
  * The one shared end-state helper: a game appends `element` and calls
- * `update` with its minimised score. After the write it reads the day's
+ * `update` with its score. After the write it reads the day's
  * histogram, the day's bits (for the next game), the streak window (for the
  * streak tile) and the day summary (for the share text),
  * then renders; a failing read drops that part and keeps the score.
@@ -510,7 +514,7 @@ export function createResultPanel(
     return {
       day: state.day,
       games,
-      streaks: streaks ? { any: streaks.any, all: streaks.all } : null,
+      streaks: streaks ? { any: streaks.any } : null,
       dayPercentile: summary?.dayPercentile ?? null,
     };
   };
@@ -588,7 +592,7 @@ export function createResultPanel(
           const percentile =
             histogram === null || pending
               ? null
-              : percentileFor(histogram, game.kind, state.score, !state.late);
+              : percentileFor(histogram, game, state.score, !state.late);
           const share = shareInputFor(state, bits, percentile, streaks, summary);
           shareReady = shareText(share);
           element.replaceChildren(
@@ -616,7 +620,7 @@ export function createResultPanel(
           !pending &&
           !state.late &&
           source.histogram &&
-          !holdsPlayer(histogram, game.kind, state.score)
+          !holdsPlayer(histogram, game, state.score)
         ) {
           const histogramOf = source.histogram.bind(source);
           setTimeout(() => {
@@ -625,7 +629,7 @@ export function createResultPanel(
             }
             histogramOf(game.gameId, state.day)
               .then((again) => {
-                if (current === request && holdsPlayer(again, game.kind, state.score)) {
+                if (current === request && holdsPlayer(again, game, state.score)) {
                   draw(again);
                 }
               })

@@ -1,0 +1,413 @@
+/* Daily Sound (D25): a black board. Listen plays the tone once; then the
+   whole board is the pitch control, high at the top and low at the bottom
+   (dialed.gg). The board takes whatever height is left, so the screen never
+   scrolls (D18). */
+
+.page.sound-page {
+  display: flex;
+  height: calc(100dvh - 64px);
+  min-height: 0;
+  padding-top: 18px;
+  padding-bottom: 12px;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sound-page .game-heading {
+  flex: none;
+  margin-bottom: 12px;
+}
+
+.sound-shell {
+  display: flex;
+  width: min(100%, 520px);
+  min-height: 0;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.sound-shell .game-loading,
+.sound-shell .game-error {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.sound-stage {
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sound-meta {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* The board is black in both themes: the tone is the only thing on it. */
+.sound-board {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 18px;
+  background: #050506;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
+  color: #ececec;
+  overflow: hidden;
+}
+
+.sound-listen {
+  display: inline-flex;
+  min-width: 148px;
+  min-height: 56px;
+  padding: 0 26px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-sound);
+  color: var(--accent-sound-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.sound-listen svg {
+  width: 24px;
+  height: 24px;
+}
+
+.sound-listen:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.sound-listen:focus-visible,
+.sound-submit:focus-visible,
+.sound-next:focus-visible {
+  outline: 3px solid var(--present);
+  outline-offset: 2px;
+}
+
+.sound-board-note {
+  max-width: 30ch;
+  margin: 0;
+  color: rgb(236 236 236 / 72%);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.sound-wave {
+  width: 100%;
+  height: 72px;
+  flex: none;
+  overflow: visible;
+}
+
+.sound-wave path {
+  fill: none;
+  stroke: var(--accent-sound);
+  stroke-width: 2.5px;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 0 6px var(--accent-sound));
+}
+
+.sound-board--listen .sound-wave {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  opacity: 0.35;
+  transform: translateY(-50%);
+}
+
+.sound-board--listen .sound-listen,
+.sound-board--listen .sound-board-note {
+  position: relative;
+}
+
+/* The find: the whole board is the slider. */
+.sound-board--find {
+  justify-content: flex-start;
+  padding: 0;
+  cursor: grab;
+  outline: 0;
+  touch-action: none;
+  user-select: none;
+}
+
+.sound-board--find[data-held] {
+  cursor: grabbing;
+}
+
+.sound-board--find:focus-visible {
+  box-shadow: inset 0 0 0 3px var(--present);
+}
+
+.sound-board--find .sound-wave {
+  position: absolute;
+  top: calc((1 - var(--at, 0.5)) * (100% - 72px));
+  left: 0;
+  pointer-events: none;
+}
+
+.sound-marker {
+  position: absolute;
+  top: calc((1 - var(--at, 0.5)) * (100% - 72px) + 36px);
+  right: 0;
+  left: 0;
+  height: 0;
+  border-top: 1px dashed rgb(236 236 236 / 35%);
+  pointer-events: none;
+}
+
+/* Above the wave's crest, so the line never runs through the number. */
+.sound-readout {
+  position: absolute;
+  right: 12px;
+  bottom: 40px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgb(5 5 6 / 80%);
+  color: #ececec;
+  font-family: var(--display);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.sound-hint {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  color: rgb(236 236 236 / 50%);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  pointer-events: none;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.sound-board--find[data-held] .sound-hint {
+  opacity: 0;
+}
+
+.sound-submit {
+  min-height: 48px;
+  flex: none;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent-sound);
+  color: var(--accent-sound-ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* The reveal (dialed.gg): the round, the score large, its verdict, then the two pitches. */
+.sound-board--reveal {
+  gap: 18px;
+}
+
+.sound-reveal-round {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  margin: 0;
+  color: rgb(236 236 236 / 60%);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.sound-reveal-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.sound-reveal-score strong {
+  font-family: var(--display);
+  font-size: clamp(64px, 18vh, 112px);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.sound-verdict {
+  color: var(--accent-sound-text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.sound-reveal-values {
+  display: grid;
+  margin: 0;
+  grid-template-columns: auto auto;
+  column-gap: 18px;
+  row-gap: 6px;
+  align-items: baseline;
+}
+
+.sound-reveal-values dt {
+  color: rgb(236 236 236 / 60%);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sound-reveal-values dd {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+
+.sound-next {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: inline-grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent-sound);
+  color: var(--accent-sound-ink);
+  cursor: pointer;
+}
+
+.sound-next svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* The end: the total and the five tones. */
+.sound-summary {
+  display: flex;
+  min-height: 0;
+  padding: 14px;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+
+.sound-final {
+  margin: 0;
+  color: var(--muted);
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.sound-final strong {
+  color: var(--text);
+  font-family: var(--display);
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.sound-pairs {
+  display: flex;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 6px;
+  list-style: none;
+}
+
+.sound-pair {
+  display: grid;
+  min-height: 44px;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  background: var(--surface-raised);
+}
+
+.sound-pair-index {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.sound-pair-values {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sound-pair-values strong {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.sound-pair-values span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sound-pair-score {
+  font-family: var(--display);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  text-align: right;
+}
+
+.sound-result {
+  min-height: 44px;
+  margin: 0;
+  padding: 9px 12px;
+  flex: none;
+  border-radius: 7px;
+  background: var(--surface-sound);
+  box-shadow: inset 0 0 0 2px var(--accent-sound);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.sound-stage--done .sound-summary {
+  flex: 0 1 auto;
+}

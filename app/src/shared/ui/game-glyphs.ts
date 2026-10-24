@@ -35,6 +35,21 @@ const GLYPHS: Record<GameSlug, string> = {
   connections:
     '<circle cx="7.5" cy="7.5" r="3" fill="%f" stroke="none"/><circle cx="16.5" cy="7.5" r="3" fill="%f" stroke="none"/>'
     + '<circle cx="7.5" cy="16.5" r="3" fill="%f" stroke="none"/><circle cx="16.5" cy="16.5" r="3" fill="%f" stroke="none"/>',
+  // A padlock.
+  code:
+    '<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>'
+    + '<circle cx="12" cy="15.5" r="1.6" fill="%f" stroke="none"/>',
+  // Two rays and the arc between them.
+  angle:
+    '<path d="M4 19.5h16M4 19.5l10-13"/><path d="M10 19.5a6 6 0 0 0-2.4-4.8"/>',
+  // Three slider columns, thumbs at different heights.
+  color:
+    '<path d="M6 4v16M12 4v16M18 4v16"/>'
+    + '<circle cx="6" cy="9" r="2.2" fill="%f" stroke="none"/><circle cx="12" cy="15" r="2.2" fill="%f" stroke="none"/>'
+    + '<circle cx="18" cy="7" r="2.2" fill="%f" stroke="none"/>',
+  // A speaker and two sound waves.
+  sound:
+    '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.3 6.3a8 8 0 0 1 0 11.4"/>',
 };
 
 export function gameGlyph(id: GameSlug, options: GlyphOptions = {}): string {

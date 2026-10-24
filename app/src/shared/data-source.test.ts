@@ -33,8 +33,8 @@ describe("InMemoryDataSource histograms", () => {
 
     const today = await source.histogram(0, 100);
     expect(today.total).toBe(beforeToday.total + 1);
-    expect(today.buckets.find((entry) => entry.bucket === 7)?.count).toBe(
-      (beforeToday.buckets.find((entry) => entry.bucket === 7)?.count ?? 0) + 1,
+    expect(today.buckets.find((entry) => entry.bucket === 6)?.count).toBe(
+      (beforeToday.buckets.find((entry) => entry.bucket === 6)?.count ?? 0) + 1,
     );
     expect(await source.histogram(0, 95)).toEqual(beforeArchive);
   });

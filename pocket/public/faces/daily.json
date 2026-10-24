@@ -120,7 +120,7 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
-                                "value": "tiles/count-3.png"
+                                "value": "tiles/count-2-of-4.png"
                               },
                               "fit": "Contain"
                             }
@@ -266,68 +266,6 @@
                               }
                             ]
                           }
-                        },
-                        {
-                          "tag": "Spacer",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 14
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "tag": "Image",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 16
-                              },
-                              {
-                                "tag": "Height",
-                                "value": 16
-                              }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/gem.png"
-                              },
-                              "fit": "Contain"
-                            }
-                          }
-                        },
-                        {
-                          "tag": "Spacer",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 5
-                              }
-                            ]
-                          }
-                        },
-                        {
-                          "tag": "Text",
-                          "value": {
-                            "modifiers": [],
-                            "props": {
-                              "style": "BodyLargeRegular",
-                              "color": "FgPrimary"
-                            },
-                            "children": [
-                              {
-                                "tag": "String",
-                                "value": {
-                                  "text": "2"
-                                }
-                              }
-                            ]
-                          }
                         }
                       ]
                     }
@@ -395,51 +333,51 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
+                                "value": "tiles/tile-connections-idle.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
+                                "value": "tiles/tile-code-idle.png"
+                              },
+                              "fit": "Contain"
+                            }
+                          }
+                        },
+                        {
+                          "tag": "Image",
+                          "value": {
+                            "modifiers": [
+                              {
+                                "tag": "Width",
+                                "value": 70
+                              },
+                              {
+                                "tag": "Height",
+                                "value": 95
+                              }
+                            ],
+                            "props": {
+                              "source": {
+                                "tag": "Archive",
                                 "value": "tiles/tile-word-done.png"
-                              },
-                              "fit": "Contain"
-                            }
-                          }
-                        },
-                        {
-                          "tag": "Image",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 70
-                              },
-                              {
-                                "tag": "Height",
-                                "value": 95
-                              }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-sudoku-done.png"
-                              },
-                              "fit": "Contain"
-                            }
-                          }
-                        },
-                        {
-                          "tag": "Image",
-                          "value": {
-                            "modifiers": [
-                              {
-                                "tag": "Width",
-                                "value": 70
-                              },
-                              {
-                                "tag": "Height",
-                                "value": 95
-                              }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-chess-done.png"
                               },
                               "fit": "Contain"
                             }
@@ -493,14 +431,14 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
-                                "value": "tiles/tile-globe-idle.png"
+                                "value": "tiles/tile-mini-done.png"
                               },
                               "fit": "Contain"
                             }
                           }
                         },
                         {
-                          "tag": "Image",
+                          "tag": "Spacer",
                           "value": {
                             "modifiers": [
                               {
@@ -511,18 +449,11 @@
                                 "tag": "Height",
                                 "value": 95
                               }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-mini-idle.png"
-                              },
-                              "fit": "Contain"
-                            }
+                            ]
                           }
                         },
                         {
-                          "tag": "Image",
+                          "tag": "Spacer",
                           "value": {
                             "modifiers": [
                               {
@@ -533,14 +464,7 @@
                                 "tag": "Height",
                                 "value": 95
                               }
-                            ],
-                            "props": {
-                              "source": {
-                                "tag": "Archive",
-                                "value": "tiles/tile-connections-idle.png"
-                              },
-                              "fit": "Contain"
-                            }
+                            ]
                           }
                         }
                       ]

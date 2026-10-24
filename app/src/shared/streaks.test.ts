@@ -159,49 +159,30 @@ describe("deriveHubStreaks", () => {
   const one = { played: 1n, solved: 1n, ontime: 1n };
   const all = { played: MASK, solved: MASK, ontime: MASK };
 
-  it("counts an any-game streak from one finished game a day", () => {
-    const streaks = deriveHubStreaks([one, one, one], MASK);
-    expect(streaks.any).toBe(3);
-    expect(streaks.all).toBe(0);
+  it("counts a streak from one finished game a day", () => {
+    expect(deriveHubStreaks([one, one, one], MASK).any).toBe(3);
+    // Finishing every game on a day counts the same as finishing one.
+    expect(deriveHubStreaks([all, one, all], MASK).any).toBe(3);
   });
 
-  it("counts an all-games streak only when every roster game was finished on the day", () => {
-    const streaks = deriveHubStreaks([all, all, one], MASK);
-    expect(streaks.any).toBe(3);
-    expect(streaks.all).toBe(2);
-    // Playing the last game turns today from gold to blue.
-    const finished = deriveHubStreaks([all, all, all], MASK);
-    expect(finished.all).toBe(3);
-    expect(finished.any).toBe(3);
-  });
-
-  it("gives both streaks D17's one-day grace and zeroes them after two missed days", () => {
-    expect(deriveHubStreaks([all, all, none], MASK)).toMatchObject({ any: 2, all: 2 });
-    expect(deriveHubStreaks([all, all, none, none], MASK)).toMatchObject({ any: 0, all: 0 });
-    expect(deriveHubStreaks([one, one, none], MASK)).toMatchObject({ any: 2, all: 0 });
+  it("gives the streak D17's one-day grace and zeroes it after two missed days", () => {
+    expect(deriveHubStreaks([one, one, none], MASK).any).toBe(2);
+    expect(deriveHubStreaks([one, one, none, none], MASK).any).toBe(0);
   });
 
   it("ignores games outside the roster", () => {
     const stray = { played: 1n << 9n, solved: 1n << 9n, ontime: 1n << 9n };
-    expect(deriveHubStreaks([stray, stray], MASK)).toMatchObject({
-      any: 0,
-      all: 0,
-      finished: 0,
-      perfectDays: 0,
-    });
-    const withStray = { played: MASK | (1n << 9n), solved: MASK, ontime: MASK | (1n << 9n) };
-    expect(deriveHubStreaks([withStray], MASK)).toMatchObject({ any: 1, all: 1, perfectDays: 1 });
+    expect(deriveHubStreaks([stray, stray], MASK)).toMatchObject({ any: 0, finished: 0 });
+    const withStray = { played: 1n | (1n << 9n), solved: 1n, ontime: 1n | (1n << 9n) };
+    expect(deriveHubStreaks([withStray], MASK)).toMatchObject({ any: 1, finished: 1 });
   });
 
-  it("counts a backfilled day for completion but not for either streak", () => {
+  it("counts a backfilled day as finished games but not for the streak", () => {
     // Day 1 was finished from the archive (played, not ontime).
     const backfilled = { played: MASK, solved: MASK, ontime: 0n };
     const streaks = deriveHubStreaks([all, backfilled, all], MASK);
     expect(streaks.finished).toBe(9);
-    expect(streaks.perfectDays).toBe(3);
     expect(streaks.any).toBe(1);
-    expect(streaks.all).toBe(1);
-    expect(streaks.longestAll).toBe(1);
   });
 
   it("tracks the longest any-game run, never below the live streak", () => {
@@ -220,13 +201,6 @@ describe("deriveHubStreaks", () => {
     const streaks = deriveHubStreaks([one, one, backfilled, one, one], MASK);
     expect(streaks.longestAny).toBe(2);
     expect(streaks.any).toBe(2);
-  });
-
-  it("tracks the longest all-games run without grace", () => {
-    const streaks = deriveHubStreaks([all, all, all, none, all, none, none], MASK);
-    expect(streaks.longestAll).toBe(3);
-    expect(streaks.all).toBe(0);
-    expect(streaks.finished).toBe(12);
   });
 
   it("rejects an empty roster mask", () => {

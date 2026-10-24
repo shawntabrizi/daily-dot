@@ -8,7 +8,7 @@ export type HeaderLeft = "menu" | "back";
 
 export interface HeaderHandle {
   element: HTMLElement;
-  setStreaks(streaks: Pick<HubStreaks, "any" | "all">): void;
+  setStreaks(streaks: Pick<HubStreaks, "any">): void;
   /** The centred slot: null is the hub's "Daily on Dot"; a string is a screen's eyebrow ("Daily Word · Day 294"). */
   setTitle(text: string | null): void;
   /** The 44 px circle on the left: the hamburger on the hub, the back arrow everywhere else. */

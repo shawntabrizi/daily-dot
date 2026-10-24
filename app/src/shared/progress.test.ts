@@ -7,7 +7,11 @@ import {
   createChessProgress,
   saveChessProgress,
 } from "../games/chess/progress";
+import { colorAnswer } from "../games/color/generate";
+import { applyColorGuess, createColorProgress, saveColorProgress } from "../games/color/progress";
 import { GLOBE_COUNTRIES, globeAnswer } from "../games/globe/generate";
+import { soundAnswer } from "../games/sound/generate";
+import { applySoundGuess, createSoundProgress, saveSoundProgress } from "../games/sound/progress";
 import {
   applyGlobeGuess,
   createGlobeProgress,
@@ -182,6 +186,17 @@ describe("progressLine", () => {
 
     stored(storage, "connections", { found: [0, 2] });
     expect(progressLine(game("connections"), 42, storage)).toBe("2 of 4 found");
+
+    const pick = { hue: 10, saturation: 50, brightness: 50 };
+    const color = applyColorGuess(applyColorGuess(createColorProgress(42, colorAnswer(42, "v1")), pick), pick);
+    saveColorProgress(color, storage);
+    expect(progressLine(game("color"), 42, storage)).toBe("2 of 5 colours");
+    expect(hasStarted(8, 42, storage)).toBe(true);
+
+    const sound = applySoundGuess(applySoundGuess(createSoundProgress(42, soundAnswer(42, "v1")), 220), 330);
+    saveSoundProgress(sound, storage);
+    expect(progressLine(game("sound"), 42, storage)).toBe("2 of 5 tones");
+    expect(hasStarted(9, 42, storage)).toBe(true);
   });
 
   it("says 'started' when the stored shape tells nothing more", () => {

@@ -8,6 +8,7 @@ import {
   createGlobeProgress,
   hasStartedGlobe,
   loadGlobeProgress,
+  matchCountries,
   saveGlobeProgress,
   submitGlobeOnce,
 } from "./progress";
@@ -55,6 +56,43 @@ describe("Globe progress", () => {
 
     expect(result.accepted).toBe(true);
     expect(result.progress.guesses).toEqual([guess.iso]);
+  });
+
+  it("rejects a repeated country without consuming a guess", () => {
+    const answer = globeAnswer(208, "v1");
+    const guess = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const first = applyGlobeGuess(createGlobeProgress(208, answer), guess.name);
+    const repeat = applyGlobeGuess(first.progress, guess.name.toLowerCase());
+
+    expect(repeat.accepted).toBe(false);
+    expect(repeat.progress.guesses).toEqual([guess.iso]);
+    if (!repeat.accepted) {
+      expect(repeat.message).toBe(`You already guessed ${guess.name}.`);
+    }
+  });
+
+  it("lists every country for an empty query, alphabetically", () => {
+    const names = matchCountries("  ").map((country) => country.name);
+    expect(names).toHaveLength(GLOBE_COUNTRIES.length);
+    expect(names).toEqual(
+      [...names].sort((a, b) => a.localeCompare(b, "en")),
+    );
+  });
+
+  it("filters by the typed text, prefix matches first", () => {
+    const query = "an";
+    const matches = matchCountries(query.toUpperCase());
+    const names = matches.map((country) => country.name.toLowerCase());
+    const firstContainsOnly = names.findIndex((name) => !name.startsWith(query));
+
+    expect(matches.length).toBeGreaterThan(0);
+    expect(matches.length).toBeLessThan(GLOBE_COUNTRIES.length);
+    expect(names.every((name) => name.includes(query))).toBe(true);
+    expect(firstContainsOnly).toBeGreaterThan(0);
+    expect(
+      names.slice(firstContainsOnly).every((name) => !name.startsWith(query)),
+    ).toBe(true);
+    expect(matchCountries("zzzz")).toEqual([]);
   });
 
   it("restores the accepted guess list after a mid-game reload", () => {

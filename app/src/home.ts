@@ -6,6 +6,7 @@ import {
   renderDaySummary,
   type GameSummary,
 } from "./shared/day-summary";
+import { pickedGames } from "./shared/picks";
 import { finishedUnrecorded, hasStarted, progressLine } from "./shared/progress";
 import { COUNT_WORDS as WORDS, GAME_ROSTER, type Game } from "./shared/roster";
 import { hasGameBit, type HubStreaks } from "./shared/streaks";
@@ -40,13 +41,40 @@ export function greetingFor(hour: number): string {
   return "Good evening.";
 }
 
+/** Whether "More games" is open; a per-device convenience. */
+export const MORE_OPEN_KEY = "daily-on-dot:more-games:v1";
+
+function moreOpen(): boolean {
+  try {
+    return window.localStorage.getItem(MORE_OPEN_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberMoreOpen(open: boolean): void {
+  try {
+    if (open) {
+      window.localStorage.setItem(MORE_OPEN_KEY, "1");
+    } else {
+      window.localStorage.removeItem(MORE_OPEN_KEY);
+    }
+  } catch {
+    // A blocked store only forgets the choice.
+  }
+}
+
+// Until the day's bits arrive the count is unknown; a guessed "Six to play."
+// flashed and then corrected itself on every archive step.
+const HEADLINE_LOADING = "Loading…";
+
 /** The headline states the day: "Six to play." / "Three to go." / "All six done." */
-export function headlineFor(done: number, total = GAME_ROSTER.length): string {
+export function headlineFor(done: number, total: number): string {
   if (done === 0) {
     return `${WORDS[total]} to play.`;
   }
   if (done >= total) {
-    return `All ${WORDS[total]!.toLowerCase()} done.`;
+    return total === 1 ? "All done." : total === 2 ? "Both done." : `All ${WORDS[total]!.toLowerCase()} done.`;
   }
   return `${WORDS[total - done]} to go.`;
 }
@@ -111,21 +139,27 @@ function pastHead(day: number, today: number): string {
       ${step(day + 1, "forward", `Next day, ${next}`)}
     </nav>
     <div class="home-head home-head--past">
-      <h1><span data-home-headline>${headlineFor(0)}</span></h1>
+      <h1><span data-home-headline data-loading>${HEADLINE_LOADING}</span></h1>
       <a class="today-chip" href="#/">Today${icon("forward")}</a>
     </div>
   `;
 }
 
 /**
- * The hub. With `pastDay` it is that day's hub (Archive board): the same
- * rows, bar and done group, a day stepper in place of the greeting and the
- * countdown, rows that open that day's puzzles, and a note that late plays
- * fill the calendar, not the streak.
+ * The hub. The picked games (D21) lead, then the done group (every finished
+ * game, picked or not), then "More games": the unpicked ones, collapsed, still
+ * playable. The headline and the bar count picked games only.
+ *
+ * With `pastDay` it is that day's hub (Archive board): the same rows, bar and
+ * groups, a day stepper in place of the greeting and the countdown, rows that
+ * open that day's puzzles, and a note that late plays fill the calendar, not
+ * the streak.
  */
 export function renderHome(source: DataSource, pastDay: number | null = null): ViewHandle {
   const past = pastDay !== null;
   const clockToday = dayIndexFromDate(new Date());
+  const picked = pickedGames();
+  const pickedIds = new Set(picked.map((game) => game.id));
   const page = document.createElement("section");
   page.className = past ? "page home-page home-page--past" : "page home-page";
   page.innerHTML = `
@@ -134,12 +168,12 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
       : `<div class="home-head">
       <div class="home-lead">
         <p class="eyebrow" data-home-date>${dateEyebrow()}</p>
-        <h1><span data-home-greeting>${greetingFor(new Date().getHours())}</span><br><span data-home-headline>${headlineFor(0)}</span></h1>
+        <h1><span data-home-greeting>${greetingFor(new Date().getHours())}</span><br><span data-home-headline data-loading>${HEADLINE_LOADING}</span></h1>
       </div>
       <div class="home-countdown" aria-live="off">New set in<br><span data-countdown>${countdownText()}</span></div>
     </div>`}
-    <div class="day-bar" data-day-bar role="img" aria-label="${past ? `Day ${pastDay}` : "Today"}: 0 of ${GAME_ROSTER.length} done">
-      ${GAME_ROSTER.map(
+    <div class="day-bar" data-day-bar role="img" aria-label="${past ? `Day ${pastDay}` : "Today"}: 0 of ${picked.length} done">
+      ${picked.map(
         (game) =>
           `<span class="day-bar-segment" data-segment="${game.id}" data-done="false"></span>`,
       ).join("")}
@@ -154,6 +188,12 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
       <h2 class="home-done-heading">${past ? "Done that day" : "Done today"}</h2>
       <div class="game-rows" data-done-games></div>
     </section>
+    <section class="home-more" data-home-more hidden>
+      <button type="button" class="home-more-toggle" data-more-toggle aria-expanded="false" aria-controls="home-more-games">
+        <span>More games <span class="home-more-count" data-more-count></span></span>${icon("down")}
+      </button>
+      <div class="game-rows" id="home-more-games" data-more-games hidden></div>
+    </section>
     ${past ? `<p class="past-note">${icon("calendar")}Past days fill your calendar, not your streak.</p>` : ""}
   `;
 
@@ -162,6 +202,10 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
   const openRows = page.querySelector<HTMLElement>("[data-open-games]");
   const doneSection = page.querySelector<HTMLElement>("[data-home-done]");
   const doneRows = page.querySelector<HTMLElement>("[data-done-games]");
+  const moreSection = page.querySelector<HTMLElement>("[data-home-more]");
+  const moreToggle = page.querySelector<HTMLButtonElement>("[data-more-toggle]");
+  const moreCount = page.querySelector<HTMLElement>("[data-more-count]");
+  const moreRows = page.querySelector<HTMLElement>("[data-more-games]");
   const readError = page.querySelector<HTMLElement>("[data-home-read-error]");
   const retryRead = readError?.querySelector<HTMLButtonElement>("button");
   const countdown = page.querySelector<HTMLElement>("[data-countdown]");
@@ -172,6 +216,10 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
     || !openRows
     || !doneSection
     || !doneRows
+    || !moreSection
+    || !moreToggle
+    || !moreCount
+    || !moreRows
     || !readError
     || !retryRead
     || (!past && !countdown)
@@ -186,9 +234,21 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
   let disposed = false;
   let readRequest = 0;
 
+  const showMore = (open: boolean): void => {
+    moreRows.hidden = !open;
+    moreToggle.setAttribute("aria-expanded", String(open));
+  };
+  showMore(moreOpen());
+  moreToggle.addEventListener("click", () => {
+    const open = moreRows.hidden;
+    showMore(open);
+    rememberMoreOpen(open);
+  });
+
   const renderRows = (): void => {
     const states = GAME_ROSTER.map((game) => ({
       game,
+      picked: pickedIds.has(game.id),
       state: rowState(
         game,
         shownDay,
@@ -200,21 +260,26 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
     const ordered = [...states].sort(
       (left, right) => ORDER[left.state.kind] - ORDER[right.state.kind],
     );
-    openRows.replaceChildren(
-      ...ordered
-        .filter((entry) => entry.state.kind !== "done")
-        .map((entry) => createGameRow(entry.game, entry.state, pastDay)),
-    );
+    const row = (entry: (typeof states)[number]): HTMLElement =>
+      createGameRow(entry.game, entry.state, pastDay);
+    const waiting = ordered.filter((entry) => entry.state.kind !== "done");
+    openRows.replaceChildren(...waiting.filter((entry) => entry.picked).map(row));
+    const more = waiting.filter((entry) => !entry.picked);
+    moreRows.replaceChildren(...more.map(row));
+    moreCount.textContent = String(more.length);
+    moreSection.hidden = more.length === 0;
     const done = ordered.filter((entry) => entry.state.kind === "done");
-    doneRows.replaceChildren(
-      ...done.map((entry) => createGameRow(entry.game, entry.state, pastDay)),
-    );
+    doneRows.replaceChildren(...done.map(row));
     doneSection.hidden = done.length === 0;
 
-    headline.textContent = headlineFor(done.length);
+    const pickedDone = done.filter((entry) => entry.picked).length;
+    if (dayBits) {
+      headline.textContent = headlineFor(pickedDone, picked.length);
+      delete headline.dataset.loading;
+    }
     bar.setAttribute(
       "aria-label",
-      `${past ? `Day ${pastDay}` : "Today"}: ${done.length} of ${GAME_ROSTER.length} done`,
+      `${past ? `Day ${pastDay}` : "Today"}: ${pickedDone} of ${picked.length} done`,
     );
     for (const entry of states) {
       bar
@@ -240,7 +305,7 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
       if (disposed || request !== readRequest) {
         return null;
       }
-      announce(day, { streakAny: streaks.any, streakAll: streaks.all });
+      announce(day, { streakAny: streaks.any });
       return streaks;
     } catch {
       // A failed read leaves the header as it was.
@@ -268,7 +333,7 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
       }
       summaries = summary.games;
       renderRows();
-      if (!dayComplete(bits)) {
+      if (!dayComplete(bits, picked)) {
         return;
       }
       // A past day's summary has no streak tiles: late plays do not count for them.
@@ -289,6 +354,10 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
   const hydrateCompletion = async (): Promise<void> => {
     const request = ++readRequest;
     readError.hidden = true;
+    if (!dayBits) {
+      headline.textContent = HEADLINE_LOADING;
+      headline.dataset.loading = "";
+    }
     try {
       const today = await source.currentDay();
       if (pastDay !== null && pastDay >= today) {
@@ -310,6 +379,10 @@ export function renderHome(source: DataSource, pastDay: number | null = null): V
     } catch {
       if (!disposed && request === readRequest) {
         readError.hidden = false;
+        if (!dayBits) {
+          headline.textContent = `${WORDS[picked.length]} ${picked.length === 1 ? "game" : "games"}.`;
+          delete headline.dataset.loading;
+        }
       }
     }
   };
