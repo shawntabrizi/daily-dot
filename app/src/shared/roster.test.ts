@@ -42,12 +42,21 @@ describe("roster bucket specs and direction", () => {
       chess: ["lower", { min: 1, max: 32, buckets: 31 }],
       globe: ["lower", { min: 1, max: 32, buckets: 31 }],
       mini: ["lower", { min: 0, max: 1815, buckets: 121 }],
-      connections: ["lower", { min: 1, max: 32, buckets: 31 }],
+      connections: ["lower", { min: 0, max: 32, buckets: 32 }],
       code: ["lower", { min: 1, max: 32, buckets: 31 }],
       angle: ["lower", { min: 1, max: 32, buckets: 31 }],
       color: ["higher", { min: 0, max: 500, buckets: 100 }],
       sound: ["higher", { min: 0, max: 500, buckets: 100 }],
     });
+  });
+
+  it("gives a perfect Connections board (0 mistakes) its own bar, apart from 1 mistake", () => {
+    // Why: Connections scores mistakes and 0 is the best result; a spec that
+    // starts at 1 would put 0 and 1 in the same bucket for good (set once).
+    const spec = GAME_ROSTER.find((game) => game.id === "connections")!.buckets;
+    const bucket = (score: number) =>
+      Math.min(spec.buckets - 1, Math.floor(((score - spec.min) * spec.buckets) / (spec.max - spec.min)));
+    expect(bucket(0)).not.toBe(bucket(1));
   });
 
   it("keeps every spec inside what the contract accepts", () => {

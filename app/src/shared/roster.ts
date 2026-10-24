@@ -45,6 +45,8 @@ export const COUNT_BUCKETS: BucketSpec = { min: 1, max: 32, buckets: 31 };
 export const SECONDS_BUCKETS: BucketSpec = { min: 0, max: 1815, buckets: 121 };
 /** Half-point steps over 0–50 points (scores in tenths). */
 export const POINTS_BUCKETS: BucketSpec = { min: 0, max: 500, buckets: 100 };
+/** Exact counts 0–30, then 31+: Connections scores mistakes, and 0 is the best board. */
+export const MISTAKE_BUCKETS: BucketSpec = { min: 0, max: 32, buckets: 32 };
 
 export interface Game {
   id: GameSlug;
@@ -123,7 +125,7 @@ export const GAME_ROSTER: readonly Game[] = [
     route: "#/g/connections",
     kind: "count",
     better: "lower",
-    buckets: COUNT_BUCKETS,
+    buckets: MISTAKE_BUCKETS,
   },
   {
     id: "code",

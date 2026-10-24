@@ -103,8 +103,8 @@ any single context window. `PLAN.md` is the design; this is where things actuall
 - **WP40 (bucket specs, score direction, Daily Color), in progress 2026-10-23:** D13 and
   D20 amended, D24 added (Shawn: "we shouldn't force that every game aims to zero");
   brief `plans/wp-40-bucket-specs.md`; parity vectors `shared/bucket-test-vectors.json`.
-  Run by subagents: A contract, B app, then C Daily Color. Needs Shawn: `DailyScores`
-  redeploy and `set-bucket-specs`.
+  Run by subagents: A contract, B app, then C Daily Color. `DailyScores` redeployed and
+  `set-bucket-specs` run 2026-10-24 (see Current deployment).
   - **A done (`dc3376f`):** `contracts/logic` `BucketSpec` (private fields, `new` validates
     1–128 buckets and max > min, `DEFAULT` {1, 32, 31}, `bucket`), `GameKind` gone;
     `DailyScores` `setBucketSpec` (owner, set-once) / `bucketSpec` view, 0-based buckets.
@@ -272,7 +272,9 @@ commit `df7c439`).
   `5Fuf9FMKzP7X2pcmzGKogjp5v3UPg9db5crAQfKq194CzT3t`
   (H160 `0xa77dbc1dd83e38009e7d7766f2e4889709c52fe1`).
 - Contracts (finalized block):
-  - `DailyScores` `0xd73e83ed956dfe25f1cc5a17cba73fc7263486e3` (#2115536)
+  - `DailyScores` `0x16fda8975e27d4b32bf6b2884b371a4bd56b794d` (#2205679, redeployed
+    2026-10-24 for WP40 bucket specs; the first `DailyScores` `0xd73e…86e3` and its
+    scores are abandoned)
   - `WordRegistry` `0xb31cbec3f1fee095d18c82e53143a9ef65155830` (#2127374, redeployed
     2026-10-22 07:20 UTC for the one-word-a-day content; the first `WordRegistry`
     `0x9eed…defa` and its ladder list are abandoned)
@@ -280,8 +282,11 @@ commit `df7c439`).
   - `MiniRegistry` `0x085b864b03ed14bf0b24b60538267d433914c166` (#2115582)
   - `ConnectionsRegistry` `0xcf098c719f63d7bef5c90d1436f41c0d525696af` (#2115597)
   Record: `app/src/deployments/paseo-next-v2.json` plus five `paseo-next-v2-*.abi.json`.
-- Score kinds (`pnpm set:game-kinds`, from the roster): Sudoku 1 and Mini 4 are Seconds;
-  the rest read as Count.
+- Bucket specs (`pnpm set:bucket-specs`, from the roster, set once 2026-10-24; the
+  second dry-run reads "already" for all ten): Word, Chess, Globe, Code, Angle
+  {1, 32, 31}; Sudoku, Mini {0, 1815, 121}; Color, Sound {0, 500, 100}; Connections
+  {0, 32, 32}, because it scores mistakes and a perfect board (0) needs its own bar
+  (`MISTAKE_BUCKETS`; the handoff's {1, 32, 31} would have merged 0 with 1).
 - Content (sealed by `//4`, 2026-10-22 UTC): Word list **#1** "Daily Word answers v2"
   (1,022 six-letter words, `startDay` 294, 16 batches of up to 64; list #0 "v1" is
   abandoned), chess set #0 (400 puzzles, 50 batches, 01:37), Mini set #0 (400 grids, 50
@@ -299,7 +304,11 @@ commit `df7c439`).
   `dailyondot.paseo/0` (`5DMSJqZK…zRNiz`): `record(2, 294, 1, true)` landed in 4 s,
   `getDay` shows the bit, the histogram total went 0 → 1 in bucket 1; PGAS 48.08 → 46.82,
   PAS 0.
-- Checks on this commit: `pnpm --filter daily-on-dot-prototype test` 60 files / 378 tests;
+- Verified 2026-10-24 03:20 UTC: `pnpm verify:deployment` (five probes, ABIs match the
+  pinned v0.3.0 builds), `pnpm verify:live-reads` (`currentDay` 296,
+  `wordForDay(2, 296)` = `pepper`, `getDay`, `histogram(0, 296)`). App checks: 84 files /
+  686 tests, `tsc --noEmit`.
+- Checks on the 2026-10-22 commit: `pnpm --filter daily-on-dot-prototype test` 60 files / 378 tests;
   `tsc --noEmit`; `typecheck:tools`; `build:paseo` (the bundle carries all five addresses);
   `pnpm pocket:build`; `pnpm smoke` (7 ok).
 
@@ -307,7 +316,11 @@ commit `df7c439`).
 
 - `dailyondot.paseo` on Paseo Next v2 (https://dailyondot.paseo.li), owner `//4`, with
   subnames `app.` and `worker.`; registered 2026-10-21 for 11 PAS. Last publish
-  2026-10-22 07:34 UTC from `dae1efb` (one word a day): app
+  2026-10-24 03:22 UTC from `b333d3a` plus the Connections spec (WP39, WP40): app
+  `bafybeibblzodlgzrmd2gkszy5d45sxdwernrax52quyg5jjvoivfhekvzi` (root contenthash tx
+  `0x3dfa76…6501ea5d8` #2206057, `app.` tx `0x2020da…a255773a9`), worker
+  `bafybeifb3m2ac2ec3b57ndoug5bbqqwdnlhqd43wj4onwms6drufgqcdqu` (`worker.` tx
+  `0xc5be1e…e84e76df13a`). The publish before it, 2026-10-22 07:34 UTC from `dae1efb`: app
   `bafybeihf5utof2wwbqggdjueznqyoyphnphgf4knlamlbdz45yqexr6vbq` (root contenthash tx
   `0x216188…f60fde` #2127763, `app.` tx `0x0ecb8a…b38dcd`), worker
   `bafybeigxhvsiwee4szjspo7owj2mfrnbaxi2xmnaohhs5ztaju6d2hlule` (`worker.` tx

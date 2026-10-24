@@ -231,7 +231,9 @@ describe("home", () => {
       dayBitsRange: async (_from, count) => Array.from({ length: count }, () => FULL),
       histograms,
       // Color and Sound (gameIds 8, 9) score points, higher better: 0.7 points is their bucket 1.
-      details: async (_day, ids) => ids.map((id) => ({ score: id === 8 || id === 9 ? 7 : 2, solved: true })),
+      // Connections (gameId 5) buckets from 0 mistakes, so 1 mistake is its bucket 1.
+      details: async (_day, ids) =>
+        ids.map((id) => ({ score: id === 8 || id === 9 ? 7 : id === 5 ? 1 : 2, solved: true })),
     });
     const announced: unknown[] = [];
     const onSummary = (event: Event): void => {

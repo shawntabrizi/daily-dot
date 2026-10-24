@@ -31,7 +31,7 @@ function sourceFor(
     dayBitsRange: async () => [],
     record,
     // Three finishers today: two clean boards and one with two mistakes.
-    histogram: async () => ({ total: 3, buckets: [{ bucket: 0, count: 2 }, { bucket: 1, count: 1 }] }),
+    histogram: async () => ({ total: 3, buckets: [{ bucket: 1, count: 2 }, { bucket: 2, count: 1 }] }),
   };
 }
 
@@ -190,7 +190,7 @@ describe("Connections view", () => {
     });
     expect(record).toHaveBeenCalledOnce();
     expect(record).toHaveBeenCalledWith(5, 208, 1, true);
-    // One mistake: bucket 0, tied with one other for best of three.
+    // One mistake: bucket 1 (0 mistakes has bucket 0), tied with one other for best of three.
     await vi.waitFor(() => {
       expect(view.element.querySelector("[data-result-rank-tile] .result-tile-value")?.textContent).toBe("33%");
     });

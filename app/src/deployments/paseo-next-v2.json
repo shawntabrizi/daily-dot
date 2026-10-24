@@ -3,7 +3,7 @@
   "chain": "paseo-asset-hub",
   "status": "deployed",
   "contracts": {
-    "scores": "0xd73e83ed956dfe25f1cc5a17cba73fc7263486e3",
+    "scores": "0x16fda8975e27d4b32bf6b2884b371a4bd56b794d",
     "word": "0xb31cbec3f1fee095d18c82e53143a9ef65155830",
     "chess": "0x4775352f3993d66cf7d562c91f730d11973cf0aa",
     "mini": "0x085b864b03ed14bf0b24b60538267d433914c166",
@@ -11,8 +11,8 @@
   },
   "abis": {
     "scores": {
-      "file": "paseo-next-v2-scores-938ac2186a4c.abi.json",
-      "sha256": "938ac2186a4cddef7be2b8da97c08df432b8fb1814bf595c98843c4cd3de8035"
+      "file": "paseo-next-v2-scores-c6e620f44a22.abi.json",
+      "sha256": "c6e620f44a225558b3bdb1b9f44e1f1bf4f3606b7b1020efacb3ee98973be445"
     },
     "word": {
       "file": "paseo-next-v2-word-5054e704fb24.abi.json",
@@ -31,7 +31,7 @@
       "sha256": "d730eeebb7bcff48e752116eea6214fe3162648b4849cbb227b59844551e7508"
     }
   },
-  "deployedAt": "2026-10-22T07:20:34.339Z",
+  "deployedAt": "2026-10-24T03:10:41.883Z",
   "content": {
     "chessSetId": 0,
     "miniSetId": 0,
