@@ -178,6 +178,14 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   the live drag tone follows it as the pitch moves. The tone gains soft 2nd and 3rd
   harmonics so phone speakers, which barely play 110 Hz, still carry the pitch; scoring
   is unchanged. Not yet heard on a device: tune `COMPENSATION` / `PEAK_LEVEL` by ear.
+- **Angle on-screen pad (2026-10-24, Shawn: the keyboard covered the hints):** Angle's
+  number input opened the phone keyboard over the hint list and refocused after every
+  guess. It now has a readout and a two-row pad (`1–5 ⌫ / 6–0 Guess`), physical keys on
+  desktop, hints between the drawing and the pad. Checked at 360×780 (three hints show),
+  360×640 (newest shows, the rest scroll) and 1440×900, no page scroll. Only Angle and
+  Globe ever opened the system keyboard; Globe needs typing to search, but its input is
+  rebuilt unfocused after a guess, so the keyboard closes and the list shows. Not
+  checked on a device.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

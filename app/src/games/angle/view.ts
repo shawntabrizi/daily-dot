@@ -19,6 +19,8 @@ import {
 } from "./progress";
 
 const GAME = gameById("angle")!;
+/** Two rows of six, so the pad leaves room for the hints. */
+const KEYS = ["1", "2", "3", "4", "5", "backspace", "6", "7", "8", "9", "0", "enter"] as const;
 const SIZE = 240;
 const CENTER = SIZE / 2;
 const RAY = 104;
@@ -139,6 +141,57 @@ export function renderAngle(source: DataSource, requestedDay?: number): ViewHand
       });
   };
 
+  let draft = "";
+
+  const handleKey = (key: string): void => {
+    if (!progress || progress.complete || alreadyRecorded) {
+      return;
+    }
+    if (key === "backspace") {
+      draft = draft.slice(0, -1);
+      renderGame();
+      return;
+    }
+    if (key === "enter") {
+      if (draft === "") {
+        return;
+      }
+      const result = applyAngleGuess(progress, Number(draft));
+      draft = "";
+      if (!result.accepted) {
+        renderGame(result.message);
+        return;
+      }
+      progress = result.progress;
+      saveAngleProgress(progress);
+      renderGame();
+      if (progress.complete) {
+        submitAndRender();
+      }
+      return;
+    }
+    // Three digits at most, and no leading zero: 0 is never an answer.
+    if (/^\d$/.test(key) && draft.length < 3 && !(draft === "" && key === "0")) {
+      draft += key;
+      renderGame();
+    }
+  };
+
+  const onPhysicalKey = (event: KeyboardEvent): void => {
+    if (event.metaKey || event.ctrlKey || event.altKey) {
+      return;
+    }
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleKey("enter");
+    } else if (event.key === "Backspace") {
+      handleKey("backspace");
+    } else if (/^\d$/.test(event.key)) {
+      handleKey(event.key);
+    }
+  };
+  window.addEventListener("keydown", onPhysicalKey);
+
   const renderGame = (message = ""): void => {
     if (!progress || !puzzle) {
       return;
@@ -160,59 +213,45 @@ export function renderAngle(source: DataSource, requestedDay?: number): ViewHand
     }
     stage.append(figure);
 
+    // Playing: the hints sit right under the drawing, the pad at the foot.
+    let playArea: HTMLElement[] = [];
     if (!readOnly) {
-      const form = document.createElement("form");
-      form.className = "angle-form";
-      // The game's own message, not the webview's validation bubble.
-      form.noValidate = true;
-      const label = document.createElement("label");
-      label.htmlFor = "angle-input";
-      label.className = "angle-label";
-      label.textContent = "DEGREES";
-      const row = document.createElement("div");
-      row.className = "angle-input-row";
-      const input = document.createElement("input");
-      input.id = "angle-input";
-      input.name = "degrees";
-      input.type = "number";
-      input.inputMode = "numeric";
-      input.min = String(MIN_ANGLE);
-      input.max = String(MAX_ANGLE);
-      input.step = "1";
-      input.placeholder = `${MIN_ANGLE}–${MAX_ANGLE}`;
-      input.setAttribute("autocomplete", "off");
-      const submit = document.createElement("button");
-      submit.type = "submit";
-      submit.textContent = "Guess";
+      // An on-screen pad, not a number input: the phone keyboard would open
+      // over the hints, which are what the next guess needs.
+      const entry = document.createElement("div");
+      entry.className = "angle-entry";
+      entry.dataset.angleDraft = draft;
+      entry.setAttribute("role", "status");
+      entry.setAttribute("aria-label", draft ? `Your guess: ${draft} degrees` : "Your guess: empty");
+      entry.textContent = draft ? `${draft}°` : `${MIN_ANGLE}–${MAX_ANGLE}°`;
+      entry.classList.toggle("angle-entry--empty", draft === "");
       const status = document.createElement("p");
       status.className = "angle-message";
       status.setAttribute("role", "status");
       status.setAttribute("aria-live", "polite");
       status.textContent = message;
-      row.append(input, submit);
-      form.append(label, row, status);
-      form.addEventListener("submit", (event) => {
-        event.preventDefault();
-        if (!progress) {
-          return;
-        }
-        const value = input.value.trim() === "" ? Number.NaN : Number(input.value);
-        const result = applyAngleGuess(progress, value);
-        if (!result.accepted) {
-          renderGame(result.message);
-          document.querySelector<HTMLInputElement>("#angle-input")?.focus();
-          return;
-        }
-        progress = result.progress;
-        saveAngleProgress(progress);
-        renderGame();
-        if (progress.complete) {
-          submitAndRender();
+      const pad = document.createElement("div");
+      pad.className = "angle-pad";
+      pad.setAttribute("aria-label", "Number pad");
+      for (const key of KEYS) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "angle-key";
+        button.dataset.key = key;
+        if (key === "backspace") {
+          button.textContent = "⌫";
+          button.setAttribute("aria-label", "Delete");
+        } else if (key === "enter") {
+          button.textContent = "Guess";
+          button.classList.add("angle-key--enter");
+          button.disabled = draft === "";
         } else {
-          document.querySelector<HTMLInputElement>("#angle-input")?.focus();
+          button.textContent = key;
         }
-      });
-      stage.append(form);
+        button.addEventListener("click", () => handleKey(key));
+        pad.append(button);
+      }
+      playArea = [entry, status, pad];
     } else {
       const result = document.createElement("p");
       result.className = "angle-result";
@@ -257,7 +296,7 @@ export function renderAngle(source: DataSource, requestedDay?: number): ViewHand
         list.append(createGuessRow(guess, progress.answer));
       }
     }
-    stage.append(list);
+    stage.append(list, ...playArea);
 
     const onSave = !alreadyRecorded && progress.complete && progress.submission === "pending"
       ? submitAndRender
@@ -338,6 +377,7 @@ export function renderAngle(source: DataSource, requestedDay?: number): ViewHand
     dispose() {
       disposed = true;
       loadRequest += 1;
+      window.removeEventListener("keydown", onPhysicalKey);
       if (document.documentElement.dataset.game === "angle") {
         delete document.documentElement.dataset.game;
       }
