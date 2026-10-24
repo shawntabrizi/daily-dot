@@ -41,11 +41,17 @@ function pointer(type: string, clientY: number): MouseEvent {
   return event;
 }
 
+/** Opens the game and taps Start, as a player must before the first look. */
 async function open(source: DataSource): Promise<ReturnType<typeof renderColor>> {
   const view = renderColor(source, DAY);
   document.body.append(view.element);
   await vi.waitFor(() => expect(view.element.querySelector("[data-color-phase]")).not.toBeNull());
+  start(view.element);
   return view;
+}
+
+function start(root: Element): void {
+  root.querySelector<HTMLButtonElement>("[data-color-start]")!.click();
 }
 
 /** Past the 5-second look of the current colour. */
@@ -64,6 +70,20 @@ afterEach(() => {
 });
 
 describe("Color view", () => {
+  it("waits for Start before showing a colour, so opening the game never starts the clock", async () => {
+    const view = renderColor(sourceFor(), DAY);
+    document.body.append(view.element);
+    await vi.waitFor(() => expect(view.element.querySelector('[data-color-phase="ready"]')).not.toBeNull());
+    await vi.advanceTimersByTimeAsync(10_000);
+    // Still waiting: no colour on screen, no countdown ran.
+    expect(view.element.querySelector('[data-color-phase="look"]')).toBeNull();
+    expect(view.element.querySelector("[data-color-countdown]")).toBeNull();
+    start(view.element);
+    expect(view.element.querySelector('[data-color-phase="look"]')).not.toBeNull();
+    expect(view.element.querySelector("[data-color-countdown]")?.textContent).toBe("5");
+    view.dispose();
+  });
+
   it("shows the colour full-board for 5 seconds with a countdown, then hides it for the sliders", async () => {
     const view = await open(sourceFor());
     const board = view.element.querySelector<HTMLElement>('[data-color-phase="look"]')!;

@@ -164,6 +164,14 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   no speakers), a real device or the host, iOS's silent switch; read-only state by unit
   test only. Logged, not fixed: the 0.5 ERB tolerance is the brief's round choice
   (dialed.gg's looks nearer 0.515) — tune before first play.
+- **Rules popup and Color Start (2026-10-24, Shawn):** a (?) in every game's header
+  opens "How to play" (`shared/ui/rules.ts`: two or three steps per game, each a small
+  picture and one line, then how it scores); Escape, the close button, the backdrop or
+  "Got it" close it and focus returns to the (?); keys do not reach the game while it is
+  open. Daily Color no longer starts its 5 s look on page load or reload: a "Ready? /
+  Start" board first (Sound already waits for its Listen tap). Checked in Chromium at
+  360×780 and 1440×900, no page scroll. Not checked on a device. The rename to
+  `dailydot` is dropped (Shawn); the name stays `dailyondot.paseo`.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

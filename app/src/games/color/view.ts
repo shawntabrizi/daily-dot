@@ -242,8 +242,12 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
   let alreadyRecorded = false;
   let today = 0;
   let loadRequest = 0;
-  /** The round in hand: shown (look), being rebuilt (pick), or just scored (reveal). */
-  let phase: "look" | "pick" | "reveal" | "done" = "look";
+  /**
+   * The round in hand: waiting for Start (ready), shown (look), being rebuilt
+   * (pick), or just scored (reveal). A page load never starts the clock: the
+   * player taps Start, so a tap from the hub cannot eat the 5-second look.
+   */
+  let phase: "ready" | "look" | "pick" | "reveal" | "done" = "ready";
   let remaining = LOOK_SECONDS;
   let timer: number | null = null;
   let pick: Hsb = { ...START_PICK };
@@ -301,6 +305,29 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     total.textContent = `${formatPoints(colorScore(progress!))} points`;
     row.append(which, total);
     return row;
+  };
+
+  const readyBoard = (round: number): HTMLElement => {
+    const board = document.createElement("div");
+    board.className = "color-board color-board--ready";
+    board.dataset.colorPhase = "ready";
+    const heading = document.createElement("strong");
+    heading.className = "color-ready-title";
+    heading.textContent = round === 0 ? "Ready?" : `Colour ${round + 1} of ${ROUNDS}`;
+    const note = document.createElement("span");
+    note.className = "color-ready-note";
+    note.textContent = `Each colour shows for ${LOOK_SECONDS} seconds. Then rebuild it from memory.`;
+    const start = document.createElement("button");
+    start.type = "button";
+    start.className = "color-next color-start";
+    start.dataset.colorStart = "";
+    start.textContent = round === 0 ? "Start" : "Show the colour";
+    start.addEventListener("click", () => {
+      startLook();
+      renderGame();
+    });
+    board.append(heading, note, start);
+    return board;
   };
 
   const lookBoard = (round: number): HTMLElement => {
@@ -476,7 +503,10 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
       stage.append(meta(round), ...revealBoard(round));
     } else {
       const round = progress.guesses.length;
-      stage.append(meta(round), phase === "look" ? lookBoard(round) : pickBoard());
+      stage.append(
+        meta(round),
+        phase === "ready" ? readyBoard(round) : phase === "look" ? lookBoard(round) : pickBoard(),
+      );
     }
 
     const onSave = finished && !alreadyRecorded && progress.submission === "pending"
@@ -524,8 +554,8 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
       if (progress.complete || alreadyRecorded) {
         phase = "done";
       } else {
-        // A reload mid-round shows that colour again from the start (D1).
-        startLook();
+        // A reload mid-round shows that colour again from the start (D1), after Start.
+        phase = "ready";
       }
       renderGame();
       if (

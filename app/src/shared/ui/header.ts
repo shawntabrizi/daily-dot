@@ -2,6 +2,7 @@ import { dayIndexFromDate } from "../day";
 import type { Game } from "../roster";
 import type { HubStreaks } from "../streaks";
 import { icon } from "./icons";
+import { openRules } from "./rules";
 import { createStreakPill } from "./streak-badges";
 
 export type HeaderLeft = "menu" | "back";
@@ -20,7 +21,7 @@ export interface HeaderHandle {
    * pill on the right. On a past day the pill is "‹ DAY N ›": the same game
    * a day earlier or later (Archive board).
    */
-  setGame(game: Pick<Game, "id" | "short" | "route">, day: number): void;
+  setGame(game: Pick<Game, "id" | "name" | "short" | "route">, day: number): void;
 }
 
 export interface HeaderOptions {
@@ -37,7 +38,7 @@ export function setHeaderTitle(text: string | null): void {
 }
 
 /** A game screen sets its header (Game board) without a handle; the result shows the eyebrow instead. */
-export function setHeaderGame(game: Pick<Game, "id" | "short" | "route">, day: number): void {
+export function setHeaderGame(game: Pick<Game, "id" | "name" | "short" | "route">, day: number): void {
   currentTitle = `${game.short} · Day ${day}`;
   current?.setGame(game, day);
 }
@@ -78,12 +79,26 @@ export function createHeader(options: HeaderOptions = {}): HeaderHandle {
   const dayPill = document.createElement("span");
   dayPill.className = "header-day";
   dayPill.hidden = true;
-  right.append(pill.element, dayPill);
+  // How to play, on every game screen: opens over the board and closes back to it.
+  const help = document.createElement("button");
+  help.type = "button";
+  help.className = "header-help";
+  help.dataset.headerHelp = "";
+  help.textContent = "?";
+  help.hidden = true;
+  let helpGame: Pick<Game, "id" | "name"> | null = null;
+  help.addEventListener("click", () => {
+    if (helpGame) {
+      openRules(helpGame);
+    }
+  });
+  right.append(pill.element, help, dayPill);
 
   header.append(menu, back, title, right);
 
   const setTitle = (text: string | null): void => {
     dayPill.hidden = true;
+    help.hidden = true;
     if (text === null) {
       title.textContent = "Daily on Dot";
       title.dataset.kind = "title";
@@ -103,7 +118,10 @@ export function createHeader(options: HeaderOptions = {}): HeaderHandle {
     back.hidden = kind !== "back";
     pill.element.hidden = kind !== "menu";
   };
-  const setGame = (game: Pick<Game, "id" | "short" | "route">, day: number): void => {
+  const setGame = (game: Pick<Game, "id" | "name" | "short" | "route">, day: number): void => {
+    helpGame = game;
+    help.hidden = false;
+    help.setAttribute("aria-label", `How to play ${game.name}`);
     const dot = document.createElement("span");
     dot.className = "header-dot";
     dot.style.background = `var(--accent-${game.id})`;
