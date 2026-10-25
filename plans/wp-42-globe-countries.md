@@ -47,8 +47,10 @@ each with a stable id, display name, alternate names, kind (sovereign, territory
 disputed), owner, label point, continent and shape. The config picks two subsets by id:
 **guessable** (the picker) and **answers** (the daily shuffle). Both are the 197 above
 for now. The v1 answer for a day depends only on `answers` and its order, so adding
-places to the superset or to `guessable` never changes a day's answer; changing
-`answers` once live is a new version (D11).
+places to the superset or to `guessable` never changes a day's answer. Each `answers` entry has a start day (`since`, optional
+`until`); the shuffle runs in cycles, each over the pool as it stands on the cycle's
+first day, so an entry added or removed from a future day changes no earlier answer.
+Only a change to a place's id or to the shuffle rule is breaking (frozen once live).
 
 ## Work
 

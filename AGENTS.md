@@ -74,7 +74,9 @@ below, **stop and say so** rather than designing around it.
   Antarctica, Siachen), each with a stable id, kind and owner; an editorial config
   (`shared/countries/globe-countries.json`) picks two subsets, **guessable** and
   **answers**, both Globle's 197 today (193 UN members + Vatican, Kosovo, Palestine,
-  Taiwan). The daily answer depends only on `answers`. Non-guessable places are drawn
+  Taiwan). The daily answer depends only on `answers`, whose entries carry a start day
+  (`since`, optional `until`), so adding a place or an answer is never breaking; ids and
+  the shuffle rule are frozen once live. Non-guessable places are drawn
   neutral when their owner is guessed. See `plans/wp-42-globe-countries.md`.
 - **D20** `DailyScores` keeps a per-`(game_id, day)` histogram of **on-time** finishers,
   bucketed by an owner-set, set-once, per-game **bucket spec** `{min, max, buckets ≤ 128}`:
