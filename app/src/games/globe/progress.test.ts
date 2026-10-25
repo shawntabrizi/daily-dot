@@ -50,24 +50,24 @@ describe("Globe progress", () => {
 
   it("accepts a listed country case-insensitively", () => {
     const answer = globeAnswer(208, "v1");
-    const guess = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const guess = GLOBE_COUNTRIES.find((country) => country.id !== answer.id)!;
     const result = applyGlobeGuess(
       createGlobeProgress(208, answer),
       ` ${guess.name.toUpperCase()} `,
     );
 
     expect(result.accepted).toBe(true);
-    expect(result.progress.guesses).toEqual([guess.iso]);
+    expect(result.progress.guesses).toEqual([guess.id]);
   });
 
   it("rejects a repeated country without consuming a guess", () => {
     const answer = globeAnswer(208, "v1");
-    const guess = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const guess = GLOBE_COUNTRIES.find((country) => country.id !== answer.id)!;
     const first = applyGlobeGuess(createGlobeProgress(208, answer), guess.name);
     const repeat = applyGlobeGuess(first.progress, guess.name.toLowerCase());
 
     expect(repeat.accepted).toBe(false);
-    expect(repeat.progress.guesses).toEqual([guess.iso]);
+    expect(repeat.progress.guesses).toEqual([guess.id]);
     if (!repeat.accepted) {
       expect(repeat.message).toBe(`You already guessed ${guess.name}.`);
     }
@@ -141,7 +141,7 @@ describe("Globe progress", () => {
     const answer = globeAnswer(208, "v1");
     const myanmar = countryFromGuess("Myanmar")!;
     const progress = acceptGuess(createGlobeProgress(208, answer), "burma");
-    expect(progress.guesses).toEqual([myanmar.iso]);
+    expect(progress.guesses).toEqual([myanmar.id]);
     const repeat = applyGlobeGuess(progress, "Myanmar");
     expect(repeat.accepted).toBe(false);
     expect(matchCountries("burm").map((country) => country.name)).toEqual(["Myanmar"]);
@@ -153,7 +153,7 @@ describe("Globe progress", () => {
   it("restores the accepted guess list after a mid-game reload", () => {
     const storage = new MemoryStorage();
     const answer = globeAnswer(208, "v1");
-    const wrong = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const wrong = GLOBE_COUNTRIES.find((country) => country.id !== answer.id)!;
     const progress = acceptGuess(
       createGlobeProgress(208, answer),
       wrong.name,
@@ -167,7 +167,7 @@ describe("Globe progress", () => {
   it("records one gameId 3 result even when completion is submitted twice", async () => {
     const storage = new MemoryStorage();
     const answer = globeAnswer(208, "v1");
-    const wrong = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const wrong = GLOBE_COUNTRIES.find((country) => country.id !== answer.id)!;
     let progress = acceptGuess(
       createGlobeProgress(208, answer),
       wrong.name,

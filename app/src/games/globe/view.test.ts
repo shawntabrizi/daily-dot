@@ -107,7 +107,7 @@ describe("Globe view", () => {
   it("greys out guessed countries and will not pick them", async () => {
     const day = 208;
     const answer = globeAnswer(day, "v1");
-    const guess = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const guess = GLOBE_COUNTRIES.find((country) => country.id !== answer.id)!;
     const view = renderGlobe(sourceFor(day), day);
     document.body.append(view.element);
     await vi.waitFor(() => {
@@ -133,7 +133,7 @@ describe("Globe view", () => {
   it("fills the input from a picked country and closes the list", async () => {
     const day = 208;
     const answer = globeAnswer(day, "v1");
-    const guess = GLOBE_COUNTRIES.find((country) => country.iso !== answer.iso)!;
+    const guess = GLOBE_COUNTRIES.find((country) => country.id !== answer.id)!;
     const view = renderGlobe(sourceFor(day), day);
     document.body.append(view.element);
     await vi.waitFor(() => {
@@ -184,7 +184,7 @@ describe("Globe view", () => {
       expect(first.element.querySelector(".globe-form")).not.toBeNull();
     });
     for (const country of GLOBE_COUNTRIES.filter(
-      (candidate) => candidate.iso !== answer.iso,
+      (candidate) => candidate.id !== answer.id,
     ).slice(0, 15)) {
       submitCountry(first.element, country.name);
     }
@@ -213,7 +213,7 @@ describe("Globe view", () => {
     const day = 208;
     const answer = globeAnswer(day, "v1");
     const wrong = GLOBE_COUNTRIES.find(
-      (country) => country.iso !== answer.iso,
+      (country) => country.id !== answer.id,
     )!;
     const view = renderGlobe(sourceFor(day), day);
     document.body.append(view.element);
@@ -237,7 +237,7 @@ describe("Globe view", () => {
     const day = 208;
     const answer = globeAnswer(day, "v1");
     const wrong = GLOBE_COUNTRIES.find(
-      (country) => country.iso !== answer.iso,
+      (country) => country.id !== answer.id,
     )!;
     const view = renderGlobe(sourceFor(day), day);
     document.body.append(view.element);
@@ -257,18 +257,18 @@ describe("Globe view", () => {
     submitCountry(view.element, wrong.name);
 
     const fills = globeCalls.fills.at(-1)!;
-    expect(fills.get(wrong.iso)).toEqual({
+    expect(fills.get(wrong.id)).toEqual({
       kind: "guess",
       ...proximityRamp(countryDistanceKm(wrong, answer)),
     });
-    expect(fills.has(answer.iso)).toBe(false);
+    expect(fills.has(answer.id)).toBe(false);
     expect(globeCalls.focus.at(-1)).toEqual(wrong);
     expect(canvas?.getAttribute("aria-label")).toContain(wrong.name);
     // The same canvas survives the re-render, so rotation is not lost.
     expect(view.element.querySelector("canvas")).toBe(canvas);
 
     submitCountry(view.element, answer.name);
-    expect(globeCalls.fills.at(-1)?.get(answer.iso)).toEqual({ kind: "answer" });
+    expect(globeCalls.fills.at(-1)?.get(answer.id)).toEqual({ kind: "answer" });
     expect(globeCalls.focus.at(-1)).toEqual(answer);
     view.dispose();
   });

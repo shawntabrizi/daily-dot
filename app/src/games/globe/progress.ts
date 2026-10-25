@@ -27,7 +27,7 @@ export type GlobeGuessResult =
   | { accepted: false; progress: GlobeProgress; message: string };
 
 const COUNTRY_BY_ISO = new Map(
-  GLOBE_COUNTRIES.map((country) => [country.iso, country]),
+  GLOBE_COUNTRIES.map((country) => [country.id, country]),
 );
 // The shown name and every alternate name find the country (D26); the
 // generator guarantees no folded label names two countries.
@@ -43,7 +43,7 @@ const COUNTRIES_BY_NAME = [...GLOBE_COUNTRIES].sort((a, b) =>
 );
 const FOLDED_LABELS = new Map(
   COUNTRIES_BY_NAME.map((country) => [
-    country.iso,
+    country.id,
     [country.name, ...country.aliases].map(foldCountryName),
   ]),
 );
@@ -75,7 +75,7 @@ function isProgress(
   if (
     candidate.version !== 1
     || candidate.day !== day
-    || candidate.answerIso !== answer.iso
+    || candidate.answerIso !== answer.id
     || !Array.isArray(candidate.guesses)
     || !candidate.guesses.every(
       (identity) =>
@@ -87,7 +87,7 @@ function isProgress(
     return false;
   }
 
-  const firstSolvedIndex = candidate.guesses.indexOf(answer.iso);
+  const firstSolvedIndex = candidate.guesses.indexOf(answer.id);
   if (
     firstSolvedIndex >= 0
     && firstSolvedIndex !== candidate.guesses.length - 1
@@ -105,7 +105,7 @@ function isProgress(
   );
 }
 
-export function countryByIso(identity: string): Country | undefined {
+export function countryById(identity: string): Country | undefined {
   return COUNTRY_BY_ISO.get(identity);
 }
 
@@ -125,7 +125,7 @@ export function matchCountries(query: string): readonly Country[] {
   const starts: Country[] = [];
   const contains: Country[] = [];
   for (const country of COUNTRIES_BY_NAME) {
-    const labels = FOLDED_LABELS.get(country.iso)!;
+    const labels = FOLDED_LABELS.get(country.id)!;
     if (labels.some((label) => label.startsWith(needle))) {
       starts.push(country);
     } else if (labels.some((label) => label.includes(needle))) {
@@ -142,13 +142,13 @@ export function createGlobeProgress(
   if (!Number.isSafeInteger(day) || day < 0) {
     throw new RangeError("Day must be a non-negative safe integer");
   }
-  if (COUNTRY_BY_ISO.get(answer.iso)?.name !== answer.name) {
+  if (COUNTRY_BY_ISO.get(answer.id)?.name !== answer.name) {
     throw new TypeError("Globe answer must come from the bundled country list");
   }
   return {
     version: 1,
     day,
-    answerIso: answer.iso,
+    answerIso: answer.id,
     guesses: [],
     complete: false,
     submission: "idle",
@@ -225,7 +225,7 @@ export function applyGlobeGuess(
     };
   }
   // A repeat tells the player nothing new, so it must not cost a guess.
-  if (progress.guesses.includes(country.iso)) {
+  if (progress.guesses.includes(country.id)) {
     return {
       accepted: false,
       progress,
@@ -233,8 +233,8 @@ export function applyGlobeGuess(
     };
   }
 
-  const guesses = [...progress.guesses, country.iso];
-  const complete = country.iso === progress.answerIso;
+  const guesses = [...progress.guesses, country.id];
+  const complete = country.id === progress.answerIso;
   return {
     accepted: true,
     country,

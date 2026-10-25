@@ -21,7 +21,7 @@ import { countryFills, createGlobe, type GlobeHandle } from "./globe";
 import { ZOOM_MAX, ZOOM_MIN, ZOOM_STEP } from "./projection";
 import {
   applyGlobeGuess,
-  countryByIso,
+  countryById,
   loadGlobeProgress,
   matchCountries,
   prepareGlobeSubmissionRetry,
@@ -153,7 +153,7 @@ function createCountryPicker(
       option.setAttribute("aria-selected", "false");
       option.textContent = country.name;
       // Guessed countries stay in place, greyed, so the list keeps its order.
-      if (guessed.has(country.iso)) {
+      if (guessed.has(country.id)) {
         option.setAttribute("aria-disabled", "true");
         const note = document.createElement("span");
         note.className = "globe-option-note";
@@ -344,7 +344,7 @@ export function renderGlobe(
     stage.classList.toggle("globe-stage--done", readOnly);
 
     const guessed = progress.guesses
-      .map((identity) => countryByIso(identity))
+      .map((identity) => countryById(identity))
       .filter((country): country is Country => country !== undefined);
     stage.append(ensureGlobe());
     if (globe && globeCanvas) {
@@ -359,9 +359,9 @@ export function renderGlobe(
       // Turn to the newest guess (or the answer once revealed); the first
       // frame jumps so a restored game opens already centred.
       const target = readOnly ? answer : guessed[guessed.length - 1];
-      if (target && target.iso !== focusedIso) {
+      if (target && target.id !== focusedIso) {
         globe.focus(target, focusedIso !== null);
-        focusedIso = target.iso;
+        focusedIso = target.id;
       }
     }
 
@@ -491,7 +491,7 @@ export function renderGlobe(
       list.append(empty);
     } else {
       for (const identity of progress.guesses) {
-        const country = countryByIso(identity);
+        const country = countryById(identity);
         if (country) {
           list.append(createGuessRow(country, answer));
         }

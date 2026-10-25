@@ -9,7 +9,11 @@ function feature(
   properties: Record<string, unknown>,
   geometry: unknown,
 ): Record<string, unknown> {
-  return { type: "Feature", properties, geometry };
+  return {
+    type: "Feature",
+    properties: { LABEL_X: 0, LABEL_Y: 0, CONTINENT: "Europe", ...properties },
+    geometry,
+  };
 }
 
 const square = [
@@ -65,13 +69,13 @@ describe("generateCountryShapes", () => {
   it("quantises rings to 0.1°, drops closing points and specks, keeps holes", () => {
     const report = generateCountryShapes(JSON.stringify(fixture), ["Alpha", "Tiny", "Zulu"]);
 
-    expect(report.shapes.map((shape) => shape.iso)).toEqual(["AIS", "ALP", "TNY", "Zulu"]);
-    const alpha = report.shapes.find((shape) => shape.iso === "ALP")!;
+    expect(report.shapes.map((shape) => shape.id)).toEqual(["AIS", "ALP", "TNY", "Zulu"]);
+    const alpha = report.shapes.find((shape) => shape.id === "ALP")!;
     expect(alpha.rings).toEqual([
       [10, 5, 11, 5, 11, 6, 10, 6],
       [10.4, 5.4, 10.6, 5.4, 10.6, 5.6, 10.4, 5.6],
     ]);
-    expect(report.shapes.find((shape) => shape.iso === "Zulu")!.rings).toEqual([
+    expect(report.shapes.find((shape) => shape.id === "Zulu")!.rings).toEqual([
       [30, 5, 31, 5, 31, 6, 30, 6],
     ]);
     expect(report.droppedRings).toBe(1);
@@ -81,19 +85,17 @@ describe("generateCountryShapes", () => {
   it("keeps a feature's last ring on a finer grid instead of losing the country", () => {
     const report = generateCountryShapes(JSON.stringify(fixture), ["Alpha", "Tiny", "Zulu"]);
     expect(report.finerRings).toEqual(["TNY"]);
-    expect(report.shapes.find((shape) => shape.iso === "TNY")!.rings).toEqual([
+    expect(report.shapes.find((shape) => shape.id === "TNY")!.rings).toEqual([
       [12.452, 41.902, 12.456, 41.902, 12.456, 41.906, 12.452, 41.906],
     ]);
   });
 
-  it("emits other features as territories carrying their owner, never as countries", () => {
+  it("draws every place of the superset, a territory too, as just an id and rings", () => {
     const report = generateCountryShapes(JSON.stringify(fixture), ["Alpha", "Tiny", "Zulu"]);
-    expect(report.shapes.find((shape) => shape.iso === "AIS")).toEqual({
-      iso: "AIS",
-      owner: "ALP",
+    expect(report.shapes.find((shape) => shape.id === "AIS")).toEqual({
+      id: "AIS",
       rings: [[50, 5, 51, 5, 51, 6, 50, 6]],
     });
-    expect(report.shapes.find((shape) => shape.iso === "ALP")).not.toHaveProperty("owner");
   });
 
   it("simplifies a dense ring without moving its corners", () => {

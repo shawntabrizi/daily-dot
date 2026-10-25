@@ -5,22 +5,51 @@ import { fileURLToPath } from "node:url";
 
 import { foldCountryName } from "../src/games/globe/names";
 
-export interface Country {
+export type PlaceKind = "sovereign" | "territory" | "disputed";
+
+/**
+ * One Natural Earth admin-0 place: the superset the globe draws. Which
+ * places can be guessed and which can be an answer is editorial config
+ * (`globe-countries.json`), never this data.
+ */
+export interface Place {
+  /** Stable identity: never changes once the game is live. */
+  id: string;
   /** The readable name the picker, the guess rows and the result show. */
   name: string;
+  /** Other names that find the place in the picker; never shown as its name. */
+  aliases: string[];
+  kind: PlaceKind;
+  /** The sovereign place that owns a territory or disputed place; null for a sovereign. */
+  owner: string | null;
   lat: number;
   lng: number;
   continent: string;
-  iso: string;
-  /** Other names that find the country in the picker; never shown as its name. */
-  aliases: string[];
+}
+
+/** `globe-countries.json`: the sovereign names and the two editorial subsets. */
+export interface GlobeConfig {
+  /** Natural Earth `NAME`s of the sovereign places (D26: the 197). */
+  countries: string[];
+  /** Place ids the picker accepts. */
+  guessable: string[];
+  /** The v1 answer pool: a place id from day `since` until (not on) day `until`. */
+  answers: AnswerEntry[];
+}
+
+export interface AnswerEntry {
+  id: string;
+  since: number;
+  until?: number;
 }
 
 export interface NaturalEarthProperties {
   NAME?: unknown;
   NAME_LONG?: unknown;
   SOVEREIGNT?: unknown;
+  TYPE?: unknown;
   ISO_A3_EH?: unknown;
+  ADM0_A3?: unknown;
   LABEL_X?: unknown;
   LABEL_Y?: unknown;
   CONTINENT?: unknown;
@@ -36,23 +65,15 @@ interface NaturalEarthCollection {
   features?: unknown;
 }
 
-/** A feature picked for the globe: a guessable country, or a territory of one. */
+/** A kept feature with its identity and place record. */
 export interface SelectedFeature {
   feature: NaturalEarthFeature;
-  properties: NaturalEarthProperties;
-  iso: string;
-  /** Set for a territory: the `iso` of the guessable country that owns it. */
-  owner?: string;
-}
-
-export interface Selection {
-  countries: SelectedFeature[];
-  territories: SelectedFeature[];
+  place: Place;
 }
 
 /**
- * D26 territory owners Natural Earth gives a sovereignty of their own, keyed
- * by Natural Earth `NAME` (Globle's choices, rebuilt from public-domain data).
+ * D26 owners Natural Earth gives a sovereignty of their own, keyed by
+ * Natural Earth `NAME` (Globle's choices, rebuilt from public-domain data).
  */
 export const TERRITORY_OWNER_OVERRIDES: Readonly<Record<string, string>> = {
   Somaliland: "Somalia",
@@ -70,6 +91,7 @@ export const DROPPED_FEATURES: readonly string[] = ["Antarctica", "Siachen Glaci
  */
 export const DISPLAY_NAME_OVERRIDES: Readonly<Record<string, string>> = {
   eSwatini: "Eswatini",
+  "Heard I. and McDonald Is.": "Heard Island and McDonald Islands",
 };
 
 /**
@@ -85,7 +107,7 @@ export const CONTINENT_OVERRIDES: Readonly<Record<string, string>> = {
 /**
  * D26 alternate names, keyed by Natural Earth `NAME`. Accents, case and
  * apostrophes are folded when matching, so "Cote d'Ivoire" needs no entry.
- * A country's Natural Earth `NAME` is added when it differs from the shown one.
+ * A place's Natural Earth `NAME` is added when it differs from the shown one.
  */
 export const COUNTRY_ALIASES: Readonly<Record<string, readonly string[]>> = {
   Myanmar: ["Burma"],
@@ -127,7 +149,7 @@ function numberProperty(
   return value;
 }
 
-/** `ISO_A3_EH` is `-99` for a few countries; their name is the identity. */
+/** `ISO_A3_EH` is `-99` for a few places; their name is the identity. */
 export function countryIdentity(properties: NaturalEarthProperties): string {
   const naturalEarthIso = properties.ISO_A3_EH;
   return typeof naturalEarthIso === "string"
@@ -137,19 +159,44 @@ export function countryIdentity(properties: NaturalEarthProperties): string {
     : stringProperty(properties, "NAME");
 }
 
-export function parseCountryList(text: string): string[] {
-  const parsed = JSON.parse(text) as { countries?: unknown };
-  if (
-    !Array.isArray(parsed.countries)
-    || !parsed.countries.every((name) => typeof name === "string" && name !== "")
-  ) {
-    throw new TypeError("The country list must be {countries: string[]}");
+function stringList(value: unknown, key: string): string[] {
+  if (!Array.isArray(value) || !value.every((item) => typeof item === "string" && item !== "")) {
+    throw new TypeError(`globe-countries.json ${key} must be a list of strings`);
   }
-  const names = parsed.countries as string[];
-  if (new Set(names).size !== names.length) {
-    throw new Error("The country list repeats a name");
+  if (new Set(value).size !== value.length) {
+    throw new Error(`globe-countries.json ${key} repeats an entry`);
   }
-  return names;
+  return value as string[];
+}
+
+function answerEntries(value: unknown): AnswerEntry[] {
+  if (!Array.isArray(value)) {
+    throw new TypeError("globe-countries.json answers must be a list");
+  }
+  const day = (candidate: unknown): boolean =>
+    Number.isSafeInteger(candidate) && (candidate as number) >= 0;
+  return value.map((entry: unknown): AnswerEntry => {
+    const { id, since, until } = (entry ?? {}) as Record<string, unknown>;
+    if (
+      typeof id !== "string"
+      || !day(since)
+      || (until !== undefined && (!day(until) || (until as number) <= (since as number)))
+    ) {
+      throw new TypeError(`Invalid answers entry: ${JSON.stringify(entry)}`);
+    }
+    return until === undefined
+      ? { id, since: since as number }
+      : { id, since: since as number, until: until as number };
+  });
+}
+
+export function parseGlobeConfig(text: string): GlobeConfig {
+  const parsed = JSON.parse(text) as Record<string, unknown>;
+  return {
+    countries: stringList(parsed.countries, "countries"),
+    guessable: stringList(parsed.guessable, "guessable"),
+    answers: answerEntries(parsed.answers),
+  };
 }
 
 function parseCollection(geojsonText: string): NaturalEarthFeature[] {
@@ -158,92 +205,6 @@ function parseCollection(geojsonText: string): NaturalEarthFeature[] {
     throw new TypeError("Natural Earth input must be a GeoJSON FeatureCollection");
   }
   return parsed.features as NaturalEarthFeature[];
-}
-
-/**
- * D26: the guessable countries are exactly the list's `NAME`s (never a
- * `TYPE` filter); every other feature is a territory of its `SOVEREIGNT`,
- * bar the overrides and the dropped features. A territory whose identity is
- * taken (Natural Earth gives two Australian territories `AUS`) is known by
- * its `NAME`, so every identity in the output is unique.
- */
-export function selectFeatures(
-  geojsonText: string,
-  list: readonly string[],
-): Selection {
-  const features = parseCollection(geojsonText);
-  const wanted = new Set(list);
-  const byName = new Map<string, SelectedFeature>();
-  const others: { feature: NaturalEarthFeature; properties: NaturalEarthProperties }[] = [];
-  for (const feature of features) {
-    if (!feature.properties) {
-      throw new TypeError("Natural Earth feature has no properties");
-    }
-    const properties = feature.properties;
-    const name = stringProperty(properties, "NAME");
-    if (!wanted.has(name)) {
-      others.push({ feature, properties });
-      continue;
-    }
-    if (byName.has(name)) {
-      throw new Error(`Duplicate Natural Earth NAME: ${name}`);
-    }
-    byName.set(name, { feature, properties, iso: countryIdentity(properties) });
-  }
-
-  const missing = list.filter((name) => !byName.has(name));
-  if (missing.length > 0) {
-    throw new Error(`Listed countries missing from the input: ${missing.join(", ")}`);
-  }
-
-  const used = new Set<string>();
-  const countries = list.map((name) => byName.get(name)!);
-  for (const country of countries) {
-    if (used.has(country.iso)) {
-      throw new Error(`Duplicate country identity: ${country.iso}`);
-    }
-    used.add(country.iso);
-  }
-
-  const territories: SelectedFeature[] = [];
-  for (const { feature, properties } of others) {
-    const name = stringProperty(properties, "NAME");
-    if (DROPPED_FEATURES.includes(name)) {
-      continue;
-    }
-    const ownerName =
-      TERRITORY_OWNER_OVERRIDES[name] ?? stringProperty(properties, "SOVEREIGNT");
-    const owner = byName.get(ownerName);
-    if (!owner) {
-      throw new Error(`Territory ${name} has no guessable owner (${ownerName})`);
-    }
-    let iso = countryIdentity(properties);
-    if (used.has(iso)) {
-      iso = name;
-    }
-    if (used.has(iso)) {
-      throw new Error(`Duplicate territory identity: ${iso}`);
-    }
-    used.add(iso);
-    territories.push({ feature, properties, iso, owner: owner.iso });
-  }
-  return { countries, territories };
-}
-
-/** A name-keyed table entry that misses the list is a typo, not a rule. */
-export function checkNameTables(list: readonly string[]): void {
-  for (const table of [COUNTRY_ALIASES, DISPLAY_NAME_OVERRIDES, CONTINENT_OVERRIDES]) {
-    for (const name of Object.keys(table)) {
-      if (!list.includes(name)) {
-        throw new Error(`${name} is not on the country list`);
-      }
-    }
-  }
-  for (const [territory, owner] of Object.entries(TERRITORY_OWNER_OVERRIDES)) {
-    if (list.includes(territory) || !list.includes(owner)) {
-      throw new Error(`${territory} → ${owner} is not a territory of a listed country`);
-    }
-  }
 }
 
 export function displayName(properties: NaturalEarthProperties): string {
@@ -256,62 +217,161 @@ export function displayName(properties: NaturalEarthProperties): string {
   return shown;
 }
 
-export function generateCountries(
+/**
+ * Identity from the data alone, so editing the config never renames a
+ * place: `ISO_A3_EH`, or `NAME` where that is `-99`, or where several
+ * features share it and this one is not the place `ADM0_A3` says owns the
+ * code (Natural Earth gives two Australian territories `AUS`).
+ */
+function identities(features: readonly NaturalEarthFeature[]): string[] {
+  const counts = new Map<string, number>();
+  for (const feature of features) {
+    const iso = countryIdentity(feature.properties!);
+    counts.set(iso, (counts.get(iso) ?? 0) + 1);
+  }
+  const ids = features.map((feature) => {
+    const properties = feature.properties!;
+    const iso = countryIdentity(properties);
+    return counts.get(iso)! > 1 && properties.ADM0_A3 !== iso
+      ? stringProperty(properties, "NAME")
+      : iso;
+  });
+  const seen = new Set<string>();
+  for (const id of ids) {
+    if (seen.has(id)) {
+      throw new Error(`Duplicate place identity: ${id}`);
+    }
+    seen.add(id);
+  }
+  return ids;
+}
+
+/**
+ * D26 superset: every Natural Earth feature but the dropped ones. A listed
+ * sovereign `NAME` is "sovereign" whatever its `TYPE` (Cuba is
+ * "Sovereignty", Kosovo "Disputed"); any other place is "disputed" when
+ * Natural Earth types it so or D26 reassigns it (Somaliland), else a
+ * "territory", and belongs to its `SOVEREIGNT` or the D26 override.
+ */
+export function selectPlaces(
   geojsonText: string,
-  list: readonly string[],
-): Country[] {
-  const countries = selectFeatures(geojsonText, list).countries
-    .map(({ properties, iso }): Country => {
-      const naturalEarthName = stringProperty(properties, "NAME");
-      const name = displayName(properties);
-      const aliases = [
-        ...(naturalEarthName === name ? [] : [naturalEarthName]),
-        ...(COUNTRY_ALIASES[naturalEarthName] ?? []),
-      ];
-      return {
+  sovereignNames: readonly string[],
+): SelectedFeature[] {
+  const features = parseCollection(geojsonText).filter((feature) => {
+    if (!feature.properties) {
+      throw new TypeError("Natural Earth feature has no properties");
+    }
+    return !DROPPED_FEATURES.includes(stringProperty(feature.properties, "NAME"));
+  });
+  const ids = identities(features);
+  const sovereign = new Set(sovereignNames);
+  const sovereignIds = new Map<string, string>();
+  features.forEach((feature, index) => {
+    const name = stringProperty(feature.properties!, "NAME");
+    if (sovereign.has(name)) {
+      if (sovereignIds.has(name)) {
+        throw new Error(`Duplicate Natural Earth NAME: ${name}`);
+      }
+      sovereignIds.set(name, ids[index]!);
+    }
+  });
+  const missing = sovereignNames.filter((name) => !sovereignIds.has(name));
+  if (missing.length > 0) {
+    throw new Error(`Listed countries missing from the input: ${missing.join(", ")}`);
+  }
+
+  const selected = features.map((feature, index): SelectedFeature => {
+    const properties = feature.properties!;
+    const naturalEarthName = stringProperty(properties, "NAME");
+    const isSovereign = sovereign.has(naturalEarthName);
+    let owner: string | null = null;
+    let kind: PlaceKind = "sovereign";
+    if (!isSovereign) {
+      const ownerName = TERRITORY_OWNER_OVERRIDES[naturalEarthName]
+        ?? stringProperty(properties, "SOVEREIGNT");
+      owner = sovereignIds.get(ownerName) ?? null;
+      if (owner === null) {
+        throw new Error(`Territory ${naturalEarthName} has no sovereign owner (${ownerName})`);
+      }
+      const type = properties.TYPE;
+      kind = type === "Disputed"
+        || type === "Indeterminate"
+        || naturalEarthName in TERRITORY_OWNER_OVERRIDES
+        ? "disputed"
+        : "territory";
+    }
+    const name = displayName(properties);
+    return {
+      feature,
+      place: {
+        id: ids[index]!,
         name,
+        aliases: [
+          ...(naturalEarthName === name ? [] : [naturalEarthName]),
+          ...(COUNTRY_ALIASES[naturalEarthName] ?? []),
+        ],
+        kind,
+        owner,
         lat: numberProperty(properties, "LABEL_Y"),
         lng: numberProperty(properties, "LABEL_X"),
         continent: CONTINENT_OVERRIDES[naturalEarthName]
           ?? stringProperty(properties, "CONTINENT"),
-        iso,
-        aliases,
-      };
-    })
-    .sort((left, right) =>
-      left.name < right.name ? -1 : left.name > right.name ? 1 : 0,
-    );
-
-  // A folded name or alias finds one country only, or a guess would be ambiguous.
-  const owners = new Map<string, string>();
-  for (const country of countries) {
-    if (country.iso === "-99") {
-      throw new Error(`${country.name} has the invalid -99 identity`);
-    }
-    for (const label of new Set([country.name, ...country.aliases].map(foldCountryName))) {
-      const other = owners.get(label);
-      if (other !== undefined) {
-        throw new Error(`"${label}" names both ${other} and ${country.name}`);
-      }
-      owners.set(label, country.name);
-    }
-  }
-  return countries;
+      },
+    };
+  });
+  return selected.sort((left, right) =>
+    left.place.id < right.place.id ? -1 : left.place.id > right.place.id ? 1 : 0,
+  );
 }
 
-export function renderCountries(countries: readonly Country[]): string {
-  return `${JSON.stringify(countries, null, 2)}\n`;
+/** A name-keyed table entry that misses the list is a typo, not a rule. */
+export function checkNameTables(sovereignNames: readonly string[]): void {
+  for (const table of [COUNTRY_ALIASES, CONTINENT_OVERRIDES]) {
+    for (const name of Object.keys(table)) {
+      if (!sovereignNames.includes(name)) {
+        throw new Error(`${name} is not on the country list`);
+      }
+    }
+  }
+  for (const [territory, owner] of Object.entries(TERRITORY_OWNER_OVERRIDES)) {
+    if (sovereignNames.includes(territory) || !sovereignNames.includes(owner)) {
+      throw new Error(`${territory} → ${owner} is not a territory of a listed country`);
+    }
+  }
+}
+
+export function generatePlaces(
+  geojsonText: string,
+  sovereignNames: readonly string[],
+): Place[] {
+  const places = selectPlaces(geojsonText, sovereignNames).map(({ place }) => place);
+  // A folded name or alias names one place only, or a guess would be ambiguous.
+  const owners = new Map<string, string>();
+  for (const place of places) {
+    for (const label of new Set([place.name, ...place.aliases].map(foldCountryName))) {
+      const other = owners.get(label);
+      if (other !== undefined) {
+        throw new Error(`"${label}" names both ${other} and ${place.name}`);
+      }
+      owners.set(label, place.name);
+    }
+  }
+  return places;
+}
+
+export function renderPlaces(places: readonly Place[]): string {
+  return `${JSON.stringify(places, null, 2)}\n`;
 }
 
 export function modulePath(relative: string): string {
   return fileURLToPath(new URL(relative, import.meta.url));
 }
 
-export const DEFAULT_LIST_PATH = modulePath("../../shared/countries/globe-countries.json");
+export const DEFAULT_CONFIG_PATH = modulePath("../../shared/countries/globe-countries.json");
 
 interface GeneratorOptions {
   inputPath: string;
-  listPath: string;
+  configPath: string;
   outputPath: string;
 }
 
@@ -331,7 +391,7 @@ function options(args: readonly string[]): GeneratorOptions {
   }
   return {
     inputPath: resolve(input),
-    listPath: resolve(parsed.values.list ?? DEFAULT_LIST_PATH),
+    configPath: resolve(parsed.values.list ?? DEFAULT_CONFIG_PATH),
     outputPath: resolve(
       parsed.values.output ?? modulePath("../../shared/countries/core.json"),
     ),
@@ -341,11 +401,17 @@ function options(args: readonly string[]): GeneratorOptions {
 export async function main(args = process.argv.slice(2)): Promise<void> {
   const paths = options(args);
   const source = await readFile(paths.inputPath, "utf8");
-  const list = parseCountryList(await readFile(paths.listPath, "utf8"));
-  checkNameTables(list);
-  const countries = generateCountries(source, list);
-  await writeFile(paths.outputPath, renderCountries(countries));
-  console.log(`Wrote ${countries.length} countries to ${paths.outputPath}.`);
+  const config = parseGlobeConfig(await readFile(paths.configPath, "utf8"));
+  checkNameTables(config.countries);
+  const places = generatePlaces(source, config.countries);
+  const ids = new Set(places.map((place) => place.id));
+  const unknown = [...config.guessable, ...config.answers.map((entry) => entry.id)]
+    .filter((id) => !ids.has(id));
+  if (unknown.length > 0) {
+    throw new Error(`Config ids not in the superset: ${[...new Set(unknown)].join(", ")}`);
+  }
+  await writeFile(paths.outputPath, renderPlaces(places));
+  console.log(`Wrote ${places.length} places to ${paths.outputPath}.`);
 }
 
 if (process.argv[1]?.endsWith("generate-countries.ts")) {

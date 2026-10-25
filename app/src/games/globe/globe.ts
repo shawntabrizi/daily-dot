@@ -1,7 +1,7 @@
 import shapeData from "../../../../shared/countries/shapes.json";
 import type { GeoPoint, ProximityRamp } from "./geography";
 import { countryDistanceKm, proximityRamp } from "./geography";
-import type { Country } from "./generate";
+import { GLOBE_PLACES, type Country, type Place } from "./generate";
 import {
   clampZoom,
   dragRotate,
@@ -14,7 +14,7 @@ import {
 
 /**
  * Why a shape is coloured: the guess ramp the list uses, the answer, or a
- * territory whose owner is marked (D26: neutral, never a guess colour).
+ * non-guessable place whose owner is marked (D26: neutral, never a guess colour).
  */
 export type CountryFill =
   | { kind: "guess"; segment: ProximityRamp["segment"]; mix: number }
@@ -33,6 +33,8 @@ export interface GlobeHandle {
 
 export interface GlobeOptions {
   shapes?: readonly CountryShape[];
+  /** The whole place superset, for owners; `GLOBE_PLACES` when unset. */
+  places?: readonly Place[];
   /** Called after any zoom change: buttons, pinch, wheel or double-tap. */
   onZoom?: (zoom: number) => void;
 }
@@ -48,9 +50,7 @@ export interface GlobePalette {
 }
 
 export interface CountryShape {
-  iso: string;
-  /** Set on a territory: the guessable country whose mark reveals it. */
-  owner?: string;
+  id: string;
   rings: number[][];
 }
 
@@ -61,8 +61,9 @@ interface PreparedRing {
 }
 
 interface PreparedShape {
-  iso: string;
-  owner?: string;
+  id: string;
+  owner: string | null;
+  guessable: boolean;
   rings: PreparedRing[];
 }
 
@@ -107,27 +108,34 @@ export function countryFills(
 ): Map<string, CountryFill> {
   const fills = new Map<string, CountryFill>();
   for (const guess of guesses) {
-    if (guess.iso === answer.iso) {
+    if (guess.id === answer.id) {
       continue;
     }
     const ramp = proximityRamp(countryDistanceKm(guess, answer));
-    fills.set(guess.iso, { kind: "guess", segment: ramp.segment, mix: ramp.mix });
+    fills.set(guess.id, { kind: "guess", segment: ramp.segment, mix: ramp.mix });
   }
-  if (revealAnswer || guesses.some((guess) => guess.iso === answer.iso)) {
-    fills.set(answer.iso, { kind: "answer" });
+  if (revealAnswer || guesses.some((guess) => guess.id === answer.id)) {
+    fills.set(answer.id, { kind: "answer" });
   }
   return fills;
 }
 
-/** A territory takes its owner's mark, as neutral land; it has no fill of its own. */
+/**
+ * A guessable place is drawn by its own mark. A place that is not guessable
+ * takes its owner's mark as neutral land (Greenland with Denmark), and is
+ * never a guess or answer colour.
+ */
 export function shapeFill(
-  shape: Pick<CountryShape, "iso" | "owner">,
+  place: Pick<Place, "id" | "owner">,
   fills: ReadonlyMap<string, CountryFill>,
+  guessable: ReadonlySet<string>,
 ): CountryFill | undefined {
-  if (shape.owner !== undefined) {
-    return fills.has(shape.owner) ? { kind: "territory" } : undefined;
+  if (guessable.has(place.id)) {
+    return fills.get(place.id);
   }
-  return fills.get(shape.iso);
+  return place.owner !== null && fills.has(place.owner)
+    ? { kind: "territory" }
+    : undefined;
 }
 
 /**
@@ -169,10 +177,10 @@ export function countriesNeedingDots(
   radius: number,
 ): Country[] {
   return countries.filter((country) => {
-    if (!fills.has(country.iso)) {
+    if (!fills.has(country.id)) {
       return false;
     }
-    const extent = extents.get(country.iso);
+    const extent = extents.get(country.id);
     return extent === undefined || extent * radius < SMALL_SHAPE_PIXELS;
   });
 }
@@ -226,10 +234,15 @@ function readPalette(element: Element): GlobePalette {
   };
 }
 
-function prepareShapes(shapes: readonly CountryShape[]): PreparedShape[] {
+function prepareShapes(
+  shapes: readonly CountryShape[],
+  places: ReadonlyMap<string, Place>,
+  guessable: ReadonlySet<string>,
+): PreparedShape[] {
   return shapes.map((shape) => ({
-    iso: shape.iso,
-    ...(shape.owner === undefined ? {} : { owner: shape.owner }),
+    id: shape.id,
+    owner: places.get(shape.id)?.owner ?? null,
+    guessable: guessable.has(shape.id),
     rings: shape.rings.map((ring) => {
       const count = ring.length / 2;
       const prepared: PreparedRing = {
@@ -283,14 +296,18 @@ export function createGlobe(
   options: GlobeOptions = {},
 ): GlobeHandle {
   const shapes = options.shapes ?? GLOBE_SHAPES;
+  const places = new Map(
+    (options.places ?? GLOBE_PLACES).map((place) => [place.id, place]),
+  );
+  const guessable = new Set(countries.map((country) => country.id));
   const context = canvas.getContext("2d");
-  const prepared = prepareShapes(shapes);
-  const shaped = new Set(prepared.map((shape) => shape.iso));
-  const centroidOnly = countries.filter((country) => !shaped.has(country.iso));
+  const prepared = prepareShapes(shapes, places, guessable);
+  const shaped = new Set(prepared.map((shape) => shape.id));
+  const centroidOnly = countries.filter((country) => !shaped.has(country.id));
   const extents = new Map(
     shapes
-      .filter((shape) => shape.owner === undefined)
-      .map((shape) => [shape.iso, shapeExtent(shape.rings)]),
+      .filter((shape) => guessable.has(shape.id))
+      .map((shape) => [shape.id, shapeExtent(shape.rings)]),
   );
   let palette: GlobePalette | null = null;
   let fills: ReadonlyMap<string, CountryFill> = new Map();
@@ -375,7 +392,7 @@ export function createGlobe(
     context.stroke();
 
     for (const shape of prepared) {
-      const fill = shapeFill(shape, fills);
+      const fill = shapeFill(shape, fills, guessable);
       context.beginPath();
       let drewAny = false;
       for (const ring of shape.rings) {
@@ -424,14 +441,14 @@ export function createGlobe(
     // ones, and marked ones too small to see, get their fill as a dot on top.
     const dotted = countriesNeedingDots(countries, extents, fills, radius);
     for (const country of [
-      ...centroidOnly.filter((candidate) => !fills.has(candidate.iso)),
+      ...centroidOnly.filter((candidate) => !fills.has(candidate.id)),
       ...dotted,
     ]) {
       const point = project(country, centre);
       if (point.z < 0) {
         continue;
       }
-      const fill = fills.get(country.iso);
+      const fill = fills.get(country.id);
       context.beginPath();
       context.arc(
         middle + point.x * radius,

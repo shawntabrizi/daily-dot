@@ -100,7 +100,7 @@ describe("Word progress", () => {
     const storage = new MemoryStorage();
     const answer = globeAnswer(208, "v1");
     const wrong = GLOBE_COUNTRIES.find(
-      (country) => country.iso !== answer.iso,
+      (country) => country.id !== answer.id,
     )!;
     const result = applyGlobeGuess(
       createGlobeProgress(208, answer),

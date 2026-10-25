@@ -3,28 +3,27 @@ import { resolve } from "node:path";
 import { parseArgs } from "node:util";
 
 import {
-  DEFAULT_LIST_PATH,
+  DEFAULT_CONFIG_PATH,
   modulePath,
-  parseCountryList,
-  selectFeatures,
+  parseGlobeConfig,
+  selectPlaces,
   type SelectedFeature,
 } from "./generate-countries";
 
 /**
- * One outline for the Globe globe: every polygon ring, flat
- * `[lng, lat, lng, lat, …]`, simplified and quantised. Holes stay in the
- * list so an even-odd fill leaves them open (Lesotho inside South Africa).
- * A territory carries its `owner`, the guessable country that reveals it.
+ * One place's outline for the Globe globe (`core.json` holds the rest of
+ * the place): every polygon ring, flat `[lng, lat, lng, lat, …]`,
+ * simplified and quantised. Holes stay in the list so an even-odd fill
+ * leaves them open (Lesotho inside South Africa).
  */
 export interface CountryShape {
-  iso: string;
-  owner?: string;
+  id: string;
   rings: number[][];
 }
 
 export interface ShapeReport {
   shapes: CountryShape[];
-  /** Guessable identities with no usable ring: drawn as a label-point dot. */
+  /** Place ids with no usable ring: drawn as a label-point dot. */
   centroidOnly: string[];
   droppedRings: number;
   /** Features whose every ring was a speck at 0.1°, kept at a finer grid. */
@@ -192,40 +191,26 @@ function shapeRings(
 
 export function generateCountryShapes(
   geojsonText: string,
-  list: readonly string[],
+  sovereignNames: readonly string[],
 ): ShapeReport {
-  const selection = selectFeatures(geojsonText, list);
   const shapes: CountryShape[] = [];
   const centroidOnly: string[] = [];
   const finerRings: string[] = [];
   let droppedRings = 0;
-  for (const selected of [...selection.countries, ...selection.territories]) {
+  // selectPlaces returns id order, so the output is too.
+  for (const selected of selectPlaces(geojsonText, sovereignNames)) {
     const { rings, dropped, finer } = shapeRings(selected);
     droppedRings += dropped;
     if (finer) {
-      finerRings.push(selected.iso);
+      finerRings.push(selected.place.id);
     }
     if (rings.length === 0) {
-      if (selected.owner === undefined) {
-        centroidOnly.push(selected.iso);
-      }
+      centroidOnly.push(selected.place.id);
       continue;
     }
-    shapes.push(
-      selected.owner === undefined
-        ? { iso: selected.iso, rings }
-        : { iso: selected.iso, owner: selected.owner, rings },
-    );
+    shapes.push({ id: selected.place.id, rings });
   }
-
-  const byIso = (left: string, right: string): number =>
-    left < right ? -1 : left > right ? 1 : 0;
-  return {
-    shapes: shapes.sort((left, right) => byIso(left.iso, right.iso)),
-    centroidOnly: centroidOnly.sort(byIso),
-    droppedRings,
-    finerRings: finerRings.sort(byIso),
-  };
+  return { shapes, centroidOnly, droppedRings, finerRings };
 }
 
 /** One shape per line keeps diffs readable without pretty-printing rings. */
@@ -235,7 +220,7 @@ export function renderCountryShapes(shapes: readonly CountryShape[]): string {
 
 interface GeneratorOptions {
   inputPath: string;
-  listPath: string;
+  configPath: string;
   outputPath: string;
 }
 
@@ -255,7 +240,7 @@ function options(args: readonly string[]): GeneratorOptions {
   }
   return {
     inputPath: resolve(input),
-    listPath: resolve(parsed.values.list ?? DEFAULT_LIST_PATH),
+    configPath: resolve(parsed.values.list ?? DEFAULT_CONFIG_PATH),
     outputPath: resolve(
       parsed.values.output ?? modulePath("../../shared/countries/shapes.json"),
     ),
@@ -265,13 +250,11 @@ function options(args: readonly string[]): GeneratorOptions {
 export async function main(args = process.argv.slice(2)): Promise<void> {
   const paths = options(args);
   const source = await readFile(paths.inputPath, "utf8");
-  const list = parseCountryList(await readFile(paths.listPath, "utf8"));
-  const report = generateCountryShapes(source, list);
+  const config = parseGlobeConfig(await readFile(paths.configPath, "utf8"));
+  const report = generateCountryShapes(source, config.countries);
   await writeFile(paths.outputPath, renderCountryShapes(report.shapes));
-  const territories = report.shapes.filter((shape) => shape.owner !== undefined).length;
   console.log(
-    `Wrote ${report.shapes.length - territories} country and ${territories} territory `
-      + `shapes to ${paths.outputPath} `
+    `Wrote ${report.shapes.length} place shapes to ${paths.outputPath} `
       + `(${report.droppedRings} rings under ${MIN_RING_POINTS} points dropped).`,
   );
   console.log(
@@ -281,7 +264,7 @@ export async function main(args = process.argv.slice(2)): Promise<void> {
   );
   console.log(
     report.centroidOnly.length === 0
-      ? "Every country has an outline."
+      ? "Every place has an outline."
       : `Centroid-only: ${report.centroidOnly.join(", ")}`,
   );
 }
