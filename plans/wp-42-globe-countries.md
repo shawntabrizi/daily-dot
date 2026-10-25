@@ -40,6 +40,16 @@ Decision D26 (new, below). Before first public play, so Globe v1 may change in p
   few pixels at the current zoom also gets a dot at its label point in the same fill.
 - Distance and direction stay label-point haversine as now.
 
+## Superset and subsets (Shawn, 2026-10-25)
+
+The data is one **superset**: every 1:50m feature but Antarctica and Siachen Glacier,
+each with a stable id, display name, alternate names, kind (sovereign, territory,
+disputed), owner, label point, continent and shape. The config picks two subsets by id:
+**guessable** (the picker) and **answers** (the daily shuffle). Both are the 197 above
+for now. The v1 answer for a day depends only on `answers` and its order, so adding
+places to the superset or to `guessable` never changes a day's answer; changing
+`answers` once live is a new version (D11).
+
 ## Work
 
 - `app/scripts/generate-countries.ts` and `generate-country-shapes.ts`: read the list,
