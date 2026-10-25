@@ -3,35 +3,110 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { countryDistanceKm, proximityRamp } from "./geography";
 import { GLOBE_COUNTRIES, globeAnswer } from "./generate";
-import { countryFills, createGlobe, fillColour, GLOBE_SHAPES } from "./globe";
+import {
+  countriesNeedingDots,
+  countryFills,
+  createGlobe,
+  fillColour,
+  GLOBE_SHAPES,
+  shapeExtent,
+  shapeFill,
+  SMALL_SHAPE_PIXELS,
+} from "./globe";
 
 const palette = { wrong: "#c62121", present: "#dac316", correct: "#55b725" };
 
 describe("country outlines data", () => {
-  it("has an outline for every core.json country", () => {
-    const shaped = new Set(GLOBE_SHAPES.map((shape) => shape.iso));
+  const countryShapes = GLOBE_SHAPES.filter((shape) => shape.owner === undefined);
+
+  it("has an outline for every core.json country and only territories besides", () => {
+    const shaped = new Set(countryShapes.map((shape) => shape.iso));
     const missing = GLOBE_COUNTRIES.filter((country) => !shaped.has(country.iso));
-    // No country is centroid-only today; add any here if Natural Earth changes.
+    // Even Vatican keeps a ring (on a finer grid); none is centroid-only.
     expect(missing.map((country) => country.iso)).toEqual([]);
-    expect(GLOBE_SHAPES.length).toBe(GLOBE_COUNTRIES.length);
+    expect(countryShapes.length).toBe(GLOBE_COUNTRIES.length);
+    const guessable = new Set(GLOBE_COUNTRIES.map((country) => country.iso));
+    for (const shape of GLOBE_SHAPES.filter((candidate) => candidate.owner !== undefined)) {
+      expect(guessable.has(shape.iso), shape.iso).toBe(false);
+      expect(guessable.has(shape.owner!), shape.iso).toBe(true);
+    }
   });
 
   it("stays within the bundle budget", () => {
     const bytes = readFileSync("../shared/countries/shapes.json").byteLength;
-    expect(bytes).toBeLessThan(200 * 1024);
+    expect(bytes).toBeLessThan(400 * 1024);
     for (const shape of GLOBE_SHAPES) {
       expect(shape.rings.length).toBeGreaterThan(0);
       for (const ring of shape.rings) {
         expect(ring.length % 2).toBe(0);
         expect(ring.length / 2).toBeGreaterThanOrEqual(4);
-        expect(ring.length / 2).toBeLessThanOrEqual(500);
+        expect(ring.length / 2).toBeLessThanOrEqual(2000);
         for (let index = 0; index < ring.length; index += 2) {
           expect(Math.abs(ring[index]!)).toBeLessThanOrEqual(180);
           expect(Math.abs(ring[index + 1]!)).toBeLessThanOrEqual(90);
-          expect(ring[index]).toBe(Math.round(ring[index]! * 10) / 10);
         }
       }
     }
+  });
+});
+
+describe("territories (D26)", () => {
+  const denmark = GLOBE_COUNTRIES.find((country) => country.name === "Denmark")!;
+  const greenland = GLOBE_SHAPES.find((shape) => shape.iso === "GRL")!;
+  const answer = GLOBE_COUNTRIES.find((country) => country.name === "Australia")!;
+
+  it("draws Greenland neutral once Denmark is guessed, and not before", () => {
+    expect(greenland.owner).toBe(denmark.iso);
+    expect(shapeFill(greenland, countryFills([], answer, false))).toBeUndefined();
+    expect(shapeFill(greenland, countryFills([denmark], answer, false))).toEqual({
+      kind: "territory",
+    });
+    expect(fillColour({ kind: "territory" }, palette)).toBe("#707070");
+  });
+
+  it("reveals the answer's territories with it, but never fills them in its colour", () => {
+    const denmarkAnswer = countryFills([], denmark, true);
+    expect(shapeFill(greenland, denmarkAnswer)).toEqual({ kind: "territory" });
+    expect(denmarkAnswer.has("GRL")).toBe(false);
+    expect(shapeFill({ iso: denmark.iso }, denmarkAnswer)).toEqual({ kind: "answer" });
+  });
+});
+
+describe("small-country dots", () => {
+  const extents = new Map(
+    GLOBE_SHAPES.filter((shape) => shape.owner === undefined).map((shape) => [
+      shape.iso,
+      shapeExtent(shape.rings),
+    ]),
+  );
+  const named = (name: string) => GLOBE_COUNTRIES.find((country) => country.name === name)!;
+  const singapore = named("Singapore");
+  const vatican = named("Vatican");
+  const france = named("France");
+  const answer = named("Australia");
+  // A 360 px phone canvas at 1×.
+  const radius = 178.5;
+
+  it("dots a guessed Singapore or Vatican but not France", () => {
+    const fills = countryFills([singapore, vatican, france], answer, false);
+    expect(
+      countriesNeedingDots(GLOBE_COUNTRIES, extents, fills, radius).map((country) => country.name),
+    ).toEqual(["Singapore", "Vatican"]);
+  });
+
+  it("dots only marked countries, and drops the dot once zoom makes the shape visible", () => {
+    expect(countriesNeedingDots(GLOBE_COUNTRIES, extents, new Map(), radius)).toEqual([]);
+    const fills = countryFills([singapore], answer, false);
+    const pixels = extents.get(singapore.iso)! * radius;
+    expect(pixels).toBeLessThan(SMALL_SHAPE_PIXELS);
+    expect(
+      countriesNeedingDots(GLOBE_COUNTRIES, extents, fills, (SMALL_SHAPE_PIXELS / pixels) * radius * 1.01),
+    ).toEqual([]);
+  });
+
+  it("dots a marked country with no outline at all", () => {
+    const fills = countryFills([france], answer, false);
+    expect(countriesNeedingDots([france], new Map(), fills, radius)).toEqual([france]);
   });
 });
 

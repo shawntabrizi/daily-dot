@@ -138,6 +138,28 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     Checked in Chromium at 360×780 and 1440×900 (look, sliders, reveal: no page scroll;
     final result scrolls as the result page does). Not verified: on a device or in the
     host; the read-only state was checked by unit test only, not in the browser.
+- **WP42 done (Daily Globe: the 197 countries, D26), 2026-10-25:** `core.json` is now the
+  197 `NAME`s of `globe-countries.json` selected from Natural Earth **1:50m** (never by
+  `TYPE`), so Cuba, Kazakhstan, Israel, Kosovo, Palestine, Singapore, Malta, Vatican… are
+  guessable. The other 43 features are territories in `shapes.json` with an `owner` iso
+  (Somaliland → Somalia, N. Cyprus → Cyprus, W. Sahara → Morocco; Antarctica and Siachen
+  dropped), drawn `--neutral` when the owner is guessed or revealed, never guessable or in
+  a distance. Identity stays `ISO_A3_EH` / `NAME` on `-99`; a territory whose iso is taken
+  (two Australian ones are `AUS`) uses its `NAME`. Readable names (`NAME_LONG` where `NAME`
+  abbreviates, "Eswatini"), `aliases` (D26 list + the NE name), folded matching
+  (`games/globe/names.ts`: accents, case, apostrophes, hyphens) in `countryFromGuess` and
+  `matchCountries`; "Seven seas" continents mapped to Asia/Africa. Shapes are
+  Douglas–Peucker (half a grid step) + 0.1° quantised; a feature's last ring is kept on a
+  finer grid (32 features incl. Vatican, Monaco, San Marino). A marked country whose largest
+  ring is under 4 px at the current zoom also gets a dot at its label point. Globe v1
+  answers re-pinned (day 0 Cabo Verde, 208 Norway; rewrite before first play, D11).
+  `shapes.json` 99,781 → 277,281 bytes; main chunk 868.71 → 1,052.87 kB (gzip 282.99 →
+  335.95 kB). Generators rerun byte-identical; `--input`/`NE_GEOJSON` kept, `--countries`
+  replaced by `--list`. **Verified:** tsc, `typecheck:tools`, vitest (709), build,
+  `pocket:test`, `smoke`; Chromium 360×780 and 1440×900 (`app/test-results/wp42/`, not
+  committed): Singapore guessed shows as a dot, Denmark shows Greenland neutral, "Burma"
+  lists as Myanmar, no page scroll. **Not verified:** the phone/Polkadot app webview; the
+  dot and territory fill under zoom on a real device.
 - **WP41 done (Daily Sound, gameId 9, `#/g/sound`, D25), 2026-10-23:** `games/sound`
   engine (ERB-rate `21.4·log10(1 + 0.00437 f)`, per tone `10 × max(0, 1 − ΔERB/0.5)`
   shown to hundredths; recorded score = the five shown hundredths summed, then rounded

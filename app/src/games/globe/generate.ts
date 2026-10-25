@@ -6,10 +6,14 @@ export interface Country {
   lng: number;
   continent: string;
   iso: string;
+  /** Alternate names that find the country in the picker (D26). */
+  aliases: readonly string[];
 }
 
 export const GLOBE_COUNTRIES: readonly Country[] = Object.freeze(
-  countryData.map((country) => Object.freeze({ ...country })),
+  countryData.map((country) =>
+    Object.freeze({ ...country, aliases: Object.freeze([...country.aliases]) }),
+  ),
 );
 
 const V1_SEED_SALT = 0x676c6f62;
@@ -46,7 +50,7 @@ function deckForV1Cycle(cycle: number): readonly Country[] {
 }
 
 /**
- * Natural Earth's 166-country table necessarily recycles about 2.2 times per
+ * The 197-country table (D26) necessarily recycles about 1.85 times per
  * year. v1 uses a complete shuffled deck before starting a cycle-specific
  * reshuffle, so recycling never repeats a country early within a cycle.
  *

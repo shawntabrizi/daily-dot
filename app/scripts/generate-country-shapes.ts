@@ -1,43 +1,116 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { fileURLToPath } from "node:url";
 
 import {
-  countryIdentity,
-  isCountryFeature,
-  type NaturalEarthFeature,
+  DEFAULT_LIST_PATH,
+  modulePath,
+  parseCountryList,
+  selectFeatures,
+  type SelectedFeature,
 } from "./generate-countries";
 
 /**
- * One country outline for the Globe globe: every polygon ring, flat
- * `[lng, lat, lng, lat, …]`, quantised to 0.1°. Holes stay in the list so an
- * even-odd fill leaves them open (Lesotho inside South Africa).
+ * One outline for the Globe globe: every polygon ring, flat
+ * `[lng, lat, lng, lat, …]`, simplified and quantised. Holes stay in the
+ * list so an even-odd fill leaves them open (Lesotho inside South Africa).
+ * A territory carries its `owner`, the guessable country that reveals it.
  */
 export interface CountryShape {
   iso: string;
+  owner?: string;
   rings: number[][];
 }
 
 export interface ShapeReport {
   shapes: CountryShape[];
-  /** `core.json` identities with no usable ring: drawn as a centroid dot. */
+  /** Guessable identities with no usable ring: drawn as a label-point dot. */
   centroidOnly: string[];
   droppedRings: number;
+  /** Features whose every ring was a speck at 0.1°, kept at a finer grid. */
+  finerRings: string[];
 }
 
-/** Natural Earth 110m is ~1° resolution; 0.1° keeps every detail it has. */
+/** 0.1° is about 11 km: finer than a globe pixel at 4× zoom on a phone. */
 const QUANTUM = 10;
+/** The finer grids a feature's last ring may fall back to (Vatican is ~0.004°). */
+const FINE_QUANTA = [100, 1000, 10000] as const;
+/** Douglas–Peucker tolerance, in grid steps, applied before quantising. */
+const SIMPLIFY_STEPS = 0.5;
 /** A ring is a polygon only from 3 distinct points; 4 stops slivers. */
 const MIN_RING_POINTS = 4;
 
 type Position = [number, number];
 
-function quantiseRing(ring: readonly Position[]): number[] | null {
+function perpendicularDistance(point: Position, start: Position, end: Position): number {
+  const dx = end[0] - start[0];
+  const dy = end[1] - start[1];
+  const length = Math.hypot(dx, dy);
+  if (length === 0) {
+    return Math.hypot(point[0] - start[0], point[1] - start[1]);
+  }
+  return Math.abs(dy * point[0] - dx * point[1] + end[0] * start[1] - end[1] * start[0])
+    / length;
+}
+
+/** Iterative Douglas–Peucker over an open polyline; keeps both ends. */
+function simplify(points: readonly Position[], tolerance: number): Position[] {
+  if (points.length <= 2) {
+    return [...points];
+  }
+  const keep = new Uint8Array(points.length);
+  keep[0] = 1;
+  keep[points.length - 1] = 1;
+  const stack: [number, number][] = [[0, points.length - 1]];
+  while (stack.length > 0) {
+    const [first, last] = stack.pop()!;
+    let farthest = -1;
+    let distance = tolerance;
+    for (let index = first + 1; index < last; index += 1) {
+      const candidate = perpendicularDistance(points[index]!, points[first]!, points[last]!);
+      if (candidate > distance) {
+        distance = candidate;
+        farthest = index;
+      }
+    }
+    if (farthest >= 0) {
+      keep[farthest] = 1;
+      stack.push([first, farthest], [farthest, last]);
+    }
+  }
+  return points.filter((_, index) => keep[index] === 1);
+}
+
+function quantiseRing(ring: readonly Position[], quantum: number): number[] | null {
+  // A closed ring split at its farthest point simplifies as two open halves,
+  // so Douglas–Peucker never collapses it to its own start point.
+  const open = ring.length > 1
+    && ring[0]![0] === ring[ring.length - 1]![0]
+    && ring[0]![1] === ring[ring.length - 1]![1]
+    ? ring.slice(0, -1)
+    : [...ring];
+  if (open.length === 0) {
+    return null;
+  }
+  let split = 0;
+  let farthest = -1;
+  for (let index = 1; index < open.length; index += 1) {
+    const distance = Math.hypot(open[index]![0] - open[0]![0], open[index]![1] - open[0]![1]);
+    if (distance > farthest) {
+      farthest = distance;
+      split = index;
+    }
+  }
+  const tolerance = SIMPLIFY_STEPS / quantum;
+  const simplified = [
+    ...simplify(open.slice(0, split + 1), tolerance),
+    ...simplify([...open.slice(split), open[0]!], tolerance).slice(1, -1),
+  ];
+
   const points: Position[] = [];
-  for (const [lng, lat] of ring) {
-    const x = Math.round(lng * QUANTUM) / QUANTUM;
-    const y = Math.round(lat * QUANTUM) / QUANTUM;
+  for (const [lng, lat] of simplified) {
+    const x = Math.round(lng * quantum) / quantum;
+    const y = Math.round(lat * quantum) / quantum;
     const last = points[points.length - 1];
     if (last && last[0] === x && last[1] === y) {
       continue;
@@ -69,51 +142,89 @@ function polygonRings(geometry: unknown): Position[][] {
   throw new TypeError(`Unsupported geometry type ${String(type)}`);
 }
 
+function boundingArea(ring: readonly Position[]): number {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const [x, y] of ring) {
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
+  }
+  return (maxX - minX) * (maxY - minY);
+}
+
+function shapeRings(
+  selected: SelectedFeature,
+): { rings: number[][]; dropped: number; finer: boolean } {
+  const source = polygonRings(selected.feature.geometry);
+  const rings: number[][] = [];
+  let dropped = 0;
+  for (const ring of source) {
+    const quantised = quantiseRing(ring, QUANTUM);
+    if (quantised) {
+      rings.push(quantised);
+    } else {
+      dropped += 1;
+    }
+  }
+  if (rings.length > 0 || source.length === 0) {
+    return { rings, dropped, finer: false };
+  }
+  // Never lose a feature's last ring: its largest ring on the first finer
+  // grid that keeps it a polygon (Vatican, Monaco, Nauru…).
+  let largest = source[0]!;
+  for (const ring of source) {
+    if (boundingArea(ring) > boundingArea(largest)) {
+      largest = ring;
+    }
+  }
+  for (const quantum of FINE_QUANTA) {
+    const quantised = quantiseRing(largest, quantum);
+    if (quantised) {
+      return { rings: [quantised], dropped: dropped - 1, finer: true };
+    }
+  }
+  return { rings, dropped, finer: false };
+}
+
 export function generateCountryShapes(
   geojsonText: string,
-  identities: readonly string[],
+  list: readonly string[],
 ): ShapeReport {
-  const parsed = JSON.parse(geojsonText) as { type?: unknown; features?: unknown };
-  if (parsed.type !== "FeatureCollection" || !Array.isArray(parsed.features)) {
-    throw new TypeError("Natural Earth input must be a GeoJSON FeatureCollection");
-  }
-
-  const wanted = new Set(identities);
-  const shapes = new Map<string, CountryShape>();
+  const selection = selectFeatures(geojsonText, list);
+  const shapes: CountryShape[] = [];
+  const centroidOnly: string[] = [];
+  const finerRings: string[] = [];
   let droppedRings = 0;
-  for (const feature of (parsed.features as NaturalEarthFeature[]).filter(
-    isCountryFeature,
-  )) {
-    if (!feature.properties) {
-      throw new TypeError("Natural Earth feature has no properties");
+  for (const selected of [...selection.countries, ...selection.territories]) {
+    const { rings, dropped, finer } = shapeRings(selected);
+    droppedRings += dropped;
+    if (finer) {
+      finerRings.push(selected.iso);
     }
-    const iso = countryIdentity(feature.properties);
-    if (!wanted.has(iso)) {
+    if (rings.length === 0) {
+      if (selected.owner === undefined) {
+        centroidOnly.push(selected.iso);
+      }
       continue;
     }
-    if (shapes.has(iso)) {
-      throw new Error(`Duplicate country identity: ${iso}`);
-    }
-    const rings: number[][] = [];
-    for (const ring of polygonRings(feature.geometry)) {
-      const quantised = quantiseRing(ring);
-      if (quantised) {
-        rings.push(quantised);
-      } else {
-        droppedRings += 1;
-      }
-    }
-    if (rings.length > 0) {
-      shapes.set(iso, { iso, rings });
-    }
+    shapes.push(
+      selected.owner === undefined
+        ? { iso: selected.iso, rings }
+        : { iso: selected.iso, owner: selected.owner, rings },
+    );
   }
 
+  const byIso = (left: string, right: string): number =>
+    left < right ? -1 : left > right ? 1 : 0;
   return {
-    shapes: [...shapes.values()].sort((left, right) =>
-      left.iso < right.iso ? -1 : left.iso > right.iso ? 1 : 0,
-    ),
-    centroidOnly: identities.filter((iso) => !shapes.has(iso)),
+    shapes: shapes.sort((left, right) => byIso(left.iso, right.iso)),
+    centroidOnly: centroidOnly.sort(byIso),
     droppedRings,
+    finerRings: finerRings.sort(byIso),
   };
 }
 
@@ -122,13 +233,9 @@ export function renderCountryShapes(shapes: readonly CountryShape[]): string {
   return `[\n${shapes.map((shape) => `  ${JSON.stringify(shape)}`).join(",\n")}\n]\n`;
 }
 
-function modulePath(relative: string): string {
-  return fileURLToPath(new URL(relative, import.meta.url));
-}
-
 interface GeneratorOptions {
   inputPath: string;
-  countriesPath: string;
+  listPath: string;
   outputPath: string;
 }
 
@@ -137,7 +244,7 @@ function options(args: readonly string[]): GeneratorOptions {
     args,
     options: {
       input: { type: "string" },
-      countries: { type: "string" },
+      list: { type: "string" },
       output: { type: "string" },
     },
     strict: true,
@@ -148,9 +255,7 @@ function options(args: readonly string[]): GeneratorOptions {
   }
   return {
     inputPath: resolve(input),
-    countriesPath: resolve(
-      parsed.values.countries ?? modulePath("../../shared/countries/core.json"),
-    ),
+    listPath: resolve(parsed.values.list ?? DEFAULT_LIST_PATH),
     outputPath: resolve(
       parsed.values.output ?? modulePath("../../shared/countries/shapes.json"),
     ),
@@ -160,17 +265,19 @@ function options(args: readonly string[]): GeneratorOptions {
 export async function main(args = process.argv.slice(2)): Promise<void> {
   const paths = options(args);
   const source = await readFile(paths.inputPath, "utf8");
-  const countries = JSON.parse(
-    await readFile(paths.countriesPath, "utf8"),
-  ) as { iso: string }[];
-  const report = generateCountryShapes(
-    source,
-    countries.map((country) => country.iso),
-  );
+  const list = parseCountryList(await readFile(paths.listPath, "utf8"));
+  const report = generateCountryShapes(source, list);
   await writeFile(paths.outputPath, renderCountryShapes(report.shapes));
+  const territories = report.shapes.filter((shape) => shape.owner !== undefined).length;
   console.log(
-    `Wrote ${report.shapes.length} shapes to ${paths.outputPath} `
+    `Wrote ${report.shapes.length - territories} country and ${territories} territory `
+      + `shapes to ${paths.outputPath} `
       + `(${report.droppedRings} rings under ${MIN_RING_POINTS} points dropped).`,
+  );
+  console.log(
+    report.finerRings.length === 0
+      ? "No feature needed a finer grid."
+      : `Kept on a finer grid: ${report.finerRings.join(", ")}`,
   );
   console.log(
     report.centroidOnly.length === 0

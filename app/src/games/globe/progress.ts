@@ -6,6 +6,7 @@ import {
   GLOBE_COUNTRIES,
   type Country,
 } from "./generate";
+import { foldCountryName } from "./names";
 
 const GLOBE_PROGRESS_PREFIX = "daily-on-dot:globe:v1:";
 
@@ -28,11 +29,23 @@ export type GlobeGuessResult =
 const COUNTRY_BY_ISO = new Map(
   GLOBE_COUNTRIES.map((country) => [country.iso, country]),
 );
+// The shown name and every alternate name find the country (D26); the
+// generator guarantees no folded label names two countries.
 const COUNTRY_BY_NAME = new Map(
-  GLOBE_COUNTRIES.map((country) => [country.name.toLowerCase(), country]),
+  GLOBE_COUNTRIES.flatMap((country) =>
+    [country.name, ...country.aliases].map(
+      (label) => [foldCountryName(label), country] as const,
+    ),
+  ),
 );
 const COUNTRIES_BY_NAME = [...GLOBE_COUNTRIES].sort((a, b) =>
   a.name.localeCompare(b.name, "en"),
+);
+const FOLDED_LABELS = new Map(
+  COUNTRIES_BY_NAME.map((country) => [
+    country.iso,
+    [country.name, ...country.aliases].map(foldCountryName),
+  ]),
 );
 
 function progressKey(day: number): string {
@@ -97,23 +110,25 @@ export function countryByIso(identity: string): Country | undefined {
 }
 
 export function countryFromGuess(value: string): Country | undefined {
-  return COUNTRY_BY_NAME.get(value.trim().toLowerCase());
+  return COUNTRY_BY_NAME.get(foldCountryName(value));
 }
 
-// The picker's list: every country for an empty query, otherwise names that
-// start with it ahead of names that only contain it ("Korea" finds both Koreas).
+// The picker's list: every country for an empty query, otherwise countries
+// whose name or an alternate name starts with it ahead of those that only
+// contain it ("Korea" finds both Koreas, "Burma" finds Myanmar). The list
+// shows the country's own name either way.
 export function matchCountries(query: string): readonly Country[] {
-  const needle = query.trim().toLowerCase();
+  const needle = foldCountryName(query);
   if (!needle) {
     return COUNTRIES_BY_NAME;
   }
   const starts: Country[] = [];
   const contains: Country[] = [];
   for (const country of COUNTRIES_BY_NAME) {
-    const name = country.name.toLowerCase();
-    if (name.startsWith(needle)) {
+    const labels = FOLDED_LABELS.get(country.iso)!;
+    if (labels.some((label) => label.startsWith(needle))) {
       starts.push(country);
-    } else if (name.includes(needle)) {
+    } else if (labels.some((label) => label.includes(needle))) {
       contains.push(country);
     }
   }

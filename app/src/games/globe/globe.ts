@@ -12,10 +12,14 @@ import {
   wheelZoom,
 } from "./projection";
 
-/** Why a country is coloured: the guess ramp the list uses, or the answer. */
+/**
+ * Why a shape is coloured: the guess ramp the list uses, the answer, or a
+ * territory whose owner is marked (D26: neutral, never a guess colour).
+ */
 export type CountryFill =
   | { kind: "guess"; segment: ProximityRamp["segment"]; mix: number }
-  | { kind: "answer" };
+  | { kind: "answer" }
+  | { kind: "territory" };
 
 export interface GlobeHandle {
   setFills(fills: ReadonlyMap<string, CountryFill>): void;
@@ -39,10 +43,14 @@ export interface GlobePalette {
   correct: string;
   /** The found country (WP36 decision 9: accent on the done state); `correct` when unset. */
   accent?: string;
+  /** A marked country's territories; `--neutral` when unset. */
+  neutral?: string;
 }
 
 export interface CountryShape {
   iso: string;
+  /** Set on a territory: the guessable country whose mark reveals it. */
+  owner?: string;
   rings: number[][];
 }
 
@@ -54,6 +62,7 @@ interface PreparedRing {
 
 interface PreparedShape {
   iso: string;
+  owner?: string;
   rings: PreparedRing[];
 }
 
@@ -75,6 +84,12 @@ const FOCUS_DURATION_MS = 700;
 const GRATICULE_STEP_DEGREES = 30;
 const GRATICULE_SAMPLE_DEGREES = 3;
 const CENTROID_DOT_RADIUS = 3;
+const NEUTRAL = "#707070";
+/**
+ * A marked country whose largest ring spans fewer canvas pixels than this
+ * also gets a dot at its label point, so Singapore or Vatican is seen.
+ */
+export const SMALL_SHAPE_PIXELS = 4;
 /** A tap moves less than this; a drag past it is not a tap. */
 const TAP_SLOP_PIXELS = 10;
 const DOUBLE_TAP_MS = 350;
@@ -104,6 +119,64 @@ export function countryFills(
   return fills;
 }
 
+/** A territory takes its owner's mark, as neutral land; it has no fill of its own. */
+export function shapeFill(
+  shape: Pick<CountryShape, "iso" | "owner">,
+  fills: ReadonlyMap<string, CountryFill>,
+): CountryFill | undefined {
+  if (shape.owner !== undefined) {
+    return fills.has(shape.owner) ? { kind: "territory" } : undefined;
+  }
+  return fills.get(shape.iso);
+}
+
+/**
+ * The angular size, in radians, of a shape's largest ring: its bounding
+ * box's longer side, with longitude shrunk by latitude. On a globe of
+ * `radius` pixels the ring spans about `extent × radius` pixels at the centre.
+ */
+export function shapeExtent(rings: readonly (readonly number[])[]): number {
+  let largest = 0;
+  for (const ring of rings) {
+    let minLng = Infinity;
+    let maxLng = -Infinity;
+    let minLat = Infinity;
+    let maxLat = -Infinity;
+    for (let index = 0; index < ring.length; index += 2) {
+      minLng = Math.min(minLng, ring[index]!);
+      maxLng = Math.max(maxLng, ring[index]!);
+      minLat = Math.min(minLat, ring[index + 1]!);
+      maxLat = Math.max(maxLat, ring[index + 1]!);
+    }
+    const middle = ((minLat + maxLat) / 2) * Math.PI / 180;
+    const span = Math.max(
+      maxLat - minLat,
+      (maxLng - minLng) * Math.cos(middle),
+    );
+    largest = Math.max(largest, span);
+  }
+  return largest * Math.PI / 180;
+}
+
+/**
+ * The marked countries that get a label-point dot on a globe of `radius`
+ * pixels: those with no outline, and those whose outline is too small to see.
+ */
+export function countriesNeedingDots(
+  countries: readonly Country[],
+  extents: ReadonlyMap<string, number>,
+  fills: ReadonlyMap<string, CountryFill>,
+  radius: number,
+): Country[] {
+  return countries.filter((country) => {
+    if (!fills.has(country.iso)) {
+      return false;
+    }
+    const extent = extents.get(country.iso);
+    return extent === undefined || extent * radius < SMALL_SHAPE_PIXELS;
+  });
+}
+
 function parseHex(colour: string): [number, number, number] | null {
   const match = /^#([0-9a-f]{6})$/i.exec(colour.trim());
   if (!match) {
@@ -130,6 +203,9 @@ export function fillColour(fill: CountryFill, palette: GlobePalette): string {
   if (fill.kind === "answer") {
     return palette.accent ?? palette.correct;
   }
+  if (fill.kind === "territory") {
+    return palette.neutral ?? NEUTRAL;
+  }
   return fill.segment === "near"
     ? mixColours(palette.present, palette.correct, fill.mix)
     : mixColours(palette.wrong, palette.present, fill.mix);
@@ -146,12 +222,14 @@ function readPalette(element: Element): GlobePalette {
     present: token("--present", DEFAULT_PALETTE.present),
     correct: token("--correct", DEFAULT_PALETTE.correct),
     accent: token("--accent-globe", DEFAULT_PALETTE.correct),
+    neutral: token("--neutral", NEUTRAL),
   };
 }
 
 function prepareShapes(shapes: readonly CountryShape[]): PreparedShape[] {
   return shapes.map((shape) => ({
     iso: shape.iso,
+    ...(shape.owner === undefined ? {} : { owner: shape.owner }),
     rings: shape.rings.map((ring) => {
       const count = ring.length / 2;
       const prepared: PreparedRing = {
@@ -209,6 +287,11 @@ export function createGlobe(
   const prepared = prepareShapes(shapes);
   const shaped = new Set(prepared.map((shape) => shape.iso));
   const centroidOnly = countries.filter((country) => !shaped.has(country.iso));
+  const extents = new Map(
+    shapes
+      .filter((shape) => shape.owner === undefined)
+      .map((shape) => [shape.iso, shapeExtent(shape.rings)]),
+  );
   let palette: GlobePalette | null = null;
   let fills: ReadonlyMap<string, CountryFill> = new Map();
   let centre: GeoPoint = INITIAL_CENTRE;
@@ -292,7 +375,7 @@ export function createGlobe(
     context.stroke();
 
     for (const shape of prepared) {
-      const fill = fills.get(shape.iso);
+      const fill = shapeFill(shape, fills);
       context.beginPath();
       let drewAny = false;
       for (const ring of shape.rings) {
@@ -337,7 +420,13 @@ export function createGlobe(
       context.stroke();
     }
 
-    for (const country of centroidOnly) {
+    // Unmarked countries with no outline still show where they are; marked
+    // ones, and marked ones too small to see, get their fill as a dot on top.
+    const dotted = countriesNeedingDots(countries, extents, fills, radius);
+    for (const country of [
+      ...centroidOnly.filter((candidate) => !fills.has(candidate.iso)),
+      ...dotted,
+    ]) {
       const point = project(country, centre);
       if (point.z < 0) {
         continue;
@@ -353,6 +442,11 @@ export function createGlobe(
       );
       context.fillStyle = fill ? fillColour(fill, palette) : OUTLINE;
       context.fill();
+      if (fill) {
+        context.lineWidth = 1;
+        context.strokeStyle = "rgb(22 24 25 / 70%)";
+        context.stroke();
+      }
     }
 
     context.restore();
