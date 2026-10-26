@@ -10,8 +10,10 @@
 // (D21), "DONE TODAY" under it, and the streak (flame + days) at the bottom.
 // Right: up to six of the picked games in rows of three tiles (`cardTiles`:
 // unfinished first, then finished; five and a "+" when more than six are
-// unfinished), each baked whole as one PNG (solid accent with ink glyph and
-// label when done, dark with a ring when not), spread across the column. A strip down the left edge is the day's
+// unfinished), each baked whole as one PNG, spread across the column. The
+// games left to play carry the colour: the first is solid accent (next up),
+// the rest show their glyph and label in the accent; a done game is muted with
+// a check, since nothing is left to do there. A strip down the left edge is the day's
 // state: grey before any game, green once one is played, gold when every pick
 // is done, red when the streak is about to lapse.
 // The renderer has nine theme colours, five text styles and no Fredoka or
@@ -180,9 +182,12 @@ export function countImage(bits: CardBits, games: readonly Game[]): string {
   return `count-${playedCount(bits, games)}-of-${games.length}.png`;
 }
 
-/** The tile image for a game: tiles/tile-<id>-done.png or -idle.png. */
-export function tileImage(game: Game, played: boolean): string {
-  return `tile-${game.id}-${played ? "done" : "idle"}.png`;
+/** A tile's look: the next game to play, another still to play, or done. */
+export type TileState = "next" | "idle" | "done";
+
+/** The tile image for a game: tiles/tile-<id>-<state>.png. */
+export function tileImage(game: Game, state: TileState): string {
+  return `tile-${game.id}-${state}.png`;
 }
 
 /** The strip's theme colour: the renderer has no gold, green or red of its own. */
@@ -254,9 +259,9 @@ export function cardTiles(bits: CardBits, games: readonly Game[]): CardTile[] {
   return [...open, ...done].slice(0, MAX_TILES);
 }
 
-/** One game: its whole tile as a PNG, lit in the accent once done. The label
- *  is baked in; the renderer has no accessibility text for an image. */
-function tile(game: CardTile, played: boolean, options: FaceOptions): RendererNode {
+/** One game: its whole tile as a PNG in its state's look. The label is baked
+ *  in; the renderer has no accessibility text for an image. */
+function tile(game: CardTile, state: TileState, options: FaceOptions): RendererNode {
   if (game === "more") {
     return image("tile-more.png", TILE_WIDTH, TILE_HEIGHT);
   }
@@ -270,7 +275,7 @@ function tile(game: CardTile, played: boolean, options: FaceOptions): RendererNo
       },
     };
   }
-  return image(tileImage(game, played), TILE_WIDTH, TILE_HEIGHT);
+  return image(tileImage(game, state), TILE_WIDTH, TILE_HEIGHT);
 }
 
 /** The streak: flame + days, only when > 0. The renderer has no 18px 800
@@ -322,6 +327,12 @@ export function dailyFace(
   );
 
   const tiles = cardTiles(bits, games);
+  // Unfinished games come first, so the first unplayed tile is next up.
+  const next = tiles.find((entry) => entry !== "more" && !hasBit(bits.played, entry.gameId));
+  const stateOf = (entry: CardTile): TileState =>
+    entry === "more" || !hasBit(bits.played, entry.gameId)
+      ? entry === next ? "next" : "idle"
+      : "done";
   const tileRows: RendererNode[] = [];
   for (let i = 0; i < tiles.length; i += TILES_PER_ROW) {
     const lineGames = tiles.slice(i, i + TILES_PER_ROW);
@@ -333,9 +344,7 @@ export function dailyFace(
     // Fixed-width tiles spread across whatever width the host gives the column.
     const line = row(
       [
-        ...lineGames.map((entry) =>
-          tile(entry, entry !== "more" && hasBit(bits.played, entry.gameId), options),
-        ),
+        ...lineGames.map((entry) => tile(entry, stateOf(entry), options)),
         ...blanks,
       ],
       [{ tag: "FillWidth", value: true }, { tag: "Height", value: TILE_HEIGHT }],

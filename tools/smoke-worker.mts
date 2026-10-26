@@ -125,9 +125,10 @@ if (sent.length !== 2) fail(`expected a repaint after the app recorded, got ${se
 expectImage(sent[1], `tiles/count-3-of-${N}.png`, "three recorded");
 expectNoText(sent[1], "Tap to play", "three recorded");
 for (const id of ["word", "globe", "chess"]) expectImage(sent[1], `tiles/tile-${id}-done.png`, "three recorded");
-for (const id of ["sudoku", "mini", "connections"]) expectImage(sent[1], `tiles/tile-${id}-idle.png`, "three recorded");
+expectImage(sent[1], "tiles/tile-sudoku-next.png", "three recorded");
+for (const id of ["mini", "connections"]) expectImage(sent[1], `tiles/tile-${id}-idle.png`, "three recorded");
 expectStrip(sent[1], "FgSuccess", "three recorded");
-console.log(`ok  three games recorded in the app -> card repainted 3/${N}, three lit tiles, green strip`);
+console.log(`ok  three games recorded in the app -> card repainted 3/${N}, three muted tiles, Sudoku next, green strip`);
 
 await sleep(2_600);
 if (sent.length !== 2) fail("an unchanged checklist on a frozen clock must not repaint");
@@ -191,7 +192,7 @@ await sleep(2_600);
 if (sent.length !== 6) fail(`expected a repaint after the picks changed, got ${sent.length} faces`);
 expectImage(sent[5], "tiles/count-1-of-2.png", "two picks");
 const pickedTiles = imagePathsIn(sent[5]).filter((path) => path.startsWith("tiles/tile-"));
-if (pickedTiles.join() !== "tiles/tile-mini-idle.png,tiles/tile-word-done.png") {
+if (pickedTiles.join() !== "tiles/tile-mini-next.png,tiles/tile-word-done.png") {
   fail(`two picks: expected the Word and Mini tiles only, got ${pickedTiles.join(", ")}`);
 }
 expectStrip(sent[5], "FgSuccess", "two picks");
