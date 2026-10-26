@@ -185,7 +185,7 @@
 .launcher-row[data-launcher-state="fresh"] .launcher-row__state {
   background: color-mix(in srgb, var(--accent) 18%, var(--surface));
   /* Pulled toward the text color, so the word reads on the tint in both themes. */
-  color: color-mix(in srgb, var(--accent) 65%, var(--text));
+  color: color-mix(in srgb, var(--accent) 50%, var(--text));
 }
 
 .launcher-row[data-launcher-state="done"] .launcher-row__state {
