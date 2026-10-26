@@ -27,6 +27,9 @@ export const HEAT_MARKS: Record<Heat, string> = {
   cold: "☃️",
 };
 
+/** The widest miss, in degrees, each hint covers; beyond Warm is Cold. */
+export const HEAT_BANDS = { burning: 3, hot: 10, warm: 25 } as const;
+
 export function isAngle(value: number): boolean {
   return Number.isInteger(value) && value >= MIN_ANGLE && value <= MAX_ANGLE;
 }
@@ -43,6 +46,12 @@ export function hintFor(guess: number, answer: number): AngleHint {
   }
   const off = Math.abs(answer - guess);
   const direction = off === 0 ? null : answer > guess ? "up" : "down";
-  const heat: Heat = off === 0 ? "exact" : off <= 3 ? "burning" : off <= 10 ? "hot" : off <= 25 ? "warm" : "cold";
+  const heat: Heat = off === 0 ? "exact" : off <= HEAT_BANDS.burning
+      ? "burning"
+      : off <= HEAT_BANDS.hot
+        ? "hot"
+        : off <= HEAT_BANDS.warm
+          ? "warm"
+          : "cold";
   return { heat, direction };
 }

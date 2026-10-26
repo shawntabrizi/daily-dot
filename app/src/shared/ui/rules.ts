@@ -1,3 +1,4 @@
+import { HEAT_BANDS, HEAT_MARKS } from "../../games/angle/engine";
 import type { Game, GameSlug } from "../roster";
 import { icon } from "./icons";
 
@@ -78,7 +79,11 @@ export const RULES: Record<GameSlug, GameRules> = {
   angle: {
     steps: [
       { visual: emoji("📐"), text: "Guess the marked angle, from 1° to 359°." },
-      { visual: emoji("🔥") + emoji("⬆️"), text: "Burning, Hot, Warm or Cold tells you how near; the arrow says higher or lower." },
+      { visual: emoji("⬆️"), text: "Each guess says how near you are; the arrow says higher or lower." },
+      {
+        visual: emoji("🌡️"),
+        text: `${HEAT_MARKS.burning} Burning within ${HEAT_BANDS.burning}°, ${HEAT_MARKS.hot} Hot within ${HEAT_BANDS.hot}°, ${HEAT_MARKS.warm} Warm within ${HEAT_BANDS.warm}°, ${HEAT_MARKS.cold} Cold beyond.`,
+      },
     ],
     score: "Fewer guesses is better.",
   },
