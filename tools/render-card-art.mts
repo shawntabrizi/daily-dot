@@ -90,7 +90,9 @@ const GLYPH: Record<GameSlug, (ink: string) => string> = {
     `<rect x="2" y="2" width="9" height="9" rx="2" fill="${ink}"/><rect x="15" y="2" width="9" height="9" rx="2" fill="${ink}" opacity="0.55"/><rect x="2" y="15" width="9" height="9" rx="2" fill="${ink}" opacity="0.55"/><rect x="15" y="15" width="9" height="9" rx="2" fill="${ink}"/>`,
   sudoku: (ink) =>
     `<path d="M3 3h20v20H3zM3 10h20M3 17h20M10 3v20M17 3v20" fill="none" stroke="${ink}" stroke-width="1.6"/>`,
-  chess: (ink) => `<path d="M9 23h8M10 20h6l-1-5c3-1 4-4 3-7l-3-3-2 2-2-2-3 3c-1 3 0 6 3 7z" fill="${ink}"/>`,
+  // A knight on the 24 grid, scaled to 26.
+  chess: (ink) =>
+    `<g transform="scale(1.0833)" fill="${ink}"><path fill-rule="evenodd" d="M9 3l1 3-3.5 2.2c-.5.3-.7.9-.5 1.4l.4 1.1c.2.6.9.9 1.5.7l2.6-.9L8 16h8.5l1.5-5.5C18.8 6.5 16 3 12 3zM12.3 5.4a.9.9 0 1 0 0 1.8.9.9 0 1 0 0-1.8z"/><path d="M7.5 17h9l1.5 1.5v2H6v-2z"/></g>`,
   globe: (ink) =>
     `<circle cx="13" cy="13" r="10" fill="none" stroke="${ink}" stroke-width="1.6"/><path d="M3 13h20M13 3c4 4 4 16 0 20M13 3c-4 4-4 16 0 20" fill="none" stroke="${ink}" stroke-width="1.6"/>`,
   mini: (ink) =>

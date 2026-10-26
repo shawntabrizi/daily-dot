@@ -91,7 +91,7 @@ export const RULES: Record<GameSlug, GameRules> = {
   },
   sound: {
     steps: [
-      { visual: emoji("🔊"), text: "Tap Listen to hear a tone, once." },
+      { visual: emoji("🔊"), text: "Tap Listen to start. Each tone plays once." },
       { visual: emoji("👆"), text: "Hold and drag up or down to find it again, then Submit." },
       { visual: emoji("🎵"), text: "Five tones a day. Sound on!" },
     ],

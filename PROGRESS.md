@@ -211,6 +211,11 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   the live drag tone follows it as the pitch moves. The tone gains soft 2nd and 3rd
   harmonics so phone speakers, which barely play 110 Hz, still carry the pitch; scoring
   is unchanged. Not yet heard on a device: tune `COMPENSATION` / `PEAK_LEVEL` by ear.
+- **Chess knight, one Listen (2026-10-26, Shawn):** the Chess glyph is a knight, not a
+  pawn, in the hub rows, the card launcher and the two baked Pocket tiles
+  (`tile-chess-*.png`; only those two re-baked). Daily Sound asks for Listen once: the
+  arrow after a reveal plays the next tone itself (that tap unlocks audio too); a
+  reload mid-game still shows Listen. Not checked on a device.
 - **Angle on-screen pad (2026-10-24, Shawn: the keyboard covered the hints):** Angle's
   number input opened the phone keyboard over the hint list and refocused after every
   guess. It now has a readout and a two-row pad (`1–5 ⌫ / 6–0 Guess`), physical keys on
