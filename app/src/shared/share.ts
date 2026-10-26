@@ -19,7 +19,7 @@ export interface ShareGame {
   score: number | null;
   kind: ScoreKind;
   percentile: number | null;
-  /** Extra colour-free lines under the game's line (Connections' tier rows). */
+  /** Extra color-free lines under the game's line (Connections' tier rows). */
   lines?: readonly string[];
 }
 

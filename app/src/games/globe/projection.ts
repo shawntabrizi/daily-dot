@@ -1,7 +1,7 @@
 import type { GeoPoint } from "./geography";
 
 /**
- * Orthographic projection on the unit sphere, seen from the point `centre`.
+ * Orthographic projection on the unit sphere, seen from the point `center`.
  * `x` is right, `y` is up (not canvas-down), `z` is toward the viewer; the
  * caller scales by the globe radius. Pure math so the renderer stays thin.
  */
@@ -18,39 +18,39 @@ interface Vector3 {
 }
 
 const DEGREES = 180 / Math.PI;
-/** Keep the pole off the exact centre so a drag never loses its heading. */
-const MAX_CENTRE_LATITUDE = 85;
+/** Keep the pole off the exact center so a drag never loses its heading. */
+const MAX_CENTER_LATITUDE = 85;
 
 function radians(degrees: number): number {
   return degrees / DEGREES;
 }
 
-export function normaliseLongitude(lng: number): number {
+export function normalizeLongitude(lng: number): number {
   const wrapped = ((lng + 180) % 360 + 360) % 360 - 180;
   return Object.is(wrapped, -0) ? 0 : wrapped;
 }
 
-export function project(point: GeoPoint, centre: GeoPoint): Projected {
+export function project(point: GeoPoint, center: GeoPoint): Projected {
   const latitude = radians(point.lat);
-  const centreLatitude = radians(centre.lat);
-  const longitudeDelta = radians(point.lng - centre.lng);
+  const centerLatitude = radians(center.lat);
+  const longitudeDelta = radians(point.lng - center.lng);
   const cosLatitude = Math.cos(latitude);
   const sinLatitude = Math.sin(latitude);
   const cosDelta = Math.cos(longitudeDelta);
   return {
     x: cosLatitude * Math.sin(longitudeDelta),
     y:
-      Math.cos(centreLatitude) * sinLatitude
-      - Math.sin(centreLatitude) * cosLatitude * cosDelta,
+      Math.cos(centerLatitude) * sinLatitude
+      - Math.sin(centerLatitude) * cosLatitude * cosDelta,
     z:
-      Math.sin(centreLatitude) * sinLatitude
-      + Math.cos(centreLatitude) * cosLatitude * cosDelta,
+      Math.sin(centerLatitude) * sinLatitude
+      + Math.cos(centerLatitude) * cosLatitude * cosDelta,
   };
 }
 
 /** A point is visible when it is on the near hemisphere (or its rim). */
-export function visible(point: GeoPoint, centre: GeoPoint): boolean {
-  return project(point, centre).z >= 0;
+export function visible(point: GeoPoint, center: GeoPoint): boolean {
+  return project(point, center).z >= 0;
 }
 
 function toVector(point: GeoPoint): Vector3 {
@@ -66,12 +66,12 @@ function toVector(point: GeoPoint): Vector3 {
 function toPoint(vector: Vector3): GeoPoint {
   return {
     lat: Math.atan2(vector.z, Math.hypot(vector.x, vector.y)) * DEGREES,
-    lng: normaliseLongitude(Math.atan2(vector.y, vector.x) * DEGREES),
+    lng: normalizeLongitude(Math.atan2(vector.y, vector.x) * DEGREES),
   };
 }
 
 /**
- * The view centre `t` of the way along the great circle from `from` to `to`
+ * The view center `t` of the way along the great circle from `from` to `to`
  * (spherical linear interpolation). `t` is clamped to 0..1, so `t >= 1`
  * lands exactly on `to`.
  */
@@ -108,12 +108,12 @@ export function rotateToward(
 }
 
 /**
- * Where the view centre lands after the pointer moves `dx`,`dy` canvas
+ * Where the view center lands after the pointer moves `dx`,`dy` canvas
  * pixels over a globe of `radius` pixels. Dragging one radius turns the
  * globe a quarter turn, which feels like pulling the surface.
  */
 export function dragRotate(
-  centre: GeoPoint,
+  center: GeoPoint,
   dx: number,
   dy: number,
   radius: number,
@@ -121,10 +121,10 @@ export function dragRotate(
   const degreesPerPixel = 90 / Math.max(1, radius);
   return {
     lat: Math.max(
-      -MAX_CENTRE_LATITUDE,
-      Math.min(MAX_CENTRE_LATITUDE, centre.lat + dy * degreesPerPixel),
+      -MAX_CENTER_LATITUDE,
+      Math.min(MAX_CENTER_LATITUDE, center.lat + dy * degreesPerPixel),
     ),
-    lng: normaliseLongitude(centre.lng - dx * degreesPerPixel),
+    lng: normalizeLongitude(center.lng - dx * degreesPerPixel),
   };
 }
 

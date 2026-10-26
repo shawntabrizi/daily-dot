@@ -1,7 +1,7 @@
 /* Launcher: the half-height sheet beneath the Pocket card (WP29; the hub board's rows, WP37 R1).
    No head: the card right above shows the count and the streak. The foot stays put;
    the picks fill two columns (six fit the half sheet) and the list scrolls when there
-   are more, or on a shorter sheet. The games left to play carry the colour: the
+   are more, or on a shorter sheet. The games left to play carry the color: the
    selected one's icon is solid accent, the rest tinted; done games are muted and go
    last. The Play button fills in the selected game's accent. */
 
@@ -181,7 +181,7 @@
 
 .launcher-row[data-launcher-state="fresh"] .launcher-row__state {
   background: color-mix(in srgb, var(--accent) 18%, var(--surface));
-  /* Pulled toward the text colour, so the word reads on the tint in both themes. */
+  /* Pulled toward the text color, so the word reads on the tint in both themes. */
   color: color-mix(in srgb, var(--accent) 65%, var(--text));
 }
 

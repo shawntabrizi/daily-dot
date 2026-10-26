@@ -192,7 +192,7 @@ a.calendar-day:hover {
 }
 
 /* All-games calendar (D17b, D17c, decision 7): the whole cell is blue when
-   every picked game is done, gold when a game was finished on the day, grey
+   every picked game is done, gold when a game was finished on the day, gray
    with a tick for a day only played later. Gold and blue are the same in both theme blocks, so the
    ink on them is fixed. */
 .calendar-day--complete,
@@ -237,7 +237,7 @@ a.calendar-day:hover {
   line-height: 7px;
 }
 
-/* Today is ringed in the text colour; a future day is a blank cell. */
+/* Today is ringed in the text color; a future day is a blank cell. */
 .calendar-day--today {
   box-shadow: 0 0 0 2px var(--text);
 }
@@ -352,7 +352,7 @@ a.calendar-day:hover {
 }
 
 /* The streaks route: the Streak board (plans/wp-36-boards/Streak.dc.html). The
-   board's own colours (tints, rings, inks) live here; the shared tokens are
+   board's own colors (tints, rings, inks) live here; the shared tokens are
    referenced by name. */
 .streaks-page {
   --streak-gold-tint: #221c10;
@@ -369,7 +369,7 @@ a.calendar-day:hover {
   flex-direction: column;
 }
 
-/* Two tiles, always tinted: the number carries the colour. */
+/* Two tiles, always tinted: the number carries the color. */
 .streak-tiles {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -509,7 +509,7 @@ a.calendar-day:hover {
 }
 
 /* Played: the gold tint with a gold number. A backfilled day is a played
-   day for the calendar; its grey tick in the corner says "later". */
+   day for the calendar; its gray tick in the corner says "later". */
 .streak-month .calendar-day--any,
 .streak-month .calendar-day--backfill {
   background: var(--streak-gold-cell);

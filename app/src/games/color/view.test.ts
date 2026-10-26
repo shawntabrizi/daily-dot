@@ -54,7 +54,7 @@ function start(root: Element): void {
   root.querySelector<HTMLButtonElement>("[data-color-start]")!.click();
 }
 
-/** Past the 5-second look of the current colour. */
+/** Past the 5-second look of the current color. */
 async function look(): Promise<void> {
   await vi.advanceTimersByTimeAsync(5_000);
 }
@@ -70,12 +70,12 @@ afterEach(() => {
 });
 
 describe("Color view", () => {
-  it("waits for Start before showing a colour, so opening the game never starts the clock", async () => {
+  it("waits for Start before showing a color, so opening the game never starts the clock", async () => {
     const view = renderColor(sourceFor(), DAY);
     document.body.append(view.element);
     await vi.waitFor(() => expect(view.element.querySelector('[data-color-phase="ready"]')).not.toBeNull());
     await vi.advanceTimersByTimeAsync(10_000);
-    // Still waiting: no colour on screen, no countdown ran.
+    // Still waiting: no color on screen, no countdown ran.
     expect(view.element.querySelector('[data-color-phase="look"]')).toBeNull();
     expect(view.element.querySelector("[data-color-countdown]")).toBeNull();
     start(view.element);
@@ -84,11 +84,11 @@ describe("Color view", () => {
     view.dispose();
   });
 
-  it("shows the colour full-board for 5 seconds with a countdown, then hides it for the sliders", async () => {
+  it("shows the color full-board for 5 seconds with a countdown, then hides it for the sliders", async () => {
     const view = await open(sourceFor());
     const board = view.element.querySelector<HTMLElement>('[data-color-phase="look"]')!;
     expect(board.style.background).toBe(hsbCss(TARGETS[0]!));
-    expect(view.element.querySelector("[data-color-round]")?.textContent).toBe("Colour 1 of 5");
+    expect(view.element.querySelector("[data-color-round]")?.textContent).toBe("Color 1 of 5");
     const countdown = () => view.element.querySelector("[data-color-countdown]")?.textContent;
     expect(countdown()).toBe("5");
     await vi.advanceTimersByTimeAsync(1_000);
@@ -146,7 +146,7 @@ describe("Color view", () => {
     view.dispose();
   });
 
-  it("submits, reveals the colour beside the guess with its score out of 10, then shows the next colour", async () => {
+  it("submits, reveals the color beside the guess with its score out of 10, then shows the next color", async () => {
     const view = await open(sourceFor());
     await look();
     dial(view.element, "hue", TARGETS[0]!.hue);
@@ -161,25 +161,25 @@ describe("Color view", () => {
     expect(view.element.querySelector("[data-color-total]")?.textContent).toBe("10 points");
 
     view.element.querySelector<HTMLButtonElement>("[data-color-next]")!.click();
-    expect(view.element.querySelector("[data-color-round]")?.textContent).toBe("Colour 2 of 5");
+    expect(view.element.querySelector("[data-color-round]")?.textContent).toBe("Color 2 of 5");
     expect(view.element.querySelector<HTMLElement>('[data-color-phase="look"]')!.style.background).toBe(hsbCss(TARGETS[1]!));
     expect(view.element.querySelector("[data-color-countdown]")?.textContent).toBe("5");
     view.dispose();
   });
 
-  it("records once after the fifth colour, the total in tenths, and shows it out of 50", async () => {
+  it("records once after the fifth color, the total in tenths, and shows it out of 50", async () => {
     const record = vi.fn<DataSource["record"]>(async () => undefined);
     const view = await open(sourceFor(0n, record));
     for (let round = 0; round < 5; round += 1) {
       await look();
-      // The sliders start mid-way every colour; submit them as they are.
+      // The sliders start mid-way every color; submit them as they are.
       view.element.querySelector<HTMLButtonElement>("[data-color-submit]")!.click();
       expect(view.element.querySelector(".color-reveal-score strong")?.textContent).toBe(
         String(roundScore(TARGETS[round]!, START) / 10),
       );
       expect(record).not.toHaveBeenCalled();
       expect(view.element.querySelector("[data-color-next]")?.textContent).toBe(
-        round < 4 ? "Next colour" : "See your total",
+        round < 4 ? "Next color" : "See your total",
       );
       view.element.querySelector<HTMLButtonElement>("[data-color-next]")!.click();
     }
@@ -193,7 +193,7 @@ describe("Color view", () => {
     view.dispose();
   });
 
-  it("restarts the current colour's look after a reload and keeps the colours done", async () => {
+  it("restarts the current color's look after a reload and keeps the colors done", async () => {
     const first = await open(sourceFor());
     await look();
     first.element.querySelector<HTMLButtonElement>("[data-color-submit]")!.click();
@@ -201,13 +201,13 @@ describe("Color view", () => {
     document.body.replaceChildren();
 
     const again = await open(sourceFor());
-    expect(again.element.querySelector("[data-color-round]")?.textContent).toBe("Colour 2 of 5");
+    expect(again.element.querySelector("[data-color-round]")?.textContent).toBe("Color 2 of 5");
     expect(again.element.querySelector("[data-color-countdown]")?.textContent).toBe("5");
     expect(again.element.querySelector<HTMLElement>('[data-color-phase="look"]')!.style.background).toBe(hsbCss(TARGETS[1]!));
     again.dispose();
   });
 
-  it("opens a day recorded elsewhere read-only, with the day's five colours", async () => {
+  it("opens a day recorded elsewhere read-only, with the day's five colors", async () => {
     const view = renderColor(sourceFor(1n << 8n), DAY);
     document.body.append(view.element);
     await vi.waitFor(() => expect(view.element.querySelector(".color-result")).not.toBeNull());

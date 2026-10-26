@@ -78,10 +78,10 @@ describe("stripState", () => {
     expect(stripState(EMPTY_BITS, 1, 1, GAME_ROSTER)).toBe("red");
   });
 
-  it("stays grey at 0/6 at exactly four hours or with no streak", () => {
-    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS, GAME_ROSTER)).toBe("grey");
-    expect(stripState(EMPTY_BITS, 0, HOUR, GAME_ROSTER)).toBe("grey");
-    expect(stripState(EMPTY_BITS, 0, 10 * HOUR, GAME_ROSTER)).toBe("grey");
+  it("stays gray at 0/6 at exactly four hours or with no streak", () => {
+    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS, GAME_ROSTER)).toBe("gray");
+    expect(stripState(EMPTY_BITS, 0, HOUR, GAME_ROSTER)).toBe("gray");
+    expect(stripState(EMPTY_BITS, 0, 10 * HOUR, GAME_ROSTER)).toBe("gray");
   });
 });
 
@@ -153,9 +153,9 @@ describe("dailyFace layout", () => {
 });
 
 describe("dailyFace", () => {
-  it("draws one tile per pick: colour on the games left to play, done ones muted", () => {
+  it("draws one tile per pick: color on the games left to play, done ones muted", () => {
     // Why: the card is an action list. The games still to play carry the
-    // colour, one of them solid as next up; a done game has nothing to tap for.
+    // color, one of them solid as next up; a done game has nothing to tap for.
     const paths = imagePathsIn(dailyFace(three, {}, {}, noon, SIX));
     const tiles = paths.filter((path) => /^tiles\/tile-[a-z]+-(next|idle|done)\.png$/.test(path));
     expect(tiles).toHaveLength(SIX.length);
@@ -234,11 +234,11 @@ describe("dailyFace", () => {
     const some = dailyFace(three, {}, { streakAny: 14 }, noon);
     expect(imagePathsIn(some)).toContain("tiles/flame.png");
     const texts = nodesIn(some).filter((n) => n.tag === "Text" && !/^(NEW SET IN|\d\d:\d\d:\d\d)$/.test(textsIn(n)[0] ?? ""));
-    const colours = texts.map((n) => [textsIn(n)[0], n.value?.props?.color, n.value?.props?.style]);
-    expect(colours).toEqual([["14", "FgWarning", "BodyLargeRegular"]]);
+    const colors = texts.map((n) => [textsIn(n)[0], n.value?.props?.color, n.value?.props?.style]);
+    expect(colors).toEqual([["14", "FgWarning", "BodyLargeRegular"]]);
   });
 
-  it("draws the strip that stripState names: grey, green, gold, red", () => {
+  it("draws the strip that stripState names: gray, green, gold, red", () => {
     expect(strip(dailyFace(EMPTY_BITS, {}, {}, noon))).toBe("FgTertiary");
     expect(strip(dailyFace(three, {}, {}, noon))).toBe("FgSuccess");
     expect(strip(dailyFace({ played: 1n, solved: 0n }, {}, {}, noon))).toBe("FgSuccess");

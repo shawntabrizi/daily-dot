@@ -10,14 +10,14 @@ export type HeaderLeft = "menu" | "back";
 export interface HeaderHandle {
   element: HTMLElement;
   setStreaks(streaks: Pick<HubStreaks, "any">): void;
-  /** The centred slot: null is the hub's "Daily on Dot"; a string is a screen's eyebrow ("Daily Word · Day 294"). */
+  /** The centered slot: null is the hub's "Daily on Dot"; a string is a screen's eyebrow ("Daily Word · Day 294"). */
   setTitle(text: string | null): void;
   /** The 44 px circle on the left: the hamburger on the hub, the back arrow everywhere else. */
   setLeft(kind: HeaderLeft): void;
   /** Where the back circle goes (`setLeft` resets it to today). */
   setBack(href: string, label: string): void;
   /**
-   * A game screen (Game board): accent dot and short name centred, the day
+   * A game screen (Game board): accent dot and short name centered, the day
    * pill on the right. On a past day the pill is "‹ DAY N ›": the same game
    * a day earlier or later (Archive board).
    */
@@ -50,8 +50,8 @@ export function headerTitle(): string | null {
 
 /**
  * The per-screen header the boards draw: a 44 px circle on the left, the
- * title or a screen's eyebrow centred, the streak pill on the right of the
- * hub (a spacer elsewhere keeps the title centred). No hairline, no blur.
+ * title or a screen's eyebrow centered, the streak pill on the right of the
+ * hub (a spacer elsewhere keeps the title centered). No hairline, no blur.
  */
 export function createHeader(options: HeaderOptions = {}): HeaderHandle {
   const header = document.createElement("header");

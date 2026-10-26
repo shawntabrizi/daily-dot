@@ -3,12 +3,12 @@ import { ROUNDS, type Hsb } from "./engine";
 
 const V1_SALT = 0x636f6c72;
 
-/** The v1 draw's ranges: no washed-out greys and no near-blacks to remember. */
+/** The v1 draw's ranges: no washed-out grays and no near-blacks to remember. */
 export const V1_SATURATION = { min: 25, max: 100 } as const;
 export const V1_BRIGHTNESS = { min: 30, max: 100 } as const;
 
 /**
- * The day's five colours. v1 is historical content once played (D11): any
+ * The day's five colors. v1 is historical content once played (D11): any
  * change to the draw rewrites past days, so a new rule ships as a new
  * version from a future start day.
  */

@@ -34,7 +34,7 @@ import { applyGuess } from "./games/word/session";
 import { CARD_STATE_KEY, type CardSummary } from "./shared/card-state";
 import { dayIndexFromTimestamp } from "./shared/day";
 import { OPEN_INTENT_KEY, parseOpenIntent } from "./shared/open-intent";
-import { PICKS_KEY, serialisePicks } from "./shared/picks";
+import { PICKS_KEY, serializePicks } from "./shared/picks";
 import { pickSixGames } from "./test/picks";
 import { createWordProgress, saveWordProgress } from "./shared/progress";
 import { GAME_ROSTER, gameIdOf } from "./shared/roster";
@@ -79,7 +79,7 @@ const settled = () => new Promise((resolve) => setTimeout(resolve, 0));
 // The six original games picked, in the host's copy and this device's
 // mirror, except where a test sets its own (D21).
 beforeEach(() => {
-  host.values.set(PICKS_KEY, serialisePicks([0, 1, 2, 3, 4, 5]));
+  host.values.set(PICKS_KEY, serializePicks([0, 1, 2, 3, 4, 5]));
   pickSixGames();
 });
 
@@ -102,7 +102,7 @@ describe("fromCard", () => {
 
 describe("card launcher", () => {
   it("lists only the picks the card draws, from the host's copy, and counts them alone", async () => {
-    host.values.set(PICKS_KEY, serialisePicks([0, 4, 5]));
+    host.values.set(PICKS_KEY, serializePicks([0, 4, 5]));
     // Globe (3) is done but not picked: no row, no count.
     seedChecklist(today(), [0, 3]);
     const { root, dispose } = mount();
@@ -118,7 +118,7 @@ describe("card launcher", () => {
   it("falls back to this device's picks, then to the starter set", async () => {
     host.values.delete(PICKS_KEY);
     window.localStorage.clear();
-    window.localStorage.setItem(PICKS_KEY, serialisePicks([2]));
+    window.localStorage.setItem(PICKS_KEY, serializePicks([2]));
     const local = mount();
     await settled();
     expect(rows(local.root).map((row) => row.dataset.launcherGame)).toEqual(["chess"]);

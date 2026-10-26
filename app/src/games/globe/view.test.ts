@@ -104,7 +104,7 @@ describe("Globe view", () => {
     view.dispose();
   });
 
-  it("greys out guessed countries and will not pick them", async () => {
+  it("grays out guessed countries and will not pick them", async () => {
     const day = 208;
     const answer = globeAnswer(day, "v1");
     const guess = GLOBE_COUNTRIES.find((country) => country.id !== answer.id)!;
@@ -120,11 +120,11 @@ describe("Globe view", () => {
     const options = [...view.element.querySelectorAll<HTMLElement>(
       "#globe-country-options [role=option]",
     )];
-    const greyed = options.filter((option) => option.getAttribute("aria-disabled") === "true");
-    expect(greyed).toHaveLength(1);
-    expect(greyed[0]!.firstChild?.textContent).toBe(guess.name);
+    const grayed = options.filter((option) => option.getAttribute("aria-disabled") === "true");
+    expect(grayed).toHaveLength(1);
+    expect(grayed[0]!.firstChild?.textContent).toBe(guess.name);
 
-    greyed[0]!.click();
+    grayed[0]!.click();
     expect(input.value).toBe("");
     expect(view.element.querySelectorAll(".globe-guess-row")).toHaveLength(1);
     view.dispose();
@@ -233,7 +233,7 @@ describe("Globe view", () => {
     view.dispose();
   });
 
-  it("colours the guessed country on the globe with the list's ramp and turns to it", async () => {
+  it("colors the guessed country on the globe with the list's ramp and turns to it", async () => {
     const day = 208;
     const answer = globeAnswer(day, "v1");
     const wrong = GLOBE_COUNTRIES.find(

@@ -282,7 +282,7 @@ export function renderResultPanel(
         );
   main.dataset.resultNext = next?.game?.id ?? (pastDay !== null ? "day" : "today");
   if (next?.game) {
-    // The button wears the next game's colour, not this one's.
+    // The button wears the next game's color, not this one's.
     main.dataset.game = next.game.id;
   }
 
@@ -366,7 +366,7 @@ export interface ResultPanelState {
   late: boolean;
   /** The answer for the subline ("the word was BLONDE"); never in the share text. */
   detail?: string;
-  /** Extra colour-free share lines for this game (Connections' tier rows). */
+  /** Extra color-free share lines for this game (Connections' tier rows). */
   shareLines?: readonly string[];
   /** Finished, not saved: Save offered (unsaved) or the write in flight (saving). */
   pendingSave?: "unsaved" | "saving";

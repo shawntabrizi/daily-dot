@@ -26,7 +26,7 @@ export function kernelRadius(buckets: number): number {
 }
 
 /**
- * A light triangular smoothing (weights r+1−|k|), renormalised at the
+ * A light triangular smoothing (weights r+1−|k|), renormalized at the
  * edges so the first and last buckets are not pulled toward zero.
  */
 export function smoothCounts(counts: readonly number[], radius = 1): number[] {
@@ -76,7 +76,7 @@ function round(value: number): number {
 }
 
 /**
- * The curve through `values` (one per bucket, at bucket centres) as a closed
+ * The curve through `values` (one per bucket, at bucket centers) as a closed
  * area: monotone cubic segments (Fritsch–Carlson, as d3's curveMonotoneX), so
  * it never overshoots below the baseline or above a peak, held flat out to
  * both edges.
@@ -132,7 +132,7 @@ export interface DistributionCurve {
   path: string;
   /** Low-score end first. */
   labels: [low: string, high: string];
-  /** The player's bucket, its centre as a share of the width, and the curve's height there (0..1). */
+  /** The player's bucket, its center as a share of the width, and the curve's height there (0..1). */
   player: { bucket: number; x: number; y: number } | null;
 }
 

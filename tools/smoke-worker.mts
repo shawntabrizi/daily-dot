@@ -21,7 +21,7 @@ import {
   detectCardStore,
 } from "../app/src/shared/card-state.ts";
 import { dayIndexFromTimestamp } from "../app/src/shared/day.ts";
-import { PICKS_KEY, serialisePicks } from "../app/src/shared/picks.ts";
+import { PICKS_KEY, serializePicks } from "../app/src/shared/picks.ts";
 import { GAME_ROSTER, gameIdOf } from "../app/src/shared/roster.ts";
 import { expectText as expectFaceText, imagePathsIn, stripTokenIn, textsIn } from "./face-text.mts";
 
@@ -84,7 +84,7 @@ Date.now = () => frozen;
 // The player picked the six original games (D21); later steps change the picks.
 await (await getHostLocalStorage())!.writeString(
   PICKS_KEY,
-  serialisePicks(SIX.map((game) => game.gameId)),
+  serializePicks(SIX.map((game) => game.gameId)),
 );
 
 await import("../pocket/src/worker.ts");
@@ -108,7 +108,7 @@ expectText(sent[0], "Tap to play", "empty store");
 expectStrip(sent[0], "FgTertiary", "empty store");
 expectText(sent[0], "NEW SET IN", "empty store");
 expectText(sent[0], "12:00:00", "empty store");
-console.log(`ok  card on screen with nothing stored -> 0/${N}, "Tap to play", grey strip`);
+console.log(`ok  card on screen with nothing stored -> 0/${N}, "Tap to play", gray strip`);
 if ((await (await getHostLocalStorage())!.readString(CARD_DRAWN_KEY)) !== "1") {
   fail("the worker did not mark the card as drawn");
 }
@@ -161,7 +161,7 @@ if (sent.length !== 4) fail(`expected a repaint after the stored day went stale,
 expectImage(sent[3], `tiles/count-0-of-${N}.png`, "stale day");
 expectNoText(sent[3], "Tap to play", "stale day");
 expectStrip(sent[3], "FgTertiary", "stale day");
-console.log(`ok  stale day in the store -> 0/${N}, grey strip`);
+console.log(`ok  stale day in the store -> 0/${N}, gray strip`);
 
 // A streak at risk: nothing played today, a streak on the record, and the
 // clock at 23:30 UTC. The worker reads the clock on every poll.
@@ -187,7 +187,7 @@ console.log("ok  streak of 3, nothing played, 23:30 UTC -> red strip, countdown 
 await store.write(
   JSON.stringify({ version: 1, day: today, played: "1", solved: "1", streakAny: 3 }),
 );
-await (await getHostLocalStorage())!.writeString(PICKS_KEY, serialisePicks([0, 4]));
+await (await getHostLocalStorage())!.writeString(PICKS_KEY, serializePicks([0, 4]));
 await sleep(2_600);
 if (sent.length !== 6) fail(`expected a repaint after the picks changed, got ${sent.length} faces`);
 expectImage(sent[5], "tiles/count-1-of-2.png", "two picks");
@@ -202,7 +202,7 @@ console.log("ok  picks narrowed to Word and Mini, Word played -> 1/2, two tiles,
 // holds, so five of them and a "+".
 await (await getHostLocalStorage())!.writeString(
   PICKS_KEY,
-  serialisePicks(GAME_ROSTER.map((game) => game.gameId)),
+  serializePicks(GAME_ROSTER.map((game) => game.gameId)),
 );
 await sleep(2_600);
 if (sent.length !== 7) fail(`expected a repaint after every game was picked, got ${sent.length} faces`);

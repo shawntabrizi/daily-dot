@@ -78,7 +78,7 @@ h1 {
 }
 
 /* The per-screen header as the boards draw it: a 44 px circle on the left (menu on the
-   hub, back elsewhere), a centred title or eyebrow, one control on the right. No hairline,
+   hub, back elsewhere), a centered title or eyebrow, one control on the right. No hairline,
    no blur. */
 .site-header {
   display: flex;
@@ -176,7 +176,7 @@ h1 {
   display: none;
 }
 
-/* The right slot keeps the title centred when the pill is off: a 44 px spacer. */
+/* The right slot keeps the title centered when the pill is off: a 44 px spacer. */
 .header-right {
   display: flex;
   flex: none;

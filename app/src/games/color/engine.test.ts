@@ -74,7 +74,7 @@ describe("ciede2000", () => {
     expect(ciede2000(left, { L: 50, a: -2.49, b: 0.0011 })).toBeCloseTo(7.2195, 4);
   });
 
-  it("is zero for the same colour", () => {
+  it("is zero for the same color", () => {
     expect(ciede2000({ L: 40, a: 12, b: -30 }, { L: 40, a: 12, b: -30 })).toBe(0);
   });
 });
@@ -130,7 +130,7 @@ describe("the score", () => {
     expect(() => scoreForDelta(Number.NaN)).toThrow(RangeError);
   });
 
-  it("scores a colour through sRGB and CIELAB, and the day as the sum of the rounded colours", () => {
+  it("scores a color through sRGB and CIELAB, and the day as the sum of the rounded colors", () => {
     const target: Hsb = { hue: 210, saturation: 60, brightness: 80 };
     expect(roundScore(target, target)).toBe(100);
     // Opposite hues are far apart; black against white is beyond 40.
@@ -155,18 +155,18 @@ describe("the score", () => {
 });
 
 describe("colorAnswer v1", () => {
-  it("is frozen: these days keep these colours on every device (D11)", () => {
+  it("is frozen: these days keep these colors on every device (D11)", () => {
     expect(colorAnswer(0, "v1")).toEqual(FROZEN_0);
     expect(colorAnswer(295, "v1")[0]).toEqual(FROZEN_295_FIRST);
     expect(colorAnswer(1000, "v1")[4]).toEqual(FROZEN_1000_LAST);
   });
 
-  it("draws five colours a day within hue 0–359, saturation 25–100, brightness 30–100", () => {
+  it("draws five colors a day within hue 0–359, saturation 25–100, brightness 30–100", () => {
     const seen = { hueLow: false, hueHigh: false, satLow: false, satHigh: false, briLow: false, briHigh: false };
     for (let day = 0; day < 3650; day += 1) {
-      const colours = colorAnswer(day, "v1");
-      expect(colours).toHaveLength(5);
-      for (const { hue, saturation, brightness } of colours) {
+      const colors = colorAnswer(day, "v1");
+      expect(colors).toHaveLength(5);
+      for (const { hue, saturation, brightness } of colors) {
         expect(isHsb({ hue, saturation, brightness })).toBe(true);
         expect(saturation).toBeGreaterThanOrEqual(V1_SATURATION.min);
         expect(saturation).toBeLessThanOrEqual(V1_SATURATION.max);

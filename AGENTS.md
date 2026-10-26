@@ -64,8 +64,8 @@ below, **stop and say so** rather than designing around it.
 - **D23** Daily Angle (gameId 7, `#/g/angle`): an angle of 1°–359°, procedural; each
   guess gets So close (≤5°) / Hot (≤15°) / Warm (≤30°) / Cold and an up/down arrow; no
   cap (D13, unlike Angledle's six); `score` = guesses.
-- **D24** Daily Color (gameId 8, `#/g/color`): five procedural colours a day, each shown
-  5 s then rebuilt with hue/saturation/brightness sliders; 10 × (1 − ΔE00/40) per colour;
+- **D24** Daily Color (gameId 8, `#/g/color`): five procedural colors a day, each shown
+  5 s then rebuilt with hue/saturation/brightness sliders; 10 × (1 − ΔE00/40) per color;
   `score` = total in tenths of a point (0–500), higher better.
 - **D25** Daily Sound (gameId 9, `#/g/sound`): five procedural tones a day (110–880 Hz),
   each heard once then found by dragging; 10 × (1 − ΔERB/0.5) per tone; `score` = total
@@ -132,5 +132,5 @@ Body/numerals: a neutral grotesque (DM Sans or similar), 400/500/900.
 Letter tiles 64×64 r6 · keyboard keys 32×50 r4 · icon buttons 36×36 round.
 
 Layout: mobile is one vertical stack of full-width cards; desktop reflows the *same* cards
-into a centred grid. Persistent header `hamburger · title · archive · settings · account`.
+into a centered grid. Persistent header `hamburger · title · archive · settings · account`.
 No bottom tab bar. Must work at 360px wide with no horizontal scroll.

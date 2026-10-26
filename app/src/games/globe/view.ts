@@ -74,9 +74,9 @@ function createGuessRow(guess: Country, answer: Country): HTMLElement {
   continent.textContent = guess.continent;
   identity.append(name, continent);
 
-  const kilometres = document.createElement("strong");
-  kilometres.className = "globe-distance";
-  kilometres.textContent = `${Math.round(distance).toLocaleString("en")} km`;
+  const kilometers = document.createElement("strong");
+  kilometers.className = "globe-distance";
+  kilometers.textContent = `${Math.round(distance).toLocaleString("en")} km`;
 
   const arrow = document.createElement("span");
   arrow.className = "globe-direction";
@@ -89,7 +89,7 @@ function createGuessRow(guess: Country, answer: Country): HTMLElement {
   );
   arrow.title = arrow.getAttribute("aria-label") ?? "";
 
-  row.append(identity, kilometres, arrow);
+  row.append(identity, kilometers, arrow);
   return row;
 }
 
@@ -152,7 +152,7 @@ function createCountryPicker(
       option.setAttribute("role", "option");
       option.setAttribute("aria-selected", "false");
       option.textContent = country.name;
-      // Guessed countries stay in place, greyed, so the list keeps its order.
+      // Guessed countries stay in place, grayed, so the list keeps its order.
       if (guessed.has(country.id)) {
         option.setAttribute("aria-disabled", "true");
         const note = document.createElement("span");
@@ -357,7 +357,7 @@ export function renderGlobe(
           : `Globe. Marked: ${shown.map((country) => country.name).join(", ")}. Drag to rotate, pinch or scroll to zoom.`,
       );
       // Turn to the newest guess (or the answer once revealed); the first
-      // frame jumps so a restored game opens already centred.
+      // frame jumps so a restored game opens already centered.
       const target = readOnly ? answer : guessed[guessed.length - 1];
       if (target && target.id !== focusedIso) {
         globe.focus(target, focusedIso !== null);

@@ -11,7 +11,7 @@ const SHELL_CSS = readFileSync(
 );
 
 describe("header", () => {
-  it("on the hub: the hamburger, the centred title and the pill; no archive icon", () => {
+  it("on the hub: the hamburger, the centered title and the pill; no archive icon", () => {
     const onMenu = vi.fn();
     const header = createHeader({ onMenu });
     const menu = header.element.querySelector<HTMLButtonElement>('button[aria-label="Menu"]');

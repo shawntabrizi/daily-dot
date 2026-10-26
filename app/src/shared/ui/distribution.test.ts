@@ -44,7 +44,7 @@ describe("bucketCounts", () => {
 describe("smoothCounts", () => {
   it("is a light 3-bucket kernel that keeps the peak where it was", () => {
     expect(smoothCounts([0, 0, 4, 0, 0])).toEqual([0, 1, 2, 1, 0]);
-    // Renormalised at the edges: a crowd in the first bucket is not halved.
+    // Renormalized at the edges: a crowd in the first bucket is not halved.
     expect(smoothCounts([4, 0, 0])).toEqual([(4 * 2) / 3, 1, 0]);
   });
 
@@ -80,7 +80,7 @@ describe("curvePath", () => {
 });
 
 describe("distributionCurve", () => {
-  it("places the player at their bucket's centre, at the curve's height there", () => {
+  it("places the player at their bucket's center, at the curve's height there", () => {
     const curve = distributionCurve(WORD, histogram([[1, 3], [3, 1]]), 4);
     expect(curve.player?.bucket).toBe(3);
     expect(curve.player?.x).toBeCloseTo(3.5 / 31);

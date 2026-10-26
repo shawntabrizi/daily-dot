@@ -32,7 +32,7 @@ export function asciiJson(value: unknown): string {
   );
 }
 
-// A clock in the middle of the day (grey, green or gold strip) and one under
+// A clock in the middle of the day (gray, green or gold strip) and one under
 // four hours before 00:00 UTC (red when a streak is at risk).
 const noon = Date.UTC(2026, 9, 22, 12, 0, 0);
 const late = noon + 24 * 60 * 60 * 1_000 - msToRollover(noon) - RED_WINDOW_MS / 2;
@@ -65,8 +65,8 @@ for (let count = 1; count <= GAME_ROSTER.length; count += 1) {
   const games = GAME_ROSTER.slice(0, count);
   const all = games.reduce((bits, game) => bits | bit(game.gameId), 0n);
   const first = bit(games[0]!.gameId);
-  faces[`0/${count} grey`] = { face: dailyFace(EMPTY_BITS, {}, {}, noon, games), strip: "FgTertiary" };
-  faces[`0/${count} grey, streaks`] = { face: dailyFace(EMPTY_BITS, {}, streaks, noon, games), strip: "FgTertiary" };
+  faces[`0/${count} gray`] = { face: dailyFace(EMPTY_BITS, {}, {}, noon, games), strip: "FgTertiary" };
+  faces[`0/${count} gray, streaks`] = { face: dailyFace(EMPTY_BITS, {}, streaks, noon, games), strip: "FgTertiary" };
   if (count > 1) {
     faces[`1/${count} green, late`] = {
       face: dailyFace({ played: first, solved: first }, {}, streaks, late, games),

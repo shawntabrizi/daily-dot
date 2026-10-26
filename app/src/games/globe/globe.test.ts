@@ -7,7 +7,7 @@ import {
   countriesNeedingDots,
   countryFills,
   createGlobe,
-  fillColour,
+  fillColor,
   GLOBE_SHAPES,
   shapeExtent,
   shapeFill,
@@ -60,10 +60,10 @@ describe("places that are not guessable (D26)", () => {
     expect(shapeFill(greenland, countryFills([denmark], answer, false), guessable)).toEqual({
       kind: "territory",
     });
-    expect(fillColour({ kind: "territory" }, palette)).toBe("#707070");
+    expect(fillColor({ kind: "territory" }, palette)).toBe("#707070");
   });
 
-  it("reveals the answer's territories with it, but never fills them in its colour", () => {
+  it("reveals the answer's territories with it, but never fills them in its color", () => {
     const denmarkAnswer = countryFills([], denmark, true);
     expect(shapeFill(greenland, denmarkAnswer, guessable)).toEqual({ kind: "territory" });
     expect(denmarkAnswer.has("GRL")).toBe(false);
@@ -82,11 +82,11 @@ describe("places that are not guessable (D26)", () => {
     const chinaGuessed = countryFills([china], answer, false);
     expect(shapeFill(hongKong, chinaGuessed, ids)).toBeUndefined();
     expect(shapeFill(hongKong, chinaGuessed, guessable)).toEqual({ kind: "territory" });
-    // Hong Kong guessed: its own proximity colour, like any country.
+    // Hong Kong guessed: its own proximity color, like any country.
     const hongKongGuessed = countryFills([hongKong], answer, false);
     expect(shapeFill(hongKong, hongKongGuessed, ids)).toEqual(hongKongGuessed.get("HKG"));
     expect(shapeFill(hongKong, hongKongGuessed, ids)).toMatchObject({ kind: "guess" });
-    // And as the answer, the answer colour.
+    // And as the answer, the answer color.
     expect(shapeFill(hongKong, countryFills([], hongKong, true), ids)).toEqual({ kind: "answer" });
   });
 });
@@ -138,7 +138,7 @@ describe("countryFills", () => {
   const near = byDistance[0]!;
   const far = byDistance[byDistance.length - 1]!;
 
-  it("colours a guess with the same ramp the guess list uses", () => {
+  it("colors a guess with the same ramp the guess list uses", () => {
     const fills = countryFills([far, near], answer, false);
     expect(fills.get(far.id)).toEqual({
       kind: "guess",
@@ -162,19 +162,19 @@ describe("countryFills", () => {
   });
 });
 
-describe("fillColour", () => {
+describe("fillColor", () => {
   it("mixes between the design-system tokens like the rows' color-mix", () => {
-    expect(fillColour({ kind: "answer" }, palette)).toBe(palette.correct);
-    expect(fillColour({ kind: "guess", segment: "far", mix: 0 }, palette)).toBe(
+    expect(fillColor({ kind: "answer" }, palette)).toBe(palette.correct);
+    expect(fillColor({ kind: "guess", segment: "far", mix: 0 }, palette)).toBe(
       "rgb(198 33 33)",
     );
-    expect(fillColour({ kind: "guess", segment: "far", mix: 100 }, palette)).toBe(
+    expect(fillColor({ kind: "guess", segment: "far", mix: 100 }, palette)).toBe(
       "rgb(218 195 22)",
     );
-    expect(fillColour({ kind: "guess", segment: "near", mix: 100 }, palette)).toBe(
+    expect(fillColor({ kind: "guess", segment: "near", mix: 100 }, palette)).toBe(
       "rgb(85 183 37)",
     );
-    expect(fillColour({ kind: "guess", segment: "near", mix: 50 }, palette)).toBe(
+    expect(fillColor({ kind: "guess", segment: "near", mix: 50 }, palette)).toBe(
       "rgb(152 189 30)",
     );
   });

@@ -31,7 +31,7 @@ import {
   PICKS_EVENT,
   detectPicksStore,
   pickedGames,
-  serialisePicks,
+  serializePicks,
   syncPicksWithHost,
   type PicksChange,
 } from "./shared/picks";
@@ -298,7 +298,7 @@ export function bootApp(root: HTMLElement): () => void {
     const change = (event as CustomEvent<PicksChange>).detail;
     if (change.from !== "player") return;
     void picksStore
-      .then((store) => store.write(serialisePicks(change.games)))
+      .then((store) => store.write(serializePicks(change.games)))
       .catch((error: unknown) => console.warn("[daily-on-dot] picks write failed", error));
   };
   window.addEventListener(PICKS_EVENT, onPicks);

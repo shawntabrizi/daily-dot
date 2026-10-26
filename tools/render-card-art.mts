@@ -1,13 +1,13 @@
 // Bakes the Pocket card's art into pocket/public/tiles/ as PNG.
 //
 // The card is the approved board (plans/wp-36-boards/Main.dc.html, "Proposed:
-// scoreboard"). The renderer has nine theme colours, five text styles and no
-// Fredoka or Nunito, so every coloured or typeset mark on the card is an image
+// scoreboard"). The renderer has nine theme colors, five text styles and no
+// Fredoka or Nunito, so every colored or typeset mark on the card is an image
 // from the worker archive: the "n/k" count (every n of every k picked games),
 // the "DONE TODAY" label,
 // the flame of the streak, and the six game tiles whole
 // (accent fill with ink glyph and label when done, dark with a ring when
-// not). The state strip is a plain Box in a theme colour, so it needs no art.
+// not). The state strip is a plain Box in a theme color, so it needs no art.
 // Each asset is the board's own HTML and CSS, rasterised at 3x by headless
 // Chromium (the app's Playwright) so it is crisp on a phone. Commit the PNGs:
 // Vite copies pocket/public into the worker archive.
@@ -118,8 +118,8 @@ function svg(width: number, height: number, body: string): string {
 }
 
 /**
- * One whole tile: glyph over label, centred. The games left to play carry
- * the colour: "next" is solid accent, "idle" (still to play) is the accent on
+ * One whole tile: glyph over label, centered. The games left to play carry
+ * the color: "next" is solid accent, "idle" (still to play) is the accent on
  * a tinted dark with an accent ring, "done" is muted with a check.
  */
 function tile(id: GameSlug, state: "next" | "idle" | "done"): string {

@@ -11,13 +11,13 @@
 // Right: up to six of the picked games in rows of three tiles (`cardTiles`:
 // unfinished first, then finished; five and a "+" when more than six are
 // unfinished), each baked whole as one PNG, spread across the column. The
-// games left to play carry the colour: the first is solid accent (next up),
+// games left to play carry the color: the first is solid accent (next up),
 // the rest show their glyph and label in the accent; a done game is muted with
 // a check, since nothing is left to do there. A strip down the left edge is the day's
-// state: grey before any game, green once one is played, gold when every pick
+// state: gray before any game, green once one is played, gold when every pick
 // is done, red when the streak is about to lapse.
-// The renderer has nine theme colours, five text styles and no Fredoka or
-// Nunito, so every coloured or typeset mark is a PNG from the worker archive
+// The renderer has nine theme colors, five text styles and no Fredoka or
+// Nunito, so every colored or typeset mark is a PNG from the worker archive
 // (`pocket/public/tiles/`, baked by `pnpm pocket:art`); only the streak
 // numbers and "Tap to play" are live text.
 //
@@ -52,7 +52,7 @@ const CARD_HEIGHT = 234;
 const CARD_RADIUS = 24;
 const PADDING = { top: 18, end: 20, bottom: 16, start: 20 };
 const INNER_HEIGHT = CARD_HEIGHT - PADDING.top - PADDING.bottom;
-/** The state strip down the left edge: a Box in a theme colour (an Image here
+/** The state strip down the left edge: a Box in a theme color (an Image here
  *  never showed on the Android host, 2026-10-22). */
 const STRIP_WIDTH = 8;
 /** The left column and the gap to the grid. */
@@ -80,7 +80,7 @@ export const EMPTY_BITS: CardBits = { played: 0n, solved: 0n };
 
 /** Where the PNGs sit in the worker archive (`pocket/public` at build time). */
 export const TILE_DIR = "tiles";
-export type StripState = "grey" | "green" | "gold" | "red";
+export type StripState = "gray" | "green" | "gold" | "red";
 /** A lapsing streak turns the strip red this close to the day's end. */
 export const RED_WINDOW_MS = 4 * 60 * 60 * 1_000;
 const DAY_MS = DAY_SECONDS * 1_000;
@@ -190,7 +190,7 @@ export function tileImage(game: Game, state: TileState): string {
   return `tile-${game.id}-${state}.png`;
 }
 
-/** The strip's theme colour: the renderer has no gold, green or red of its own. */
+/** The strip's theme color: the renderer has no gold, green or red of its own. */
 export function stripToken(state: StripState): ColorToken {
   switch (state) {
     case "green":
@@ -225,9 +225,9 @@ export function countdownToken(msLeft: number): ColorToken {
 }
 
 /**
- * The strip's colour: gold once every pick is done, green once any game is
+ * The strip's color: gold once every pick is done, green once any game is
  * played (an unpicked one keeps the streak too, D17b), red when the streak is
- * about to lapse (nothing played today, under four hours left), else grey.
+ * about to lapse (nothing played today, under four hours left), else gray.
  */
 export function stripState(
   bits: CardBits,
@@ -238,7 +238,7 @@ export function stripState(
   if (playedCount(bits, games) === games.length) return "gold";
   if (playedCount(bits, GAME_ROSTER) > 0) return "green";
   if (streakAny > 0 && msToRollover < RED_WINDOW_MS) return "red";
-  return "grey";
+  return "gray";
 }
 
 /** A tile slot: a picked game, or the "+" that says more are waiting. */

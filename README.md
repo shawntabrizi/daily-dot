@@ -49,14 +49,14 @@ one source of ids, slugs and score kinds.
 | 5 | Daily Connections | mistakes | ConnectionsRegistry (370 authored 4×4 group puzzles, `shared/connections`) |
 | 6 | Daily Code | guesses | procedural, frozen `v1` generator |
 | 7 | Daily Angle | guesses | procedural, frozen `v1` generator |
-| 8 | Daily Color | points in tenths, higher better (0–500) | procedural, frozen `v1` generator: five colours a day, each scored 10 × max(0, 1 − ΔE00/40) |
+| 8 | Daily Color | points in tenths, higher better (0–500) | procedural, frozen `v1` generator: five colors a day, each scored 10 × max(0, 1 − ΔE00/40) |
 | 9 | Daily Sound | points in tenths, higher better (0–500) | procedural, frozen `v1` generator: five tones a day (110–880 Hz), each scored 10 × max(0, 1 − ΔERB/0.5) |
 
 Third-party content: Daily Word's answers are the six-letter words with a
 wordfreq Zipf frequency ≥ 4.0 (wordfreq 3.1.1, data CC BY-SA 4.0 crediting
 SUBTLEX and Google Books Ngrams; the export is `shared/sources/wordfreq-en-six.txt`)
 that SCOWL size 60 lists lowercase (English Speller Database, Kevin Atkinson,
-MIT-like licence kept in `shared/sources/scowl-60-us.txt`), minus LDNOOBW (CC0),
+MIT-like license kept in `shared/sources/scowl-60-us.txt`), minus LDNOOBW (CC0),
 shuffled with seed 20261022 (`pnpm --filter daily-on-dot-prototype generate:wordlists`;
 `shared/wordlists/answers-review.md` lists them with flags). Guesses are the
 six-letter words of ENABLE (public domain), SCOWL size 70 and the answer list
@@ -67,7 +67,7 @@ The display face is Fredoka 600 and 700 (Fredoka Project Authors) and the body f
 Nunito 500/700/800 (Nunito Project Authors), both SIL Open Font License 1.1; latin
 woff2 subsets self-hosted in `app/public/fonts/`, licences in `OFL-fredoka.txt` and
 `OFL-nunito.txt` beside them.
-See `shared/sources/README.md` for every source and licence.
+See `shared/sources/README.md` for every source and license.
 
 Every game writes one `DailyScores.record(gameId, day, score, solved)` at
 completion; `score` is the game's own number (lower or higher is better per game,
@@ -124,14 +124,14 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   unfinished; a short row padded with blanks so the columns hold), each one baked
   PNG (the game's accent with ink glyph and uppercase label when done, dark with
   a ring when not; the last reads GROUPS).
-  A strip down the left edge is grey before any game, green once any game is
+  A strip down the left edge is gray before any game, green once any game is
   played (an unpicked one keeps the streak too), gold when every pick is done,
   or red when the streak is at risk (nothing played today, under 4 h to 00:00
   UTC; `stripState()` is pure). No percentile. A device that never recorded
   shows `"0/3"` and "Tap to play". Plain `RendererNode` literals; sized for the
   host's 234dp frame by arithmetic (18 + 95 + 10 + 95 + 16 tall; 112 + 14 + 3 x
   70 + 2 x 8 = 352 wide of a Pixel's 355), not measurement. The renderer has
-  nine theme colours and five text styles: the streak count is
+  nine theme colors and five text styles: the streak count is
   `BodyLargeRegular` in `FgWarning` (no 18px 800), and a narrow phone (288dp
   inner) clips the third tile column.
 - **The art** is PNG in `pocket/public/tiles/`: `count-<n>-of-<k>.png` for

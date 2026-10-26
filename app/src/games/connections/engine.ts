@@ -11,7 +11,7 @@ export const CONNECTIONS_WORD_COUNT =
   CONNECTIONS_GROUP_COUNT * CONNECTIONS_GROUP_SIZE;
 
 /**
- * Tier 0 is the easiest group, tier 3 the hardest. The names are the colour
+ * Tier 0 is the easiest group, tier 3 the hardest. The names are the color
  * words of our palette (`--present`, `--correct`, then two tier tokens), not
  * another game's; the squares are what the text-only share summary prints.
  */

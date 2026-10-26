@@ -1,4 +1,4 @@
-/* Daily Color (D24): the colour fills the board for its look, then three slim
+/* Daily Color (D24): the color fills the board for its look, then three slim
    slider columns sit on the left with the pick filling the rest (dialed.gg).
    The board takes whatever height is left, so the screen never scrolls (D18). */
 
@@ -72,7 +72,7 @@
   --board-ink-soft: rgb(17 19 20 / 72%);
 }
 
-/* The look: the colour alone, a countdown in the middle. */
+/* The look: the color alone, a countdown in the middle. */
 .color-board--look {
   flex-direction: column;
   align-items: center;
@@ -171,7 +171,7 @@
   outline-offset: 2px;
 }
 
-/* The reveal: the colour beside yours, the score over the seam. */
+/* The reveal: the color beside yours, the score over the seam. */
 .color-board--reveal {
   flex-direction: row;
 }

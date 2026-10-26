@@ -31,7 +31,7 @@ interface StoredPicks {
 }
 
 /** The roster's gameIds among `ids`, in roster order; null when none are left. */
-function normalise(ids: readonly number[]): number[] | null {
+function normalize(ids: readonly number[]): number[] | null {
   const games = GAME_ROSTER.map((game) => game.gameId).filter((id) => ids.includes(id));
   return games.length > 0 ? games : null;
 }
@@ -60,11 +60,11 @@ export function parsePicks(raw: string | null | undefined): number[] | null {
   ) {
     return null;
   }
-  return normalise(candidate.games);
+  return normalize(candidate.games);
 }
 
-export function serialisePicks(ids: readonly number[]): string {
-  const games = normalise(ids);
+export function serializePicks(ids: readonly number[]): string {
+  const games = normalize(ids);
   if (!games) {
     throw new RangeError("At least one roster game must be picked");
   }
@@ -98,7 +98,7 @@ export function savePicks(
   ids: readonly number[],
   storage: StorageLike = window.localStorage,
 ): void {
-  const value = serialisePicks(ids);
+  const value = serializePicks(ids);
   storage.setItem(PICKS_KEY, value);
   announce({ from: "player", games: parsePicks(value)! });
 }
@@ -120,12 +120,12 @@ export async function syncPicksWithHost(
   const local = parsePicks(storage.getItem(PICKS_KEY));
   if (host) {
     if (!local || host.join() !== local.join()) {
-      storage.setItem(PICKS_KEY, serialisePicks(host));
+      storage.setItem(PICKS_KEY, serializePicks(host));
       announce({ from: "host", games: host });
     }
     return;
   }
   if (local) {
-    await store.write(serialisePicks(local));
+    await store.write(serializePicks(local));
   }
 }

@@ -39,7 +39,7 @@ export function imagePathsIn(face: RendererNode): string[] {
   return own.concat((node.value?.children ?? []).flatMap(imagePathsIn));
 }
 
-/** The theme colour of the state strip: the 8dp-wide Box's background. */
+/** The theme color of the state strip: the 8dp-wide Box's background. */
 export function stripTokenIn(face: RendererNode): string | undefined {
   const node = face as unknown as {
     tag: string;

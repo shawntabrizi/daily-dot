@@ -57,7 +57,7 @@ describe("card state merge", () => {
     expect(cardStateBits(merged)).toEqual({ played: 1n | (1n << 5n), solved: 1n << 5n });
   });
 
-  it("serialises bitmaps as decimal strings and rejects anything else", () => {
+  it("serializes bitmaps as decimal strings and rejects anything else", () => {
     const state = withResult(null, TODAY, 63, true);
     expect(JSON.parse(JSON.stringify(state))).toEqual({
       version: 1,
@@ -105,7 +105,7 @@ describe("card summary", () => {
     });
   });
 
-  it("writes the summary through the serialised writer", async () => {
+  it("writes the summary through the serialized writer", async () => {
     const storage = new MemoryStorage();
     const writer = new CardStateWriter(storageCardStore(storage));
     await writer.markRecorded(TODAY, 2, true);

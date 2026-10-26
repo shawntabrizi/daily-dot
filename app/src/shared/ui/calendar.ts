@@ -52,7 +52,7 @@ export interface CalendarEntry {
   state: CalendarCellState;
   disabled: boolean;
   href?: string;
-  /** Ringed in the text colour, `aria-current="date"`. */
+  /** Ringed in the text color, `aria-current="date"`. */
   today?: boolean;
   /** A future day: dim number, hidden from assistive tech (the streaks page). */
   blank?: boolean;
