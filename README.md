@@ -138,7 +138,7 @@ paritytech/humanity-spa's Humanity card and Nemanja's pets.
   every n of k picks, `done-today.png`, `flame.png`, `tile-<id>-{done,idle}.png`,
   `tile-more.png`.
   `pnpm pocket:art` (`tools/render-card-art.mts`) writes each as the board's
-  own HTML/CSS and rasterises it at 3x with the app's Playwright Chromium
+  own HTML/CSS and rasterizes it at 3x with the app's Playwright Chromium
   (`CHROMIUM_PATH=<binary>` to use a preinstalled one). It
   needs Fredoka 700 and Nunito 800 latin woff2 in `app/public/fonts/` (or
   `CARD_ART_FONTS=<dir>`). The PNGs are committed; Vite copies `pocket/public`

@@ -136,7 +136,7 @@ describe("the score", () => {
     // Opposite hues are far apart; black against white is beyond 40.
     expect(roundScore(target, { hue: 30, saturation: 60, brightness: 80 })).toBeLessThan(10);
     expect(roundScore({ hue: 0, saturation: 0, brightness: 0 }, { hue: 0, saturation: 0, brightness: 100 })).toBe(0);
-    // Hue wraps: 359° and 1° are neighbours, not 358° apart.
+    // Hue wraps: 359° and 1° are neighbors, not 358° apart.
     const red = { hue: 359, saturation: 90, brightness: 90 };
     expect(roundScore(red, { ...red, hue: 1 })).toBeGreaterThanOrEqual(95);
 

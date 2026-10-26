@@ -1,4 +1,4 @@
-import { HEAT_BANDS, HEAT_MARKS } from "../../games/angle/engine";
+import { HEAT_BANDS } from "../../games/angle/engine";
 import type { Game, GameSlug } from "../roster";
 import { icon } from "./icons";
 
@@ -81,7 +81,7 @@ export const RULES: Record<GameSlug, GameRules> = {
       { visual: emoji("⬆️"), text: "Each guess says how near you are; the arrow says higher or lower." },
       {
         visual: emoji("🌡️"),
-        text: `${HEAT_MARKS.burning} Burning within ${HEAT_BANDS.burning}°, ${HEAT_MARKS.hot} Hot within ${HEAT_BANDS.hot}°, ${HEAT_MARKS.warm} Warm within ${HEAT_BANDS.warm}°, ${HEAT_MARKS.cold} Cold beyond.`,
+        text: `Burning within ${HEAT_BANDS.burning}°, Hot within ${HEAT_BANDS.hot}°, Warm within ${HEAT_BANDS.warm}°, Cold beyond.`,
       },
     ],
     score: "Fewer guesses is better.",

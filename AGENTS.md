@@ -82,7 +82,7 @@ below, **stop and say so** rather than designing around it.
   bucketed by an owner-set, set-once, per-game **bucket spec** `{min, max, buckets ≤ 128}`:
   linear buckets over `[min, max)`, below `min` in the first, at or above `max` in the
   last. The contract never knows the direction. "Top N%" = rank share counted from the
-  game's better end, ties in the player's favour; the distribution is drawn as a smooth
+  game's better end, ties in the player's favor; the distribution is drawn as a smooth
   curve; the day percentile is the mean of the game percentiles. Parity vectors:
   `shared/bucket-test-vectors.json`. See `PLAN.md` D20, `plans/wp-40-bucket-specs.md`.
 

@@ -114,7 +114,7 @@ describe("Word view", () => {
     expect(winningRow?.querySelectorAll(".letter-tile--correct")).toHaveLength(6);
     expect(view.element.textContent).toContain("PLANET in 1 guess");
     // The day's distribution replaces the keyboard: top 10% (rank 1 of 10,
-    // ties in the player's favour), the player marked on 1 guess.
+    // ties in the player's favor), the player marked on 1 guess.
     await vi.waitFor(() => {
       expect(view.element.querySelector("[data-result-rank-tile] .result-tile-value")?.textContent).toBe("10%");
     });

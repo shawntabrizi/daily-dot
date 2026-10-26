@@ -5,10 +5,10 @@
 // Fredoka or Nunito, so every colored or typeset mark on the card is an image
 // from the worker archive: the "n/k" count (every n of every k picked games),
 // the "DONE TODAY" label,
-// the flame of the streak, and the six game tiles whole
-// (accent fill with ink glyph and label when done, dark with a ring when
-// not). The state strip is a plain Box in a theme color, so it needs no art.
-// Each asset is the board's own HTML and CSS, rasterised at 3x by headless
+// the flame of the streak, and the six game tiles whole, in three looks
+// (next up: accent fill with ink glyph and label; still to play: accent glyph
+// and label on a tint with an accent ring; done: muted with a check). The state strip is a plain Box in a theme color, so it needs no art.
+// Each asset is the board's own HTML and CSS, rasterized at 3x by headless
 // Chromium (the app's Playwright) so it is crisp on a phone. Commit the PNGs:
 // Vite copies pocket/public into the worker archive.
 //

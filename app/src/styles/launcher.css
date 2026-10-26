@@ -114,14 +114,10 @@
   place-items: center;
   border-radius: 14px;
   background: color-mix(in srgb, var(--accent) 16%, var(--surface-raised));
-  color: var(--accent);
+  /* Pulled toward the text color: at least 3.3:1 for every accent in both themes. */
+  color: color-mix(in srgb, var(--accent) 60%, var(--text));
 }
 
-/* Next up: the selected game's tile is solid accent. */
-.launcher-row.is-selected .launcher-row__icon {
-  background: var(--accent);
-  color: var(--accent-ink);
-}
 
 .launcher-row__icon svg {
   width: 22px;
@@ -136,6 +132,13 @@
 
 .launcher-row.is-played .launcher-row__name {
   color: var(--muted);
+}
+
+/* Selected: the tile is solid accent, a done row included (after the done
+   rule, so a re-opened done game still shows as picked). */
+.launcher-row.is-selected .launcher-row__icon {
+  background: var(--accent);
+  color: var(--accent-ink);
 }
 
 /* Name over state word: "Connections" plus "Resume" do not fit side by side in a
