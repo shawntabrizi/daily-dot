@@ -78,7 +78,7 @@ export const RULES: Record<GameSlug, GameRules> = {
   angle: {
     steps: [
       { visual: emoji("📐"), text: "Guess the marked angle, from 1° to 359°." },
-      { visual: emoji("🔥") + emoji("⬆️"), text: "So close, Hot, Warm or Cold tells you how near; the arrow says higher or lower." },
+      { visual: emoji("🔥") + emoji("⬆️"), text: "Burning, Hot, Warm or Cold tells you how near; the arrow says higher or lower." },
     ],
     score: "Fewer guesses is better.",
   },

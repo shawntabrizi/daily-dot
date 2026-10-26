@@ -6,13 +6,15 @@ import { hintFor, isAngle } from "./engine";
 describe("hintFor", () => {
   it.each([
     [137, 137, "exact", null],
-    [135, 137, "close", "up"],
-    [132, 137, "close", "up"],
-    [131, 137, "hot", "up"],
-    [152, 137, "hot", "down"],
-    [153, 137, "warm", "down"],
-    [167, 137, "warm", "down"],
-    [168, 137, "cold", "down"],
+    [136, 137, "burning", "up"],
+    [134, 137, "burning", "up"],
+    [133, 137, "hot", "up"],
+    [147, 137, "hot", "down"],
+    [148, 137, "warm", "down"],
+    [162, 137, "warm", "down"],
+    [163, 137, "cold", "down"],
+    // Shawn's case: 14° off is not near enough to be Hot.
+    [29, 43, "warm", "up"],
     [90, 137, "cold", "up"],
   ])("%i° for %i° is %s, %s", (guess, answer, heat, direction) => {
     expect(hintFor(guess, answer)).toEqual({ heat, direction });

@@ -211,9 +211,10 @@
   background: var(--surface-raised);
 }
 
-.angle-row--close,
+/* One heat scale, cool to hot; green only for the answer. */
 .angle-row--exact { border-left-color: var(--correct); }
-.angle-row--hot { border-left-color: var(--wrong); }
+.angle-row--burning { border-left-color: var(--wrong); }
+.angle-row--hot { border-left-color: color-mix(in srgb, var(--present), var(--wrong)); }
 .angle-row--warm { border-left-color: var(--present); }
 .angle-row--cold { border-left-color: var(--tier-sky); }
 
