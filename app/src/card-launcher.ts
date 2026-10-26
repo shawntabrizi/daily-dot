@@ -276,7 +276,10 @@ export function renderCardLauncher(root: HTMLElement): () => void {
   play.addEventListener("click", () => {
     if (selected) openGame(selected.route);
   });
-  open.addEventListener("click", () => openGame());
+  // The hub route, not the bare product: Android (nightly 1042, 2026-10-26)
+  // answers ok to a bare `polkadotapp://<id>` from beneath the card but opens
+  // nothing; a routed URL opens the full app, as Play's does.
+  open.addEventListener("click", () => openGame("#/"));
 
   return () => {
     disposed = true;
