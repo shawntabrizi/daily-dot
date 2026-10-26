@@ -226,7 +226,7 @@ it("routes an archived Daily Globe day into the procedural screen", async () => 
   root.querySelector<HTMLInputElement>("#globe-country-input")?.focus();
   expect(
     root.querySelectorAll("#globe-country-options [role=option]"),
-  ).toHaveLength(166);
+  ).toHaveLength(197);
   dispose();
 });
 

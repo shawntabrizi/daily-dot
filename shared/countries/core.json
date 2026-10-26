@@ -1,1164 +1,2502 @@
 [
   {
+    "id": "ABW",
+    "name": "Aruba",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "NLD",
+    "lat": 12.5174,
+    "lng": -69.972795,
+    "continent": "North America"
+  },
+  {
+    "id": "AFG",
     "name": "Afghanistan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
     "lat": 34.164262,
     "lng": 66.496586,
-    "continent": "Asia",
-    "iso": "AFG"
+    "continent": "Asia"
   },
   {
-    "name": "Albania",
-    "lat": 40.654855,
-    "lng": 20.11384,
-    "continent": "Europe",
-    "iso": "ALB"
-  },
-  {
-    "name": "Algeria",
-    "lat": 27.397406,
-    "lng": 2.808241,
-    "continent": "Africa",
-    "iso": "DZA"
-  },
-  {
+    "id": "AGO",
     "name": "Angola",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
     "lat": -12.182762,
     "lng": 17.984249,
-    "continent": "Africa",
-    "iso": "AGO"
-  },
-  {
-    "name": "Argentina",
-    "lat": -33.501159,
-    "lng": -64.173331,
-    "continent": "South America",
-    "iso": "ARG"
-  },
-  {
-    "name": "Armenia",
-    "lat": 40.459077,
-    "lng": 44.800564,
-    "continent": "Asia",
-    "iso": "ARM"
-  },
-  {
-    "name": "Australia",
-    "lat": -24.129522,
-    "lng": 134.04972,
-    "continent": "Oceania",
-    "iso": "AUS"
-  },
-  {
-    "name": "Austria",
-    "lat": 47.518859,
-    "lng": 14.130515,
-    "continent": "Europe",
-    "iso": "AUT"
-  },
-  {
-    "name": "Azerbaijan",
-    "lat": 40.402387,
-    "lng": 47.210994,
-    "continent": "Asia",
-    "iso": "AZE"
-  },
-  {
-    "name": "Bahamas",
-    "lat": 26.401789,
-    "lng": -77.146688,
-    "continent": "North America",
-    "iso": "BHS"
-  },
-  {
-    "name": "Bangladesh",
-    "lat": 24.214956,
-    "lng": 89.684963,
-    "continent": "Asia",
-    "iso": "BGD"
-  },
-  {
-    "name": "Belarus",
-    "lat": 53.821888,
-    "lng": 28.417701,
-    "continent": "Europe",
-    "iso": "BLR"
-  },
-  {
-    "name": "Belgium",
-    "lat": 50.785392,
-    "lng": 4.800448,
-    "continent": "Europe",
-    "iso": "BEL"
-  },
-  {
-    "name": "Belize",
-    "lat": 17.202068,
-    "lng": -88.712962,
-    "continent": "North America",
-    "iso": "BLZ"
-  },
-  {
-    "name": "Benin",
-    "lat": 10.324775,
-    "lng": 2.352018,
-    "continent": "Africa",
-    "iso": "BEN"
-  },
-  {
-    "name": "Bhutan",
-    "lat": 27.536685,
-    "lng": 90.040294,
-    "continent": "Asia",
-    "iso": "BTN"
-  },
-  {
-    "name": "Bolivia",
-    "lat": -16.666015,
-    "lng": -64.593433,
-    "continent": "South America",
-    "iso": "BOL"
-  },
-  {
-    "name": "Bosnia and Herz.",
-    "lat": 44.091051,
-    "lng": 18.06841,
-    "continent": "Europe",
-    "iso": "BIH"
-  },
-  {
-    "name": "Botswana",
-    "lat": -22.102634,
-    "lng": 24.179216,
-    "continent": "Africa",
-    "iso": "BWA"
-  },
-  {
-    "name": "Brazil",
-    "lat": -12.098687,
-    "lng": -49.55945,
-    "continent": "South America",
-    "iso": "BRA"
-  },
-  {
-    "name": "Brunei",
-    "lat": 4.448298,
-    "lng": 114.551943,
-    "continent": "Asia",
-    "iso": "BRN"
-  },
-  {
-    "name": "Bulgaria",
-    "lat": 42.508785,
-    "lng": 25.15709,
-    "continent": "Europe",
-    "iso": "BGR"
-  },
-  {
-    "name": "Burkina Faso",
-    "lat": 12.673048,
-    "lng": -1.36388,
-    "continent": "Africa",
-    "iso": "BFA"
-  },
-  {
-    "name": "Burundi",
-    "lat": -3.332836,
-    "lng": 29.917086,
-    "continent": "Africa",
-    "iso": "BDI"
-  },
-  {
-    "name": "Cambodia",
-    "lat": 12.647584,
-    "lng": 104.50487,
-    "continent": "Asia",
-    "iso": "KHM"
-  },
-  {
-    "name": "Cameroon",
-    "lat": 4.585041,
-    "lng": 12.473488,
-    "continent": "Africa",
-    "iso": "CMR"
-  },
-  {
-    "name": "Canada",
-    "lat": 60.324287,
-    "lng": -101.9107,
-    "continent": "North America",
-    "iso": "CAN"
-  },
-  {
-    "name": "Central African Rep.",
-    "lat": 6.989681,
-    "lng": 20.906897,
-    "continent": "Africa",
-    "iso": "CAF"
-  },
-  {
-    "name": "Chad",
-    "lat": 15.142959,
-    "lng": 18.645041,
-    "continent": "Africa",
-    "iso": "TCD"
-  },
-  {
-    "name": "Chile",
-    "lat": -38.151771,
-    "lng": -72.318871,
-    "continent": "South America",
-    "iso": "CHL"
-  },
-  {
-    "name": "China",
-    "lat": 32.498178,
-    "lng": 106.337289,
-    "continent": "Asia",
-    "iso": "CHN"
-  },
-  {
-    "name": "Colombia",
-    "lat": 3.373111,
-    "lng": -73.174347,
-    "continent": "South America",
-    "iso": "COL"
-  },
-  {
-    "name": "Congo",
-    "lat": 0.142331,
-    "lng": 15.9005,
-    "continent": "Africa",
-    "iso": "COG"
-  },
-  {
-    "name": "Costa Rica",
-    "lat": 10.0651,
-    "lng": -84.077922,
-    "continent": "North America",
-    "iso": "CRI"
-  },
-  {
-    "name": "Croatia",
-    "lat": 45.805799,
-    "lng": 16.37241,
-    "continent": "Europe",
-    "iso": "HRV"
-  },
-  {
-    "name": "Cyprus",
-    "lat": 34.913329,
-    "lng": 33.084182,
-    "continent": "Asia",
-    "iso": "CYP"
-  },
-  {
-    "name": "Czechia",
-    "lat": 49.882364,
-    "lng": 15.377555,
-    "continent": "Europe",
-    "iso": "CZE"
-  },
-  {
-    "name": "Côte d'Ivoire",
-    "lat": 7.49139,
-    "lng": -5.568618,
-    "continent": "Africa",
-    "iso": "CIV"
-  },
-  {
-    "name": "Dem. Rep. Congo",
-    "lat": -1.858167,
-    "lng": 23.458829,
-    "continent": "Africa",
-    "iso": "COD"
-  },
-  {
-    "name": "Denmark",
-    "lat": 55.966965,
-    "lng": 9.018163,
-    "continent": "Europe",
-    "iso": "DNK"
-  },
-  {
-    "name": "Djibouti",
-    "lat": 11.976343,
-    "lng": 42.498825,
-    "continent": "Africa",
-    "iso": "DJI"
-  },
-  {
-    "name": "Dominican Rep.",
-    "lat": 19.104137,
-    "lng": -70.653998,
-    "continent": "North America",
-    "iso": "DOM"
-  },
-  {
-    "name": "Ecuador",
-    "lat": -1.259076,
-    "lng": -78.188375,
-    "continent": "South America",
-    "iso": "ECU"
-  },
-  {
-    "name": "Egypt",
-    "lat": 26.186173,
-    "lng": 29.445837,
-    "continent": "Africa",
-    "iso": "EGY"
-  },
-  {
-    "name": "El Salvador",
-    "lat": 13.685371,
-    "lng": -88.890124,
-    "continent": "North America",
-    "iso": "SLV"
-  },
-  {
-    "name": "Eq. Guinea",
-    "lat": 2.333,
-    "lng": 8.9902,
-    "continent": "Africa",
-    "iso": "GNQ"
-  },
-  {
-    "name": "Eritrea",
-    "lat": 15.787401,
-    "lng": 38.285566,
-    "continent": "Africa",
-    "iso": "ERI"
-  },
-  {
-    "name": "Estonia",
-    "lat": 58.724865,
-    "lng": 25.867126,
-    "continent": "Europe",
-    "iso": "EST"
-  },
-  {
-    "name": "Ethiopia",
-    "lat": 8.032795,
-    "lng": 39.0886,
-    "continent": "Africa",
-    "iso": "ETH"
-  },
-  {
-    "name": "Fiji",
-    "lat": -17.826099,
-    "lng": 177.975427,
-    "continent": "Oceania",
-    "iso": "FJI"
-  },
-  {
-    "name": "Finland",
-    "lat": 63.252361,
-    "lng": 27.276449,
-    "continent": "Europe",
-    "iso": "FIN"
-  },
-  {
-    "name": "France",
-    "lat": 46.696113,
-    "lng": 2.552275,
-    "continent": "Europe",
-    "iso": "FRA"
-  },
-  {
-    "name": "Gabon",
-    "lat": -0.437739,
-    "lng": 11.835939,
-    "continent": "Africa",
-    "iso": "GAB"
-  },
-  {
-    "name": "Gambia",
-    "lat": 13.641721,
-    "lng": -14.998318,
-    "continent": "Africa",
-    "iso": "GMB"
-  },
-  {
-    "name": "Georgia",
-    "lat": 41.870087,
-    "lng": 43.735724,
-    "continent": "Asia",
-    "iso": "GEO"
-  },
-  {
-    "name": "Germany",
-    "lat": 50.961733,
-    "lng": 9.678348,
-    "continent": "Europe",
-    "iso": "DEU"
-  },
-  {
-    "name": "Ghana",
-    "lat": 7.717639,
-    "lng": -1.036941,
-    "continent": "Africa",
-    "iso": "GHA"
-  },
-  {
-    "name": "Greece",
-    "lat": 39.492763,
-    "lng": 21.72568,
-    "continent": "Europe",
-    "iso": "GRC"
-  },
-  {
-    "name": "Greenland",
-    "lat": 74.319387,
-    "lng": -39.335251,
-    "continent": "North America",
-    "iso": "GRL"
-  },
-  {
-    "name": "Guatemala",
-    "lat": 14.982133,
-    "lng": -90.497134,
-    "continent": "North America",
-    "iso": "GTM"
-  },
-  {
-    "name": "Guinea",
-    "lat": 10.618516,
-    "lng": -10.016402,
-    "continent": "Africa",
-    "iso": "GIN"
-  },
-  {
-    "name": "Guinea-Bissau",
-    "lat": 12.163712,
-    "lng": -14.52413,
-    "continent": "Africa",
-    "iso": "GNB"
-  },
-  {
-    "name": "Guyana",
-    "lat": 5.124317,
-    "lng": -58.942643,
-    "continent": "South America",
-    "iso": "GUY"
-  },
-  {
-    "name": "Haiti",
-    "lat": 19.263784,
-    "lng": -72.224051,
-    "continent": "North America",
-    "iso": "HTI"
-  },
-  {
-    "name": "Honduras",
-    "lat": 14.794801,
-    "lng": -86.887604,
-    "continent": "North America",
-    "iso": "HND"
-  },
-  {
-    "name": "Hungary",
-    "lat": 47.086841,
-    "lng": 19.447867,
-    "continent": "Europe",
-    "iso": "HUN"
-  },
-  {
-    "name": "Iceland",
-    "lat": 64.779286,
-    "lng": -18.673711,
-    "continent": "Europe",
-    "iso": "ISL"
-  },
-  {
-    "name": "India",
-    "lat": 22.686852,
-    "lng": 79.358105,
-    "continent": "Asia",
-    "iso": "IND"
-  },
-  {
-    "name": "Indonesia",
-    "lat": -0.954404,
-    "lng": 101.892949,
-    "continent": "Asia",
-    "iso": "IDN"
-  },
-  {
-    "name": "Iran",
-    "lat": 32.166225,
-    "lng": 54.931495,
-    "continent": "Asia",
-    "iso": "IRN"
-  },
-  {
-    "name": "Iraq",
-    "lat": 33.09403,
-    "lng": 43.26181,
-    "continent": "Asia",
-    "iso": "IRQ"
-  },
-  {
-    "name": "Ireland",
-    "lat": 53.078726,
-    "lng": -7.798588,
-    "continent": "Europe",
-    "iso": "IRL"
-  },
-  {
-    "name": "Italy",
-    "lat": 44.732482,
-    "lng": 11.076907,
-    "continent": "Europe",
-    "iso": "ITA"
-  },
-  {
-    "name": "Jamaica",
-    "lat": 18.137124,
-    "lng": -77.318767,
-    "continent": "North America",
-    "iso": "JAM"
-  },
-  {
-    "name": "Japan",
-    "lat": 36.142538,
-    "lng": 138.44217,
-    "continent": "Asia",
-    "iso": "JPN"
-  },
-  {
-    "name": "Jordan",
-    "lat": 30.805025,
-    "lng": 36.375991,
-    "continent": "Asia",
-    "iso": "JOR"
-  },
-  {
-    "name": "Kenya",
-    "lat": 0.549043,
-    "lng": 37.907632,
-    "continent": "Africa",
-    "iso": "KEN"
-  },
-  {
-    "name": "Kuwait",
-    "lat": 29.413628,
-    "lng": 47.313999,
-    "continent": "Asia",
-    "iso": "KWT"
-  },
-  {
-    "name": "Kyrgyzstan",
-    "lat": 41.66854,
-    "lng": 74.532637,
-    "continent": "Asia",
-    "iso": "KGZ"
-  },
-  {
-    "name": "Laos",
-    "lat": 19.431821,
-    "lng": 102.533912,
-    "continent": "Asia",
-    "iso": "LAO"
-  },
-  {
-    "name": "Latvia",
-    "lat": 57.066872,
-    "lng": 25.458723,
-    "continent": "Europe",
-    "iso": "LVA"
-  },
-  {
-    "name": "Lebanon",
-    "lat": 34.133368,
-    "lng": 35.992892,
-    "continent": "Asia",
-    "iso": "LBN"
-  },
-  {
-    "name": "Lesotho",
-    "lat": -29.480158,
-    "lng": 28.246639,
-    "continent": "Africa",
-    "iso": "LSO"
-  },
-  {
-    "name": "Liberia",
-    "lat": 6.447177,
-    "lng": -9.460379,
-    "continent": "Africa",
-    "iso": "LBR"
-  },
-  {
-    "name": "Libya",
-    "lat": 26.638944,
-    "lng": 18.011015,
-    "continent": "Africa",
-    "iso": "LBY"
-  },
-  {
-    "name": "Lithuania",
-    "lat": 55.103703,
-    "lng": 24.089932,
-    "continent": "Europe",
-    "iso": "LTU"
-  },
-  {
-    "name": "Luxembourg",
-    "lat": 49.733732,
-    "lng": 6.07762,
-    "continent": "Europe",
-    "iso": "LUX"
-  },
-  {
-    "name": "Madagascar",
-    "lat": -18.628288,
-    "lng": 46.704241,
-    "continent": "Africa",
-    "iso": "MDG"
-  },
-  {
-    "name": "Malawi",
-    "lat": -13.386737,
-    "lng": 33.608082,
-    "continent": "Africa",
-    "iso": "MWI"
-  },
-  {
-    "name": "Malaysia",
-    "lat": 2.528667,
-    "lng": 113.83708,
-    "continent": "Asia",
-    "iso": "MYS"
-  },
-  {
-    "name": "Mali",
-    "lat": 18.692713,
-    "lng": -2.038455,
-    "continent": "Africa",
-    "iso": "MLI"
-  },
-  {
-    "name": "Mauritania",
-    "lat": 19.587062,
-    "lng": -9.740299,
-    "continent": "Africa",
-    "iso": "MRT"
-  },
-  {
-    "name": "Mexico",
-    "lat": 23.919988,
-    "lng": -102.289448,
-    "continent": "North America",
-    "iso": "MEX"
-  },
-  {
-    "name": "Moldova",
-    "lat": 47.434999,
-    "lng": 28.487904,
-    "continent": "Europe",
-    "iso": "MDA"
-  },
-  {
-    "name": "Mongolia",
-    "lat": 45.997488,
-    "lng": 104.150405,
-    "continent": "Asia",
-    "iso": "MNG"
-  },
-  {
-    "name": "Montenegro",
-    "lat": 42.803101,
-    "lng": 19.143727,
-    "continent": "Europe",
-    "iso": "MNE"
-  },
-  {
-    "name": "Morocco",
-    "lat": 31.650723,
-    "lng": -7.187296,
-    "continent": "Africa",
-    "iso": "MAR"
-  },
-  {
-    "name": "Mozambique",
-    "lat": -13.94323,
-    "lng": 37.83789,
-    "continent": "Africa",
-    "iso": "MOZ"
-  },
-  {
-    "name": "Myanmar",
-    "lat": 21.573855,
-    "lng": 95.804497,
-    "continent": "Asia",
-    "iso": "MMR"
-  },
-  {
-    "name": "N. Cyprus",
-    "lat": 35.216071,
-    "lng": 33.692434,
-    "continent": "Asia",
-    "iso": "N. Cyprus"
-  },
-  {
-    "name": "Namibia",
-    "lat": -20.575298,
-    "lng": 17.108166,
-    "continent": "Africa",
-    "iso": "NAM"
-  },
-  {
-    "name": "Nepal",
-    "lat": 28.297925,
-    "lng": 83.639914,
-    "continent": "Asia",
-    "iso": "NPL"
-  },
-  {
-    "name": "Netherlands",
-    "lat": 52.422211,
-    "lng": 5.61144,
-    "continent": "Europe",
-    "iso": "NLD"
-  },
-  {
-    "name": "New Zealand",
-    "lat": -39.759,
-    "lng": 172.787,
-    "continent": "Oceania",
-    "iso": "NZL"
-  },
-  {
-    "name": "Nicaragua",
-    "lat": 12.670697,
-    "lng": -85.069347,
-    "continent": "North America",
-    "iso": "NIC"
-  },
-  {
-    "name": "Niger",
-    "lat": 17.446195,
-    "lng": 9.504356,
-    "continent": "Africa",
-    "iso": "NER"
-  },
-  {
-    "name": "Nigeria",
-    "lat": 9.439799,
-    "lng": 7.50322,
-    "continent": "Africa",
-    "iso": "NGA"
-  },
-  {
-    "name": "North Korea",
-    "lat": 39.885252,
-    "lng": 126.444516,
-    "continent": "Asia",
-    "iso": "PRK"
-  },
-  {
-    "name": "North Macedonia",
-    "lat": 41.558223,
-    "lng": 21.555839,
-    "continent": "Europe",
-    "iso": "MKD"
-  },
-  {
-    "name": "Norway",
-    "lat": 61.357092,
-    "lng": 9.679975,
-    "continent": "Europe",
-    "iso": "NOR"
-  },
-  {
-    "name": "Oman",
-    "lat": 22.120427,
-    "lng": 57.336553,
-    "continent": "Asia",
-    "iso": "OMN"
-  },
-  {
-    "name": "Pakistan",
-    "lat": 29.328389,
-    "lng": 68.545632,
-    "continent": "Asia",
-    "iso": "PAK"
-  },
-  {
-    "name": "Panama",
-    "lat": 8.72198,
-    "lng": -80.352106,
-    "continent": "North America",
-    "iso": "PAN"
-  },
-  {
-    "name": "Papua New Guinea",
-    "lat": -5.695285,
-    "lng": 143.910216,
-    "continent": "Oceania",
-    "iso": "PNG"
-  },
-  {
-    "name": "Paraguay",
-    "lat": -21.674509,
-    "lng": -60.146394,
-    "continent": "South America",
-    "iso": "PRY"
-  },
-  {
-    "name": "Peru",
-    "lat": -12.976679,
-    "lng": -72.90016,
-    "continent": "South America",
-    "iso": "PER"
-  },
-  {
-    "name": "Philippines",
-    "lat": 11.198,
-    "lng": 122.465,
-    "continent": "Asia",
-    "iso": "PHL"
-  },
-  {
-    "name": "Poland",
-    "lat": 51.990316,
-    "lng": 19.490468,
-    "continent": "Europe",
-    "iso": "POL"
-  },
-  {
-    "name": "Portugal",
-    "lat": 39.606675,
-    "lng": -8.271754,
-    "continent": "Europe",
-    "iso": "PRT"
-  },
-  {
-    "name": "Qatar",
-    "lat": 25.237383,
-    "lng": 51.143509,
-    "continent": "Asia",
-    "iso": "QAT"
-  },
-  {
-    "name": "Romania",
-    "lat": 45.733237,
-    "lng": 24.972624,
-    "continent": "Europe",
-    "iso": "ROU"
-  },
-  {
-    "name": "Russia",
-    "lat": 58.249357,
-    "lng": 44.686469,
-    "continent": "Europe",
-    "iso": "RUS"
-  },
-  {
-    "name": "Rwanda",
-    "lat": -1.897196,
-    "lng": 30.103894,
-    "continent": "Africa",
-    "iso": "RWA"
-  },
-  {
-    "name": "S. Sudan",
-    "lat": 7.230477,
-    "lng": 30.390151,
-    "continent": "Africa",
-    "iso": "SSD"
-  },
-  {
-    "name": "Saudi Arabia",
-    "lat": 23.806908,
-    "lng": 44.6996,
-    "continent": "Asia",
-    "iso": "SAU"
-  },
-  {
-    "name": "Senegal",
-    "lat": 15.138125,
-    "lng": -14.778586,
-    "continent": "Africa",
-    "iso": "SEN"
-  },
-  {
-    "name": "Serbia",
-    "lat": 44.189919,
-    "lng": 20.787989,
-    "continent": "Europe",
-    "iso": "SRB"
-  },
-  {
-    "name": "Sierra Leone",
-    "lat": 8.617449,
-    "lng": -11.763677,
-    "continent": "Africa",
-    "iso": "SLE"
-  },
-  {
-    "name": "Slovakia",
-    "lat": 48.734044,
-    "lng": 19.049868,
-    "continent": "Europe",
-    "iso": "SVK"
-  },
-  {
-    "name": "Slovenia",
-    "lat": 46.06076,
-    "lng": 14.915312,
-    "continent": "Europe",
-    "iso": "SVN"
-  },
-  {
-    "name": "Solomon Is.",
-    "lat": -8.029548,
-    "lng": 159.170468,
-    "continent": "Oceania",
-    "iso": "SLB"
-  },
-  {
-    "name": "Somalia",
-    "lat": 3.568925,
-    "lng": 45.19238,
-    "continent": "Africa",
-    "iso": "SOM"
-  },
-  {
-    "name": "Somaliland",
-    "lat": 9.443889,
-    "lng": 46.731595,
-    "continent": "Africa",
-    "iso": "Somaliland"
-  },
-  {
-    "name": "South Africa",
-    "lat": -29.708776,
-    "lng": 23.665734,
-    "continent": "Africa",
-    "iso": "ZAF"
-  },
-  {
-    "name": "South Korea",
-    "lat": 36.384924,
-    "lng": 128.129504,
-    "continent": "Asia",
-    "iso": "KOR"
-  },
-  {
-    "name": "Spain",
-    "lat": 40.090953,
-    "lng": -3.464718,
-    "continent": "Europe",
-    "iso": "ESP"
-  },
-  {
-    "name": "Sri Lanka",
-    "lat": 7.581097,
-    "lng": 80.704823,
-    "continent": "Asia",
-    "iso": "LKA"
-  },
-  {
-    "name": "Sudan",
-    "lat": 16.330746,
-    "lng": 29.260657,
-    "continent": "Africa",
-    "iso": "SDN"
-  },
-  {
-    "name": "Suriname",
-    "lat": 4.143987,
-    "lng": -55.91094,
-    "continent": "South America",
-    "iso": "SUR"
-  },
-  {
-    "name": "Sweden",
-    "lat": 65.85918,
-    "lng": 19.01705,
-    "continent": "Europe",
-    "iso": "SWE"
-  },
-  {
-    "name": "Switzerland",
-    "lat": 46.719114,
-    "lng": 7.463965,
-    "continent": "Europe",
-    "iso": "CHE"
-  },
-  {
-    "name": "Syria",
-    "lat": 35.006636,
-    "lng": 38.277783,
-    "continent": "Asia",
-    "iso": "SYR"
-  },
-  {
-    "name": "Taiwan",
-    "lat": 23.652408,
-    "lng": 120.868204,
-    "continent": "Asia",
-    "iso": "TWN"
-  },
-  {
-    "name": "Tajikistan",
-    "lat": 38.199835,
-    "lng": 72.587276,
-    "continent": "Asia",
-    "iso": "TJK"
-  },
-  {
-    "name": "Tanzania",
-    "lat": -6.051866,
-    "lng": 34.959183,
-    "continent": "Africa",
-    "iso": "TZA"
-  },
-  {
-    "name": "Thailand",
-    "lat": 15.45974,
-    "lng": 101.073198,
-    "continent": "Asia",
-    "iso": "THA"
-  },
-  {
-    "name": "Timor-Leste",
-    "lat": -8.803705,
-    "lng": 125.854679,
-    "continent": "Asia",
-    "iso": "TLS"
-  },
-  {
-    "name": "Togo",
-    "lat": 8.80722,
-    "lng": 1.058113,
-    "continent": "Africa",
-    "iso": "TGO"
-  },
-  {
-    "name": "Trinidad and Tobago",
-    "lat": 10.9989,
-    "lng": -60.9184,
-    "continent": "North America",
-    "iso": "TTO"
-  },
-  {
-    "name": "Tunisia",
-    "lat": 33.687263,
-    "lng": 9.007881,
-    "continent": "Africa",
-    "iso": "TUN"
-  },
-  {
-    "name": "Turkey",
-    "lat": 39.345388,
-    "lng": 34.508268,
-    "continent": "Asia",
-    "iso": "TUR"
-  },
-  {
-    "name": "Turkmenistan",
-    "lat": 39.855246,
-    "lng": 58.676647,
-    "continent": "Asia",
-    "iso": "TKM"
-  },
-  {
-    "name": "Uganda",
-    "lat": 1.972589,
-    "lng": 32.948555,
-    "continent": "Africa",
-    "iso": "UGA"
-  },
-  {
-    "name": "Ukraine",
-    "lat": 49.724739,
-    "lng": 32.140865,
-    "continent": "Europe",
-    "iso": "UKR"
-  },
-  {
+    "continent": "Africa"
+  },
+  {
+    "id": "AIA",
+    "name": "Anguilla",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 18.242979,
+    "lng": -63.026361,
+    "continent": "North America"
+  },
+  {
+    "id": "ALA",
+    "name": "Åland",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "FIN",
+    "lat": 60.156467,
+    "lng": 19.869671,
+    "continent": "Europe"
+  },
+  {
+    "id": "ALB",
+    "name": "Albania",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 40.654855,
+    "lng": 20.11384,
+    "continent": "Europe"
+  },
+  {
+    "id": "AND",
+    "name": "Andorra",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 42.547643,
+    "lng": 1.539409,
+    "continent": "Europe"
+  },
+  {
+    "id": "ARE",
     "name": "United Arab Emirates",
+    "aliases": [
+      "UAE"
+    ],
+    "kind": "sovereign",
+    "owner": null,
     "lat": 23.466285,
     "lng": 54.547256,
-    "continent": "Asia",
-    "iso": "ARE"
+    "continent": "Asia"
   },
   {
+    "id": "ARG",
+    "name": "Argentina",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -33.501159,
+    "lng": -64.173331,
+    "continent": "South America"
+  },
+  {
+    "id": "ARM",
+    "name": "Armenia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 40.459077,
+    "lng": 44.800564,
+    "continent": "Asia"
+  },
+  {
+    "id": "ASM",
+    "name": "American Samoa",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "USA",
+    "lat": -14.32671,
+    "lng": -170.747153,
+    "continent": "Oceania"
+  },
+  {
+    "id": "ATF",
+    "name": "French Southern and Antarctic Lands",
+    "aliases": [
+      "Fr. S. Antarctic Lands"
+    ],
+    "kind": "territory",
+    "owner": "FRA",
+    "lat": -49.303721,
+    "lng": 69.122136,
+    "continent": "Seven seas (open ocean)"
+  },
+  {
+    "id": "ATG",
+    "name": "Antigua and Barbuda",
+    "aliases": [
+      "Antigua and Barb."
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 17.352249,
+    "lng": -61.790612,
+    "continent": "North America"
+  },
+  {
+    "id": "AUS",
+    "name": "Australia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -24.129522,
+    "lng": 134.04972,
+    "continent": "Oceania"
+  },
+  {
+    "id": "AUT",
+    "name": "Austria",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 47.518859,
+    "lng": 14.130515,
+    "continent": "Europe"
+  },
+  {
+    "id": "AZE",
+    "name": "Azerbaijan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 40.402387,
+    "lng": 47.210994,
+    "continent": "Asia"
+  },
+  {
+    "id": "Ashmore and Cartier Is.",
+    "name": "Ashmore and Cartier Islands",
+    "aliases": [
+      "Ashmore and Cartier Is."
+    ],
+    "kind": "territory",
+    "owner": "AUS",
+    "lat": -12.432571,
+    "lng": 123.586368,
+    "continent": "Oceania"
+  },
+  {
+    "id": "BDI",
+    "name": "Burundi",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -3.332836,
+    "lng": 29.917086,
+    "continent": "Africa"
+  },
+  {
+    "id": "BEL",
+    "name": "Belgium",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 50.785392,
+    "lng": 4.800448,
+    "continent": "Europe"
+  },
+  {
+    "id": "BEN",
+    "name": "Benin",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 10.324775,
+    "lng": 2.352018,
+    "continent": "Africa"
+  },
+  {
+    "id": "BFA",
+    "name": "Burkina Faso",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 12.673048,
+    "lng": -1.36388,
+    "continent": "Africa"
+  },
+  {
+    "id": "BGD",
+    "name": "Bangladesh",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 24.214956,
+    "lng": 89.684963,
+    "continent": "Asia"
+  },
+  {
+    "id": "BGR",
+    "name": "Bulgaria",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 42.508785,
+    "lng": 25.15709,
+    "continent": "Europe"
+  },
+  {
+    "id": "BHR",
+    "name": "Bahrain",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 26.055972,
+    "lng": 50.554816,
+    "continent": "Asia"
+  },
+  {
+    "id": "BHS",
+    "name": "Bahamas",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 26.401789,
+    "lng": -77.146688,
+    "continent": "North America"
+  },
+  {
+    "id": "BIH",
+    "name": "Bosnia and Herzegovina",
+    "aliases": [
+      "Bosnia and Herz.",
+      "Bosnia"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 44.091051,
+    "lng": 18.06841,
+    "continent": "Europe"
+  },
+  {
+    "id": "BLM",
+    "name": "St-Barthélemy",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "FRA",
+    "lat": 17.901987,
+    "lng": -62.833193,
+    "continent": "North America"
+  },
+  {
+    "id": "BLR",
+    "name": "Belarus",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 53.821888,
+    "lng": 28.417701,
+    "continent": "Europe"
+  },
+  {
+    "id": "BLZ",
+    "name": "Belize",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 17.202068,
+    "lng": -88.712962,
+    "continent": "North America"
+  },
+  {
+    "id": "BMU",
+    "name": "Bermuda",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 32.296592,
+    "lng": -64.763573,
+    "continent": "North America"
+  },
+  {
+    "id": "BOL",
+    "name": "Bolivia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -16.666015,
+    "lng": -64.593433,
+    "continent": "South America"
+  },
+  {
+    "id": "BRA",
+    "name": "Brazil",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -12.098687,
+    "lng": -49.55945,
+    "continent": "South America"
+  },
+  {
+    "id": "BRB",
+    "name": "Barbados",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 13.163709,
+    "lng": -59.568966,
+    "continent": "North America"
+  },
+  {
+    "id": "BRN",
+    "name": "Brunei",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 4.448298,
+    "lng": 114.551943,
+    "continent": "Asia"
+  },
+  {
+    "id": "BTN",
+    "name": "Bhutan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 27.536685,
+    "lng": 90.040294,
+    "continent": "Asia"
+  },
+  {
+    "id": "BWA",
+    "name": "Botswana",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -22.102634,
+    "lng": 24.179216,
+    "continent": "Africa"
+  },
+  {
+    "id": "CAF",
+    "name": "Central African Republic",
+    "aliases": [
+      "Central African Rep."
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 6.989681,
+    "lng": 20.906897,
+    "continent": "Africa"
+  },
+  {
+    "id": "CAN",
+    "name": "Canada",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 60.324287,
+    "lng": -101.9107,
+    "continent": "North America"
+  },
+  {
+    "id": "CHE",
+    "name": "Switzerland",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 46.719114,
+    "lng": 7.463965,
+    "continent": "Europe"
+  },
+  {
+    "id": "CHL",
+    "name": "Chile",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -38.151771,
+    "lng": -72.318871,
+    "continent": "South America"
+  },
+  {
+    "id": "CHN",
+    "name": "China",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 32.498178,
+    "lng": 106.337289,
+    "continent": "Asia"
+  },
+  {
+    "id": "CIV",
+    "name": "Côte d'Ivoire",
+    "aliases": [
+      "Ivory Coast"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 7.49139,
+    "lng": -5.568618,
+    "continent": "Africa"
+  },
+  {
+    "id": "CMR",
+    "name": "Cameroon",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 4.585041,
+    "lng": 12.473488,
+    "continent": "Africa"
+  },
+  {
+    "id": "COD",
+    "name": "Democratic Republic of the Congo",
+    "aliases": [
+      "Dem. Rep. Congo",
+      "DR Congo",
+      "Congo-Kinshasa",
+      "Democratic Republic of Congo"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -1.858167,
+    "lng": 23.458829,
+    "continent": "Africa"
+  },
+  {
+    "id": "COG",
+    "name": "Congo",
+    "aliases": [
+      "Congo-Brazzaville",
+      "Republic of the Congo"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 0.142331,
+    "lng": 15.9005,
+    "continent": "Africa"
+  },
+  {
+    "id": "COK",
+    "name": "Cook Islands",
+    "aliases": [
+      "Cook Is."
+    ],
+    "kind": "territory",
+    "owner": "NZL",
+    "lat": -21.215993,
+    "lng": -159.785675,
+    "continent": "Oceania"
+  },
+  {
+    "id": "COL",
+    "name": "Colombia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 3.373111,
+    "lng": -73.174347,
+    "continent": "South America"
+  },
+  {
+    "id": "COM",
+    "name": "Comoros",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -11.727683,
+    "lng": 43.318094,
+    "continent": "Africa"
+  },
+  {
+    "id": "CPV",
+    "name": "Cabo Verde",
+    "aliases": [
+      "Cape Verde"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 15.074761,
+    "lng": -23.639434,
+    "continent": "Africa"
+  },
+  {
+    "id": "CRI",
+    "name": "Costa Rica",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 10.0651,
+    "lng": -84.077922,
+    "continent": "North America"
+  },
+  {
+    "id": "CUB",
+    "name": "Cuba",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 21.334024,
+    "lng": -77.975855,
+    "continent": "North America"
+  },
+  {
+    "id": "CUW",
+    "name": "Curaçao",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "NLD",
+    "lat": 12.145039,
+    "lng": -68.920578,
+    "continent": "North America"
+  },
+  {
+    "id": "CYM",
+    "name": "Cayman Islands",
+    "aliases": [
+      "Cayman Is."
+    ],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 19.319862,
+    "lng": -81.24055,
+    "continent": "North America"
+  },
+  {
+    "id": "CYP",
+    "name": "Cyprus",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 34.913329,
+    "lng": 33.084182,
+    "continent": "Asia"
+  },
+  {
+    "id": "CZE",
+    "name": "Czechia",
+    "aliases": [
+      "Czech Republic"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 49.882364,
+    "lng": 15.377555,
+    "continent": "Europe"
+  },
+  {
+    "id": "DEU",
+    "name": "Germany",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 50.961733,
+    "lng": 9.678348,
+    "continent": "Europe"
+  },
+  {
+    "id": "DJI",
+    "name": "Djibouti",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 11.976343,
+    "lng": 42.498825,
+    "continent": "Africa"
+  },
+  {
+    "id": "DMA",
+    "name": "Dominica",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 15.458829,
+    "lng": -61.344958,
+    "continent": "North America"
+  },
+  {
+    "id": "DNK",
+    "name": "Denmark",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 55.966965,
+    "lng": 9.018163,
+    "continent": "Europe"
+  },
+  {
+    "id": "DOM",
+    "name": "Dominican Republic",
+    "aliases": [
+      "Dominican Rep."
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 19.104137,
+    "lng": -70.653998,
+    "continent": "North America"
+  },
+  {
+    "id": "DZA",
+    "name": "Algeria",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 27.397406,
+    "lng": 2.808241,
+    "continent": "Africa"
+  },
+  {
+    "id": "ECU",
+    "name": "Ecuador",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -1.259076,
+    "lng": -78.188375,
+    "continent": "South America"
+  },
+  {
+    "id": "EGY",
+    "name": "Egypt",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 26.186173,
+    "lng": 29.445837,
+    "continent": "Africa"
+  },
+  {
+    "id": "ERI",
+    "name": "Eritrea",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 15.787401,
+    "lng": 38.285566,
+    "continent": "Africa"
+  },
+  {
+    "id": "ESH",
+    "name": "Western Sahara",
+    "aliases": [
+      "W. Sahara"
+    ],
+    "kind": "disputed",
+    "owner": "MAR",
+    "lat": 23.967592,
+    "lng": -12.630304,
+    "continent": "Africa"
+  },
+  {
+    "id": "ESP",
+    "name": "Spain",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 40.090953,
+    "lng": -3.464718,
+    "continent": "Europe"
+  },
+  {
+    "id": "EST",
+    "name": "Estonia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 58.724865,
+    "lng": 25.867126,
+    "continent": "Europe"
+  },
+  {
+    "id": "ETH",
+    "name": "Ethiopia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 8.032795,
+    "lng": 39.0886,
+    "continent": "Africa"
+  },
+  {
+    "id": "FIN",
+    "name": "Finland",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 63.252361,
+    "lng": 27.276449,
+    "continent": "Europe"
+  },
+  {
+    "id": "FJI",
+    "name": "Fiji",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -17.826099,
+    "lng": 177.975427,
+    "continent": "Oceania"
+  },
+  {
+    "id": "FLK",
+    "name": "Falkland Islands / Malvinas",
+    "aliases": [
+      "Falkland Is."
+    ],
+    "kind": "disputed",
+    "owner": "GBR",
+    "lat": -51.608913,
+    "lng": -58.738602,
+    "continent": "South America"
+  },
+  {
+    "id": "FRA",
+    "name": "France",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 46.696113,
+    "lng": 2.552275,
+    "continent": "Europe"
+  },
+  {
+    "id": "FRO",
+    "name": "Faeroe Islands",
+    "aliases": [
+      "Faeroe Is."
+    ],
+    "kind": "territory",
+    "owner": "DNK",
+    "lat": 62.185604,
+    "lng": -7.058429,
+    "continent": "Europe"
+  },
+  {
+    "id": "FSM",
+    "name": "Micronesia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 6.887553,
+    "lng": 158.234019,
+    "continent": "Oceania"
+  },
+  {
+    "id": "GAB",
+    "name": "Gabon",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -0.437739,
+    "lng": 11.835939,
+    "continent": "Africa"
+  },
+  {
+    "id": "GBR",
     "name": "United Kingdom",
+    "aliases": [
+      "UK",
+      "Britain",
+      "Great Britain"
+    ],
+    "kind": "sovereign",
+    "owner": null,
     "lat": 54.402739,
     "lng": -2.116346,
-    "continent": "Europe",
-    "iso": "GBR"
+    "continent": "Europe"
   },
   {
-    "name": "United States of America",
-    "lat": 39.538479,
-    "lng": -97.482602,
-    "continent": "North America",
-    "iso": "USA"
+    "id": "GEO",
+    "name": "Georgia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 41.870087,
+    "lng": 43.735724,
+    "continent": "Asia"
   },
   {
-    "name": "Uruguay",
-    "lat": -32.961127,
-    "lng": -55.966942,
-    "continent": "South America",
-    "iso": "URY"
+    "id": "GGY",
+    "name": "Guernsey",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 49.463533,
+    "lng": -2.561736,
+    "continent": "Europe"
   },
   {
-    "name": "Uzbekistan",
-    "lat": 41.693603,
-    "lng": 64.005429,
-    "continent": "Asia",
-    "iso": "UZB"
+    "id": "GHA",
+    "name": "Ghana",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 7.717639,
+    "lng": -1.036941,
+    "continent": "Africa"
   },
   {
-    "name": "Vanuatu",
-    "lat": -15.37153,
-    "lng": 166.908762,
-    "continent": "Oceania",
-    "iso": "VUT"
+    "id": "GIN",
+    "name": "Guinea",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 10.618516,
+    "lng": -10.016402,
+    "continent": "Africa"
   },
   {
-    "name": "Venezuela",
-    "lat": 7.182476,
-    "lng": -64.599381,
-    "continent": "South America",
-    "iso": "VEN"
+    "id": "GMB",
+    "name": "Gambia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 13.641721,
+    "lng": -14.998318,
+    "continent": "Africa"
   },
   {
-    "name": "Vietnam",
-    "lat": 21.715416,
-    "lng": 105.387292,
-    "continent": "Asia",
-    "iso": "VNM"
+    "id": "GNB",
+    "name": "Guinea-Bissau",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 12.163712,
+    "lng": -14.52413,
+    "continent": "Africa"
   },
   {
-    "name": "Yemen",
-    "lat": 15.328226,
-    "lng": 45.874383,
-    "continent": "Asia",
-    "iso": "YEM"
+    "id": "GNQ",
+    "name": "Equatorial Guinea",
+    "aliases": [
+      "Eq. Guinea"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 2.333,
+    "lng": 8.9902,
+    "continent": "Africa"
   },
   {
-    "name": "Zambia",
-    "lat": -14.660804,
-    "lng": 26.395298,
-    "continent": "Africa",
-    "iso": "ZMB"
+    "id": "GRC",
+    "name": "Greece",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 39.492763,
+    "lng": 21.72568,
+    "continent": "Europe"
   },
   {
-    "name": "Zimbabwe",
-    "lat": -18.91164,
-    "lng": 29.925444,
-    "continent": "Africa",
-    "iso": "ZWE"
+    "id": "GRD",
+    "name": "Grenada",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 12.113156,
+    "lng": -61.680461,
+    "continent": "North America"
   },
   {
-    "name": "eSwatini",
+    "id": "GRL",
+    "name": "Greenland",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "DNK",
+    "lat": 74.319387,
+    "lng": -39.335251,
+    "continent": "North America"
+  },
+  {
+    "id": "GTM",
+    "name": "Guatemala",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 14.982133,
+    "lng": -90.497134,
+    "continent": "North America"
+  },
+  {
+    "id": "GUM",
+    "name": "Guam",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "USA",
+    "lat": 13.354173,
+    "lng": 144.703614,
+    "continent": "Oceania"
+  },
+  {
+    "id": "GUY",
+    "name": "Guyana",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 5.124317,
+    "lng": -58.942643,
+    "continent": "South America"
+  },
+  {
+    "id": "HKG",
+    "name": "Hong Kong",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "CHN",
+    "lat": 22.448829,
+    "lng": 114.097769,
+    "continent": "Asia"
+  },
+  {
+    "id": "HMD",
+    "name": "Heard Island and McDonald Islands",
+    "aliases": [
+      "Heard I. and McDonald Is."
+    ],
+    "kind": "territory",
+    "owner": "AUS",
+    "lat": -53.103462,
+    "lng": 73.50521,
+    "continent": "Seven seas (open ocean)"
+  },
+  {
+    "id": "HND",
+    "name": "Honduras",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 14.794801,
+    "lng": -86.887604,
+    "continent": "North America"
+  },
+  {
+    "id": "HRV",
+    "name": "Croatia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 45.805799,
+    "lng": 16.37241,
+    "continent": "Europe"
+  },
+  {
+    "id": "HTI",
+    "name": "Haiti",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 19.263784,
+    "lng": -72.224051,
+    "continent": "North America"
+  },
+  {
+    "id": "HUN",
+    "name": "Hungary",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 47.086841,
+    "lng": 19.447867,
+    "continent": "Europe"
+  },
+  {
+    "id": "IDN",
+    "name": "Indonesia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -0.954404,
+    "lng": 101.892949,
+    "continent": "Asia"
+  },
+  {
+    "id": "IMN",
+    "name": "Isle of Man",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 54.220833,
+    "lng": -4.530069,
+    "continent": "Europe"
+  },
+  {
+    "id": "IND",
+    "name": "India",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 22.686852,
+    "lng": 79.358105,
+    "continent": "Asia"
+  },
+  {
+    "id": "IOT",
+    "name": "British Indian Ocean Territory",
+    "aliases": [
+      "Br. Indian Ocean Ter."
+    ],
+    "kind": "disputed",
+    "owner": "GBR",
+    "lat": -6.190826,
+    "lng": 71.348349,
+    "continent": "Seven seas (open ocean)"
+  },
+  {
+    "id": "IRL",
+    "name": "Ireland",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 53.078726,
+    "lng": -7.798588,
+    "continent": "Europe"
+  },
+  {
+    "id": "IRN",
+    "name": "Iran",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 32.166225,
+    "lng": 54.931495,
+    "continent": "Asia"
+  },
+  {
+    "id": "IRQ",
+    "name": "Iraq",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 33.09403,
+    "lng": 43.26181,
+    "continent": "Asia"
+  },
+  {
+    "id": "ISL",
+    "name": "Iceland",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 64.779286,
+    "lng": -18.673711,
+    "continent": "Europe"
+  },
+  {
+    "id": "ISR",
+    "name": "Israel",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 30.911148,
+    "lng": 34.847915,
+    "continent": "Asia"
+  },
+  {
+    "id": "ITA",
+    "name": "Italy",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 44.732482,
+    "lng": 11.076907,
+    "continent": "Europe"
+  },
+  {
+    "id": "Indian Ocean Ter.",
+    "name": "Indian Ocean Territories",
+    "aliases": [
+      "Indian Ocean Ter."
+    ],
+    "kind": "territory",
+    "owner": "AUS",
+    "lat": -10.490789,
+    "lng": 105.67259,
+    "continent": "Asia"
+  },
+  {
+    "id": "JAM",
+    "name": "Jamaica",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 18.137124,
+    "lng": -77.318767,
+    "continent": "North America"
+  },
+  {
+    "id": "JEY",
+    "name": "Jersey",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 49.220808,
+    "lng": -2.090146,
+    "continent": "Europe"
+  },
+  {
+    "id": "JOR",
+    "name": "Jordan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 30.805025,
+    "lng": 36.375991,
+    "continent": "Asia"
+  },
+  {
+    "id": "JPN",
+    "name": "Japan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 36.142538,
+    "lng": 138.44217,
+    "continent": "Asia"
+  },
+  {
+    "id": "KAZ",
+    "name": "Kazakhstan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 49.054149,
+    "lng": 68.685548,
+    "continent": "Asia"
+  },
+  {
+    "id": "KEN",
+    "name": "Kenya",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 0.549043,
+    "lng": 37.907632,
+    "continent": "Africa"
+  },
+  {
+    "id": "KGZ",
+    "name": "Kyrgyzstan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 41.66854,
+    "lng": 74.532637,
+    "continent": "Asia"
+  },
+  {
+    "id": "KHM",
+    "name": "Cambodia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 12.647584,
+    "lng": 104.50487,
+    "continent": "Asia"
+  },
+  {
+    "id": "KIR",
+    "name": "Kiribati",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 1.820437,
+    "lng": -157.384577,
+    "continent": "Oceania"
+  },
+  {
+    "id": "KNA",
+    "name": "Saint Kitts and Nevis",
+    "aliases": [
+      "St. Kitts and Nevis"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 17.336558,
+    "lng": -62.757975,
+    "continent": "North America"
+  },
+  {
+    "id": "KOR",
+    "name": "South Korea",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 36.384924,
+    "lng": 128.129504,
+    "continent": "Asia"
+  },
+  {
+    "id": "KWT",
+    "name": "Kuwait",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 29.413628,
+    "lng": 47.313999,
+    "continent": "Asia"
+  },
+  {
+    "id": "Kosovo",
+    "name": "Kosovo",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 42.593587,
+    "lng": 20.860719,
+    "continent": "Europe"
+  },
+  {
+    "id": "LAO",
+    "name": "Laos",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 19.431821,
+    "lng": 102.533912,
+    "continent": "Asia"
+  },
+  {
+    "id": "LBN",
+    "name": "Lebanon",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 34.133368,
+    "lng": 35.992892,
+    "continent": "Asia"
+  },
+  {
+    "id": "LBR",
+    "name": "Liberia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 6.447177,
+    "lng": -9.460379,
+    "continent": "Africa"
+  },
+  {
+    "id": "LBY",
+    "name": "Libya",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 26.638944,
+    "lng": 18.011015,
+    "continent": "Africa"
+  },
+  {
+    "id": "LCA",
+    "name": "Saint Lucia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 13.892371,
+    "lng": -60.980094,
+    "continent": "North America"
+  },
+  {
+    "id": "LIE",
+    "name": "Liechtenstein",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 47.111405,
+    "lng": 9.559439,
+    "continent": "Europe"
+  },
+  {
+    "id": "LKA",
+    "name": "Sri Lanka",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 7.581097,
+    "lng": 80.704823,
+    "continent": "Asia"
+  },
+  {
+    "id": "LSO",
+    "name": "Lesotho",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -29.480158,
+    "lng": 28.246639,
+    "continent": "Africa"
+  },
+  {
+    "id": "LTU",
+    "name": "Lithuania",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 55.103703,
+    "lng": 24.089932,
+    "continent": "Europe"
+  },
+  {
+    "id": "LUX",
+    "name": "Luxembourg",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 49.733732,
+    "lng": 6.07762,
+    "continent": "Europe"
+  },
+  {
+    "id": "LVA",
+    "name": "Latvia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 57.066872,
+    "lng": 25.458723,
+    "continent": "Europe"
+  },
+  {
+    "id": "MAC",
+    "name": "Macao",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "CHN",
+    "lat": 22.129735,
+    "lng": 113.556038,
+    "continent": "Asia"
+  },
+  {
+    "id": "MAF",
+    "name": "St-Martin",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "FRA",
+    "lat": 18.081302,
+    "lng": -63.049399,
+    "continent": "North America"
+  },
+  {
+    "id": "MAR",
+    "name": "Morocco",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 31.650723,
+    "lng": -7.187296,
+    "continent": "Africa"
+  },
+  {
+    "id": "MCO",
+    "name": "Monaco",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 43.739652,
+    "lng": 7.398291,
+    "continent": "Europe"
+  },
+  {
+    "id": "MDA",
+    "name": "Moldova",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 47.434999,
+    "lng": 28.487904,
+    "continent": "Europe"
+  },
+  {
+    "id": "MDG",
+    "name": "Madagascar",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -18.628288,
+    "lng": 46.704241,
+    "continent": "Africa"
+  },
+  {
+    "id": "MDV",
+    "name": "Maldives",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 4.174441,
+    "lng": 73.507554,
+    "continent": "Asia"
+  },
+  {
+    "id": "MEX",
+    "name": "Mexico",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 23.919988,
+    "lng": -102.289448,
+    "continent": "North America"
+  },
+  {
+    "id": "MHL",
+    "name": "Marshall Islands",
+    "aliases": [
+      "Marshall Is."
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 7.082568,
+    "lng": 171.193609,
+    "continent": "Oceania"
+  },
+  {
+    "id": "MKD",
+    "name": "North Macedonia",
+    "aliases": [
+      "Macedonia"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 41.558223,
+    "lng": 21.555839,
+    "continent": "Europe"
+  },
+  {
+    "id": "MLI",
+    "name": "Mali",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 18.692713,
+    "lng": -2.038455,
+    "continent": "Africa"
+  },
+  {
+    "id": "MLT",
+    "name": "Malta",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 35.892886,
+    "lng": 14.433005,
+    "continent": "Europe"
+  },
+  {
+    "id": "MMR",
+    "name": "Myanmar",
+    "aliases": [
+      "Burma"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 21.573855,
+    "lng": 95.804497,
+    "continent": "Asia"
+  },
+  {
+    "id": "MNE",
+    "name": "Montenegro",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 42.803101,
+    "lng": 19.143727,
+    "continent": "Europe"
+  },
+  {
+    "id": "MNG",
+    "name": "Mongolia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 45.997488,
+    "lng": 104.150405,
+    "continent": "Asia"
+  },
+  {
+    "id": "MNP",
+    "name": "Northern Mariana Islands",
+    "aliases": [
+      "N. Mariana Is."
+    ],
+    "kind": "territory",
+    "owner": "USA",
+    "lat": 15.188188,
+    "lng": 145.734397,
+    "continent": "Oceania"
+  },
+  {
+    "id": "MOZ",
+    "name": "Mozambique",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -13.94323,
+    "lng": 37.83789,
+    "continent": "Africa"
+  },
+  {
+    "id": "MRT",
+    "name": "Mauritania",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 19.587062,
+    "lng": -9.740299,
+    "continent": "Africa"
+  },
+  {
+    "id": "MSR",
+    "name": "Montserrat",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 16.73717,
+    "lng": -62.188252,
+    "continent": "North America"
+  },
+  {
+    "id": "MUS",
+    "name": "Mauritius",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -20.299506,
+    "lng": 57.565848,
+    "continent": "Africa"
+  },
+  {
+    "id": "MWI",
+    "name": "Malawi",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -13.386737,
+    "lng": 33.608082,
+    "continent": "Africa"
+  },
+  {
+    "id": "MYS",
+    "name": "Malaysia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 2.528667,
+    "lng": 113.83708,
+    "continent": "Asia"
+  },
+  {
+    "id": "N. Cyprus",
+    "name": "Northern Cyprus",
+    "aliases": [
+      "N. Cyprus"
+    ],
+    "kind": "disputed",
+    "owner": "CYP",
+    "lat": 35.216071,
+    "lng": 33.692434,
+    "continent": "Asia"
+  },
+  {
+    "id": "NAM",
+    "name": "Namibia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -20.575298,
+    "lng": 17.108166,
+    "continent": "Africa"
+  },
+  {
+    "id": "NCL",
+    "name": "New Caledonia",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "FRA",
+    "lat": -21.064697,
+    "lng": 165.084004,
+    "continent": "Oceania"
+  },
+  {
+    "id": "NER",
+    "name": "Niger",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 17.446195,
+    "lng": 9.504356,
+    "continent": "Africa"
+  },
+  {
+    "id": "NFK",
+    "name": "Norfolk Island",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "AUS",
+    "lat": -29.033042,
+    "lng": 167.954531,
+    "continent": "Oceania"
+  },
+  {
+    "id": "NGA",
+    "name": "Nigeria",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 9.439799,
+    "lng": 7.50322,
+    "continent": "Africa"
+  },
+  {
+    "id": "NIC",
+    "name": "Nicaragua",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 12.670697,
+    "lng": -85.069347,
+    "continent": "North America"
+  },
+  {
+    "id": "NIU",
+    "name": "Niue",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "NZL",
+    "lat": -19.045956,
+    "lng": -169.862565,
+    "continent": "Oceania"
+  },
+  {
+    "id": "NLD",
+    "name": "Netherlands",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 52.422211,
+    "lng": 5.61144,
+    "continent": "Europe"
+  },
+  {
+    "id": "NOR",
+    "name": "Norway",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 61.357092,
+    "lng": 9.679975,
+    "continent": "Europe"
+  },
+  {
+    "id": "NPL",
+    "name": "Nepal",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 28.297925,
+    "lng": 83.639914,
+    "continent": "Asia"
+  },
+  {
+    "id": "NRU",
+    "name": "Nauru",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -0.520261,
+    "lng": 166.932644,
+    "continent": "Oceania"
+  },
+  {
+    "id": "NZL",
+    "name": "New Zealand",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -39.759,
+    "lng": 172.787,
+    "continent": "Oceania"
+  },
+  {
+    "id": "OMN",
+    "name": "Oman",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 22.120427,
+    "lng": 57.336553,
+    "continent": "Asia"
+  },
+  {
+    "id": "PAK",
+    "name": "Pakistan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 29.328389,
+    "lng": 68.545632,
+    "continent": "Asia"
+  },
+  {
+    "id": "PAN",
+    "name": "Panama",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 8.72198,
+    "lng": -80.352106,
+    "continent": "North America"
+  },
+  {
+    "id": "PCN",
+    "name": "Pitcairn Islands",
+    "aliases": [
+      "Pitcairn Is."
+    ],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": -24.364576,
+    "lng": -128.317536,
+    "continent": "Oceania"
+  },
+  {
+    "id": "PER",
+    "name": "Peru",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -12.976679,
+    "lng": -72.90016,
+    "continent": "South America"
+  },
+  {
+    "id": "PHL",
+    "name": "Philippines",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 11.198,
+    "lng": 122.465,
+    "continent": "Asia"
+  },
+  {
+    "id": "PLW",
+    "name": "Palau",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 7.518252,
+    "lng": 134.580157,
+    "continent": "Oceania"
+  },
+  {
+    "id": "PNG",
+    "name": "Papua New Guinea",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -5.695285,
+    "lng": 143.910216,
+    "continent": "Oceania"
+  },
+  {
+    "id": "POL",
+    "name": "Poland",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 51.990316,
+    "lng": 19.490468,
+    "continent": "Europe"
+  },
+  {
+    "id": "PRI",
+    "name": "Puerto Rico",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "USA",
+    "lat": 18.234668,
+    "lng": -66.481065,
+    "continent": "North America"
+  },
+  {
+    "id": "PRK",
+    "name": "North Korea",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 39.885252,
+    "lng": 126.444516,
+    "continent": "Asia"
+  },
+  {
+    "id": "PRT",
+    "name": "Portugal",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 39.606675,
+    "lng": -8.271754,
+    "continent": "Europe"
+  },
+  {
+    "id": "PRY",
+    "name": "Paraguay",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -21.674509,
+    "lng": -60.146394,
+    "continent": "South America"
+  },
+  {
+    "id": "PSE",
+    "name": "Palestine",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 32.047431,
+    "lng": 35.291341,
+    "continent": "Asia"
+  },
+  {
+    "id": "PYF",
+    "name": "French Polynesia",
+    "aliases": [
+      "Fr. Polynesia"
+    ],
+    "kind": "territory",
+    "owner": "FRA",
+    "lat": -17.628081,
+    "lng": -149.46157,
+    "continent": "Oceania"
+  },
+  {
+    "id": "QAT",
+    "name": "Qatar",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 25.237383,
+    "lng": 51.143509,
+    "continent": "Asia"
+  },
+  {
+    "id": "ROU",
+    "name": "Romania",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 45.733237,
+    "lng": 24.972624,
+    "continent": "Europe"
+  },
+  {
+    "id": "RUS",
+    "name": "Russia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 58.249357,
+    "lng": 44.686469,
+    "continent": "Europe"
+  },
+  {
+    "id": "RWA",
+    "name": "Rwanda",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -1.897196,
+    "lng": 30.103894,
+    "continent": "Africa"
+  },
+  {
+    "id": "SAU",
+    "name": "Saudi Arabia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 23.806908,
+    "lng": 44.6996,
+    "continent": "Asia"
+  },
+  {
+    "id": "SDN",
+    "name": "Sudan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 16.330746,
+    "lng": 29.260657,
+    "continent": "Africa"
+  },
+  {
+    "id": "SEN",
+    "name": "Senegal",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 15.138125,
+    "lng": -14.778586,
+    "continent": "Africa"
+  },
+  {
+    "id": "SGP",
+    "name": "Singapore",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 1.366587,
+    "lng": 103.816925,
+    "continent": "Asia"
+  },
+  {
+    "id": "SGS",
+    "name": "South Georgia and the Islands",
+    "aliases": [
+      "S. Geo. and the Is."
+    ],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": -55.683402,
+    "lng": -31.063179,
+    "continent": "Seven seas (open ocean)"
+  },
+  {
+    "id": "SHN",
+    "name": "Saint Helena",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": -15.950487,
+    "lng": -5.71262,
+    "continent": "Seven seas (open ocean)"
+  },
+  {
+    "id": "SLB",
+    "name": "Solomon Islands",
+    "aliases": [
+      "Solomon Is."
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -8.029548,
+    "lng": 159.170468,
+    "continent": "Oceania"
+  },
+  {
+    "id": "SLE",
+    "name": "Sierra Leone",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 8.617449,
+    "lng": -11.763677,
+    "continent": "Africa"
+  },
+  {
+    "id": "SLV",
+    "name": "El Salvador",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 13.685371,
+    "lng": -88.890124,
+    "continent": "North America"
+  },
+  {
+    "id": "SMR",
+    "name": "San Marino",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 43.933916,
+    "lng": 12.441206,
+    "continent": "Europe"
+  },
+  {
+    "id": "SOM",
+    "name": "Somalia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 3.568925,
+    "lng": 45.19238,
+    "continent": "Africa"
+  },
+  {
+    "id": "SPM",
+    "name": "Saint Pierre and Miquelon",
+    "aliases": [
+      "St. Pierre and Miquelon"
+    ],
+    "kind": "territory",
+    "owner": "FRA",
+    "lat": 47.040344,
+    "lng": -56.332352,
+    "continent": "North America"
+  },
+  {
+    "id": "SRB",
+    "name": "Serbia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 44.189919,
+    "lng": 20.787989,
+    "continent": "Europe"
+  },
+  {
+    "id": "SSD",
+    "name": "South Sudan",
+    "aliases": [
+      "S. Sudan"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 7.230477,
+    "lng": 30.390151,
+    "continent": "Africa"
+  },
+  {
+    "id": "STP",
+    "name": "São Tomé and Principe",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 0.9709,
+    "lng": 7.021,
+    "continent": "Africa"
+  },
+  {
+    "id": "SUR",
+    "name": "Suriname",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 4.143987,
+    "lng": -55.91094,
+    "continent": "South America"
+  },
+  {
+    "id": "SVK",
+    "name": "Slovakia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 48.734044,
+    "lng": 19.049868,
+    "continent": "Europe"
+  },
+  {
+    "id": "SVN",
+    "name": "Slovenia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 46.06076,
+    "lng": 14.915312,
+    "continent": "Europe"
+  },
+  {
+    "id": "SWE",
+    "name": "Sweden",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 65.85918,
+    "lng": 19.01705,
+    "continent": "Europe"
+  },
+  {
+    "id": "SWZ",
+    "name": "Eswatini",
+    "aliases": [
+      "eSwatini",
+      "Swaziland"
+    ],
+    "kind": "sovereign",
+    "owner": null,
     "lat": -26.533676,
     "lng": 31.467264,
-    "continent": "Africa",
-    "iso": "SWZ"
+    "continent": "Africa"
+  },
+  {
+    "id": "SXM",
+    "name": "Sint Maarten",
+    "aliases": [],
+    "kind": "territory",
+    "owner": "NLD",
+    "lat": 18.04088,
+    "lng": -63.070133,
+    "continent": "North America"
+  },
+  {
+    "id": "SYC",
+    "name": "Seychelles",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -4.676659,
+    "lng": 55.480175,
+    "continent": "Africa"
+  },
+  {
+    "id": "SYR",
+    "name": "Syria",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 35.006636,
+    "lng": 38.277783,
+    "continent": "Asia"
+  },
+  {
+    "id": "Somaliland",
+    "name": "Somaliland",
+    "aliases": [],
+    "kind": "disputed",
+    "owner": "SOM",
+    "lat": 9.443889,
+    "lng": 46.731595,
+    "continent": "Africa"
+  },
+  {
+    "id": "TCA",
+    "name": "Turks and Caicos Islands",
+    "aliases": [
+      "Turks and Caicos Is."
+    ],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 21.81663,
+    "lng": -71.752704,
+    "continent": "North America"
+  },
+  {
+    "id": "TCD",
+    "name": "Chad",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 15.142959,
+    "lng": 18.645041,
+    "continent": "Africa"
+  },
+  {
+    "id": "TGO",
+    "name": "Togo",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 8.80722,
+    "lng": 1.058113,
+    "continent": "Africa"
+  },
+  {
+    "id": "THA",
+    "name": "Thailand",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 15.45974,
+    "lng": 101.073198,
+    "continent": "Asia"
+  },
+  {
+    "id": "TJK",
+    "name": "Tajikistan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 38.199835,
+    "lng": 72.587276,
+    "continent": "Asia"
+  },
+  {
+    "id": "TKM",
+    "name": "Turkmenistan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 39.855246,
+    "lng": 58.676647,
+    "continent": "Asia"
+  },
+  {
+    "id": "TLS",
+    "name": "Timor-Leste",
+    "aliases": [
+      "East Timor"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -8.803705,
+    "lng": 125.854679,
+    "continent": "Asia"
+  },
+  {
+    "id": "TON",
+    "name": "Tonga",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -21.210026,
+    "lng": -175.163014,
+    "continent": "Oceania"
+  },
+  {
+    "id": "TTO",
+    "name": "Trinidad and Tobago",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 10.9989,
+    "lng": -60.9184,
+    "continent": "North America"
+  },
+  {
+    "id": "TUN",
+    "name": "Tunisia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 33.687263,
+    "lng": 9.007881,
+    "continent": "Africa"
+  },
+  {
+    "id": "TUR",
+    "name": "Turkey",
+    "aliases": [
+      "Türkiye"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 39.345388,
+    "lng": 34.508268,
+    "continent": "Asia"
+  },
+  {
+    "id": "TUV",
+    "name": "Tuvalu",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -8.513717,
+    "lng": 179.209587,
+    "continent": "Oceania"
+  },
+  {
+    "id": "TWN",
+    "name": "Taiwan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 23.652408,
+    "lng": 120.868204,
+    "continent": "Asia"
+  },
+  {
+    "id": "TZA",
+    "name": "Tanzania",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -6.051866,
+    "lng": 34.959183,
+    "continent": "Africa"
+  },
+  {
+    "id": "UGA",
+    "name": "Uganda",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 1.972589,
+    "lng": 32.948555,
+    "continent": "Africa"
+  },
+  {
+    "id": "UKR",
+    "name": "Ukraine",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 49.724739,
+    "lng": 32.140865,
+    "continent": "Europe"
+  },
+  {
+    "id": "URY",
+    "name": "Uruguay",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -32.961127,
+    "lng": -55.966942,
+    "continent": "South America"
+  },
+  {
+    "id": "USA",
+    "name": "United States of America",
+    "aliases": [
+      "United States",
+      "USA",
+      "US",
+      "America"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 39.538479,
+    "lng": -97.482602,
+    "continent": "North America"
+  },
+  {
+    "id": "UZB",
+    "name": "Uzbekistan",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 41.693603,
+    "lng": 64.005429,
+    "continent": "Asia"
+  },
+  {
+    "id": "VAT",
+    "name": "Vatican",
+    "aliases": [
+      "Holy See",
+      "Vatican City"
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 41.903323,
+    "lng": 12.453418,
+    "continent": "Europe"
+  },
+  {
+    "id": "VCT",
+    "name": "Saint Vincent and the Grenadines",
+    "aliases": [
+      "St. Vin. and Gren."
+    ],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 13.0879,
+    "lng": -61.3359,
+    "continent": "North America"
+  },
+  {
+    "id": "VEN",
+    "name": "Venezuela",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 7.182476,
+    "lng": -64.599381,
+    "continent": "South America"
+  },
+  {
+    "id": "VGB",
+    "name": "British Virgin Islands",
+    "aliases": [
+      "British Virgin Is."
+    ],
+    "kind": "territory",
+    "owner": "GBR",
+    "lat": 18.426606,
+    "lng": -64.63661,
+    "continent": "North America"
+  },
+  {
+    "id": "VIR",
+    "name": "United States Virgin Islands",
+    "aliases": [
+      "U.S. Virgin Is."
+    ],
+    "kind": "territory",
+    "owner": "USA",
+    "lat": 17.746706,
+    "lng": -64.779172,
+    "continent": "North America"
+  },
+  {
+    "id": "VNM",
+    "name": "Vietnam",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 21.715416,
+    "lng": 105.387292,
+    "continent": "Asia"
+  },
+  {
+    "id": "VUT",
+    "name": "Vanuatu",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -15.37153,
+    "lng": 166.908762,
+    "continent": "Oceania"
+  },
+  {
+    "id": "WLF",
+    "name": "Wallis and Futuna Islands",
+    "aliases": [
+      "Wallis and Futuna Is."
+    ],
+    "kind": "territory",
+    "owner": "FRA",
+    "lat": -14.286415,
+    "lng": -178.137436,
+    "continent": "Oceania"
+  },
+  {
+    "id": "WSM",
+    "name": "Samoa",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -13.639139,
+    "lng": -172.438241,
+    "continent": "Oceania"
+  },
+  {
+    "id": "YEM",
+    "name": "Yemen",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": 15.328226,
+    "lng": 45.874383,
+    "continent": "Asia"
+  },
+  {
+    "id": "ZAF",
+    "name": "South Africa",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -29.708776,
+    "lng": 23.665734,
+    "continent": "Africa"
+  },
+  {
+    "id": "ZMB",
+    "name": "Zambia",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -14.660804,
+    "lng": 26.395298,
+    "continent": "Africa"
+  },
+  {
+    "id": "ZWE",
+    "name": "Zimbabwe",
+    "aliases": [],
+    "kind": "sovereign",
+    "owner": null,
+    "lat": -18.91164,
+    "lng": 29.925444,
+    "continent": "Africa"
   }
 ]

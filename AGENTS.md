@@ -70,6 +70,14 @@ below, **stop and say so** rather than designing around it.
 - **D25** Daily Sound (gameId 9, `#/g/sound`): five procedural tones a day (110–880 Hz),
   each heard once then found by dragging; 10 × (1 − ΔERB/0.5) per tone; `score` = total
   in tenths (0–500), higher better. See `plans/wp-41-daily-sound.md`.
+- **D26** Daily Globe's data is a **superset** of every Natural Earth 1:50m place (but
+  Antarctica, Siachen), each with a stable id, kind and owner; an editorial config
+  (`shared/countries/globe-countries.json`) picks two subsets, **guessable** and
+  **answers**, both Globle's 197 today (193 UN members + Vatican, Kosovo, Palestine,
+  Taiwan). The daily answer depends only on `answers`, whose entries carry a start day
+  (`since`, optional `until`), so adding a place or an answer is never breaking; ids and
+  the shuffle rule are frozen once live. Non-guessable places are drawn
+  neutral when their owner is guessed. See `plans/wp-42-globe-countries.md`.
 - **D20** `DailyScores` keeps a per-`(game_id, day)` histogram of **on-time** finishers,
   bucketed by an owner-set, set-once, per-game **bucket spec** `{min, max, buckets ≤ 128}`:
   linear buckets over `[min, max)`, below `min` in the first, at or above `max` in the

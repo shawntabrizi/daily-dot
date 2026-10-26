@@ -848,3 +848,181 @@ h1 {
   height: 16px;
   stroke-width: 2.2;
 }
+
+/* (?) on a game screen: how to play, over the board. */
+.header-help {
+  display: grid;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  padding: 0;
+  place-items: center;
+  border: 1.5px solid var(--neutral);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.header-help[hidden] {
+  display: none;
+}
+
+.header-help:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.rules-overlay {
+  position: fixed;
+  z-index: 60;
+  inset: 0;
+  display: grid;
+  padding: 16px;
+  place-items: center;
+  background: rgb(0 0 0 / 60%);
+}
+
+.rules-dialog {
+  display: flex;
+  width: min(100%, 380px);
+  max-height: calc(100dvh - 32px);
+  padding: 18px 18px 16px;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 45%);
+}
+
+.rules-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rules-head h2 {
+  margin: 0;
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.rules-close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.rules-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rules-game {
+  margin: -6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.rules-steps {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+}
+
+.rules-step {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-radius: 14px;
+  background: var(--surface-raised);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.rules-visual {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.rules-emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.rules-tile {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 4px;
+  background: var(--tile-empty);
+  box-shadow: inset 0 0 0 1.5px var(--neutral);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.rules-tile--correct { background: var(--correct); box-shadow: none; }
+.rules-tile--present { background: var(--present); box-shadow: none; color: #2a2504; }
+.rules-tile--absent { background: #454849; box-shadow: none; }
+
+.rules-peg {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.rules-peg--exact { background: var(--correct); }
+.rules-peg--near { box-shadow: inset 0 0 0 3px var(--present); }
+
+.rules-swatch {
+  width: 22px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+.rules-score {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.rules-ok {
+  min-height: 46px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.rules-dialog button:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}

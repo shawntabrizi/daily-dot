@@ -138,6 +138,39 @@ any single context window. `PLAN.md` is the design; this is where things actuall
     Checked in Chromium at 360×780 and 1440×900 (look, sliders, reveal: no page scroll;
     final result scrolls as the result page does). Not verified: on a device or in the
     host; the read-only state was checked by unit test only, not in the browser.
+- **WP42 done (Daily Globe: the 197 countries, D26; superset/subset model per Shawn),
+  2026-10-25:** Places are **one superset plus two editorial subsets**. `core.json` is
+  every Natural Earth **1:50m** admin-0 feature but Antarctica and Siachen (240 places,
+  `{id, name, aliases, kind, owner, lat, lng, continent}`); `shapes.json` is `{id, rings}`
+  for each. `kind` is sovereign for the 197 `countries` NAMEs in `globe-countries.json`
+  (never a `TYPE` filter, so Cuba, Kazakhstan, Israel, Kosovo, Palestine, Singapore,
+  Malta, Vatican… are in), otherwise disputed (5) or territory (38); `owner` from
+  `SOVEREIGNT` with Somaliland → Somalia, N. Cyprus → Cyprus, W. Sahara → Morocco. `id`
+  is `ISO_A3_EH` / `NAME` on `-99` / `NAME` where a code is shared and `ADM0_A3` is not
+  its holder (two Australian territories are `AUS`), so it never depends on the config.
+  `globe-countries.json` gains `guessable` (ids, the 197) and `answers` (`{id, since,
+  until?}`, the 197 at `since: 0`). The picker accepts `guessable` only. A guessable
+  place is drawn by its own mark; any other place is drawn `--neutral` when its owner is
+  guessed or revealed (Greenland with Denmark), so making Hong Kong guessable is
+  config-only. **v1 answer rule:** cycle `k` starts on its day (0 for cycle 0), takes the
+  pool active that day (`since <= start < until`) sorted by id, shuffles it with the v1
+  PRNG seeded `k`, lasts one day per answer; cycle starts are walked once and cached
+  (O(cycles)). Adding a place or a guessable id changes nothing; a future `since`/`until`
+  changes only cycles starting on/after it (tests (a)–(c) in `generate.test.ts`). Globe
+  v1 answers re-pinned (day 0 Central African Republic, 208 Netherlands; rewrite before
+  first play, D11). Readable names (`NAME_LONG` where `NAME` abbreviates, "Eswatini"),
+  `aliases` (D26 list + the NE name) matched folded (`games/globe/names.ts`); "Seven
+  seas" continents mapped to Asia/Africa. Shapes: Douglas–Peucker (half a grid step) +
+  0.1° grid; a place's last ring kept on a finer grid (32, incl. Vatican, Monaco, San
+  Marino); a marked guessable place under 4 px at the current zoom also gets a
+  label-point dot. `shapes.json` 99,781 → 276,439 bytes; `core.json` 20,193 → 46,279;
+  main chunk 868.71 → 1,070.68 kB (gzip 282.99 → 339.64 kB). Generators rerun
+  byte-identical; `--input`/`NE_GEOJSON` kept, `--countries` replaced by `--list` (the
+  config). **Verified:** tsc, `typecheck:tools`, vitest (717), build, `pocket:test`,
+  `smoke`; Chromium 360×780 and 1440×900 (`app/test-results/wp42/`, not committed):
+  Singapore guessed shows as a dot, Denmark shows Greenland neutral, "Burma" lists as
+  Myanmar, no page scroll. **Not verified:** the phone/Polkadot app webview; the dot and
+  territory fill under zoom on a real device.
 - **WP41 done (Daily Sound, gameId 9, `#/g/sound`, D25), 2026-10-23:** `games/sound`
   engine (ERB-rate `21.4·log10(1 + 0.00437 f)`, per tone `10 × max(0, 1 − ΔERB/0.5)`
   shown to hundredths; recorded score = the five shown hundredths summed, then rounded
@@ -164,6 +197,28 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   no speakers), a real device or the host, iOS's silent switch; read-only state by unit
   test only. Logged, not fixed: the 0.5 ERB tolerance is the brief's round choice
   (dialed.gg's looks nearer 0.515) — tune before first play.
+- **Rules popup and Color Start (2026-10-24, Shawn):** a (?) in every game's header
+  opens "How to play" (`shared/ui/rules.ts`: two or three steps per game, each a small
+  picture and one line, then how it scores); Escape, the close button, the backdrop or
+  "Got it" close it and focus returns to the (?); keys do not reach the game while it is
+  open. Daily Color no longer starts its 5 s look on page load or reload: a "Ready? /
+  Start" board first (Sound already waits for its Listen tap). Checked in Chromium at
+  360×780 and 1440×900, no page scroll. Not checked on a device. The rename to
+  `dailydot` is dropped (Shawn); the name stays `dailyondot.paseo`.
+- **Sound loudness (2026-10-24, Shawn: low tones too quiet, high too loud):** the gain now
+  follows 75% of the ISO 226 40-phon equal-loudness contour (`levelFor` in
+  `games/sound/audio.ts`: 0.45 at 110 Hz down to 0.06 at 880 Hz, was a flat 0.25), and
+  the live drag tone follows it as the pitch moves. The tone gains soft 2nd and 3rd
+  harmonics so phone speakers, which barely play 110 Hz, still carry the pitch; scoring
+  is unchanged. Not yet heard on a device: tune `COMPENSATION` / `PEAK_LEVEL` by ear.
+- **Angle on-screen pad (2026-10-24, Shawn: the keyboard covered the hints):** Angle's
+  number input opened the phone keyboard over the hint list and refocused after every
+  guess. It now has a readout and a two-row pad (`1–5 ⌫ / 6–0 Guess`), physical keys on
+  desktop, hints between the drawing and the pad. Checked at 360×780 (three hints show),
+  360×640 (newest shows, the rest scroll) and 1440×900, no page scroll. Only Angle and
+  Globe ever opened the system keyboard; Globe needs typing to search, but its input is
+  rebuilt unfocused after a guess, so the keyboard closes and the list shows. Not
+  checked on a device.
 - **Branch:** `prototype`
 - **Last verified commit:** this commit
 

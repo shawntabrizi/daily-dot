@@ -77,7 +77,7 @@ describe("header", () => {
 });
 
 describe("header on a past day's game (Archive board)", () => {
-  const word = { id: "word", short: "Word", route: "#/g/word" } as const;
+  const word = { id: "word", name: "Daily Word", short: "Word", route: "#/g/word" } as const;
 
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });

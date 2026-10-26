@@ -310,3 +310,32 @@
 .color-stage--done .color-summary {
   flex: 0 1 auto;
 }
+
+/* Before each look: nothing shown until the player taps Start (no clock on page load). */
+.color-board--ready {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.color-ready-title {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.color-ready-note {
+  max-width: 260px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.color-start {
+  margin-top: 10px;
+  min-width: 160px;
+}
