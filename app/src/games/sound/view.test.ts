@@ -170,7 +170,7 @@ describe("Sound view", () => {
     view.dispose();
   });
 
-  it("submits, reveals round, score, verdict, target and guess, then the arrow goes to the next listen", async () => {
+  it("submits, reveals round, score, verdict, target and guess, then the arrow plays the next tone with no second Listen", async () => {
     const view = await open(sourceFor());
     await listen(view.element);
     dial(view.element, hzToCents(TARGETS[0]!));
@@ -190,10 +190,13 @@ describe("Sound view", () => {
     const next = view.element.querySelector<HTMLButtonElement>("[data-sound-next]")!;
     expect(next.getAttribute("aria-label")).toBe("Next tone");
     next.click();
+    // Why: Listen is the one tap that unlocks audio; after it, the arrow is
+    // tap enough, so a second Listen would only slow every round.
+    await vi.advanceTimersByTimeAsync(0);
     expect(view.element.querySelector("[data-sound-round]")?.textContent).toBe("Tone 2 of 5");
-    expect(view.element.querySelector('[data-sound-phase="listen"]')).not.toBeNull();
-    await listen(view.element);
+    expect(view.element.querySelector('[data-sound-phase="playing"]')).not.toBeNull();
     expect(audio.playTone).toHaveBeenLastCalledWith(TARGETS[1], 2);
+    await vi.advanceTimersByTimeAsync(2_200);
     // Every tone's pitch starts mid-range again.
     expect(pitch(view.element).getAttribute("aria-valuetext")).toBe(`${START_HZ.toFixed(2)} Hz`);
     view.dispose();
@@ -204,7 +207,12 @@ describe("Sound view", () => {
     const view = await open(sourceFor(0n, record));
     const guesses: number[] = [];
     for (let round = 0; round < 5; round += 1) {
-      await listen(view.element);
+      if (round === 0) {
+        await listen(view.element);
+      } else {
+        // The arrow already started this tone.
+        await vi.advanceTimersByTimeAsync(2_200);
+      }
       // A tone a hundred cents (a semitone) sharp of each target.
       const cents = Math.min(3600, hzToCents(TARGETS[round]!) + 100);
       dial(view.element, cents);
@@ -242,7 +250,7 @@ describe("Sound view", () => {
     await listen(first.element);
     first.element.querySelector<HTMLButtonElement>("[data-sound-submit]")!.click();
     first.element.querySelector<HTMLButtonElement>("[data-sound-next]")!.click();
-    await listen(first.element);
+    await vi.advanceTimersByTimeAsync(2_200);
     first.dispose();
     document.body.replaceChildren();
 

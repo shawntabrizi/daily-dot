@@ -20,10 +20,10 @@ const GLYPHS: Record<GameSlug, string> = {
   // A 3×3 grid.
   sudoku:
     '<rect x="3.5" y="3.5" width="17" height="17" rx="2"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/>',
-  // A pawn.
+  // A knight, the eye cut out.
   chess:
-    '<circle cx="12" cy="6.5" r="2.5" fill="%f" stroke="none"/>'
-    + '<path d="M9.5 11h5l1.5 5.5h-8z" fill="%f" stroke="none"/><path d="M6.5 20.5h11l-1-3h-9z" fill="%f" stroke="none"/>',
+    '<path fill-rule="evenodd" d="M9 3l1 3-3.5 2.2c-.5.3-.7.9-.5 1.4l.4 1.1c.2.6.9.9 1.5.7l2.6-.9L8 16h8.5l1.5-5.5C18.8 6.5 16 3 12 3zM12.3 5.4a.9.9 0 1 0 0 1.8.9.9 0 1 0 0-1.8z" fill="%f" stroke="none"/>'
+    + '<path d="M7.5 17h9l1.5 1.5v2H6v-2z" fill="%f" stroke="none"/>',
   // A circle with meridians.
   globe:
     '<circle cx="12" cy="12" r="8.5"/><ellipse cx="12" cy="12" rx="3.5" ry="8.5"/><path d="M3.5 12h17"/>',

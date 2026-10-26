@@ -375,16 +375,19 @@ describe("card launcher", () => {
     dispose();
   });
 
-  it("the footer opens the product itself, without a route or an intent", async () => {
+  it("the footer opens the hub by its route, since the host ignores a bare product URL here", async () => {
     const { root, dispose } = mount();
 
     root.querySelector<HTMLButtonElement>("[data-launcher-open]")!.click();
 
+    // Why: on Android the bare URL returns ok and opens nothing; only a routed
+    // URL brings the full app up, so the routed form must be asked first.
     await vi.waitFor(() => {
-      expect(host.navigateTo).toHaveBeenCalledWith("polkadotapp://dailyondot.paseo");
+      expect(host.navigateTo).toHaveBeenCalled();
     });
-    expect(window.localStorage.getItem(OPEN_INTENT_KEY)).toBeNull();
-    expect(host.values.has(OPEN_INTENT_KEY)).toBe(false);
+    expect(host.navigateTo.mock.calls[0]![0]).toBe("polkadotapp://dailyondot.paseo/#/");
+    // The intent takes a warm full app off whatever game it showed, to the hub.
+    expect(JSON.parse(window.localStorage.getItem(OPEN_INTENT_KEY)!).route).toBe("#/");
     dispose();
   });
 });

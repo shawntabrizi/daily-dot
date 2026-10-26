@@ -461,9 +461,9 @@ export function renderSound(source: DataSource, requestedDay?: number): ViewHand
         renderGame();
         submitAndRender();
       } else {
+        // Only the first tone waits for Listen: this tap plays the next one.
         startListen();
-        renderGame();
-        shell.querySelector<HTMLElement>("[data-sound-listen]")?.focus();
+        void listen();
       }
     });
     board.append(count, result, rows, next);
