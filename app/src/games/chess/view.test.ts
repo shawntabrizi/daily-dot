@@ -36,9 +36,10 @@ function clickMove(view: HTMLElement, from: string, to: string): void {
 }
 
 async function waitForPlayer(view: HTMLElement): Promise<void> {
+  // The opening move waits a second so the player sees the position first.
   await vi.waitFor(() => {
     expect(view.querySelector("[data-chess-phase='player']")).not.toBeNull();
-  });
+  }, { timeout: 3_000 });
 }
 
 afterEach(() => {
@@ -48,6 +49,31 @@ afterEach(() => {
 });
 
 describe("Chess view", () => {
+  it("shows the position first, then slides in the other side's opening move", async () => {
+    // Why: the puzzle starts with the other side's move; a player who never
+    // sees it happen does not know what they are answering.
+    const animate = vi.fn(() => ({ finished: Promise.resolve() }) as unknown as Animation);
+    HTMLElement.prototype.animate = animate;
+    const view = renderChess(sourceFor(), 208);
+    document.body.append(view.element);
+    await vi.waitFor(() => {
+      expect(view.element.querySelector("[data-chess-phase='opponent']")).not.toBeNull();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expect(view.element.querySelector("[data-chess-phase='opponent']")).not.toBeNull();
+    expect(animate).not.toHaveBeenCalled();
+
+    await waitForPlayer(view.element);
+    expect(animate).toHaveBeenCalledTimes(1);
+    const [frames] = animate.mock.calls[0] as unknown as [Keyframe[]];
+    expect(frames[0]!.transform).toMatch(/^translate\(/);
+    expect(frames[1]!.transform).toBe("translate(0, 0)");
+    expect(view.element.querySelectorAll(".chess-square--last")).toHaveLength(2);
+    // @ts-expect-error jsdom has no Web Animations API; remove the stub.
+    delete HTMLElement.prototype.animate;
+    view.dispose();
+  });
+
   it("orients the player to move at the bottom", async () => {
     const view = renderChess(sourceFor(), 208);
     document.body.append(view.element);

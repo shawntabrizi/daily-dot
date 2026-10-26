@@ -151,6 +151,12 @@
   animation: chess-arrive 240ms ease-out;
 }
 
+/* The other side's piece, mid-slide: above the squares it crosses. */
+.chess-piece--sliding {
+  position: relative;
+  z-index: 2;
+}
+
 @keyframes chess-arrive {
   from {
     opacity: 0.4;

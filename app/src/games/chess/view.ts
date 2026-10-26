@@ -30,6 +30,10 @@ import {
 import { PIECE_SVG, type PieceType } from "./pieces";
 
 const AUTO_MOVE_DELAY_MS = 360;
+/** The puzzle's opening move waits longer: the player sees the position first, then the move. */
+const OPENING_MOVE_DELAY_MS = 1_000;
+/** How long the other side's piece takes to slide to its square. */
+const SLIDE_MS = 320;
 
 const pieceElement = (color: Color, type: string, className: string): HTMLSpanElement => {
   const token = document.createElement("span");
@@ -390,6 +394,38 @@ export function renderChess(
     shell!.replaceChildren(stage);
   }
 
+  /**
+   * Slides the piece now on `to` from `from`, so the other side's move is
+   * seen, not just inferred from the highlight. Skipped for reduced motion
+   * and where the Web Animations API is missing.
+   */
+  const slidePiece = (from: Square, to: Square): void => {
+    const piece = shell.querySelector<HTMLElement>(`[data-chess-square="${to}"] .chess-piece`);
+    const origin = shell.querySelector<HTMLElement>(`[data-chess-square="${from}"]`);
+    if (
+      !piece
+      || !origin
+      || typeof piece.animate !== "function"
+      || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    const start = origin.getBoundingClientRect();
+    const end = piece.parentElement!.getBoundingClientRect();
+    piece.classList.remove("chess-piece--arriving");
+    piece.classList.add("chess-piece--sliding");
+    piece
+      .animate(
+        [
+          { transform: `translate(${start.left - end.left}px, ${start.top - end.top}px)` },
+          { transform: "translate(0, 0)" },
+        ],
+        { duration: SLIDE_MS, easing: "ease-in-out" },
+      )
+      .finished.catch(() => undefined)
+      .finally(() => piece.classList.remove("chess-piece--sliding"));
+  };
+
   const scheduleOpponentMove = (): void => {
     if (!puzzle || !prepared || !progress || !chess || alreadyRecorded) {
       return;
@@ -426,7 +462,8 @@ export function renderChess(
       phase = "player";
       message = "Find the best move.";
       renderGame();
-    }, AUTO_MOVE_DELAY_MS);
+      slidePiece(played.from, played.to);
+    }, progress.nextMoveIndex === 0 ? OPENING_MOVE_DELAY_MS : AUTO_MOVE_DELAY_MS);
   };
 
   const submitCompletedPuzzle = (): void => {
