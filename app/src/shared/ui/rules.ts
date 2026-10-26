@@ -22,19 +22,20 @@ const tile = (letter: string, kind: "correct" | "present" | "absent" | "empty"):
   `<span class="rules-tile rules-tile--${kind}">${letter}</span>`;
 const emoji = (char: string): string => `<span class="rules-emoji" aria-hidden="true">${char}</span>`;
 const peg = (kind: "exact" | "near"): string => `<i class="rules-peg rules-peg--${kind}"></i>`;
-const swatch = (colour: string): string => `<span class="rules-swatch" style="background:${colour}"></span>`;
+const swatch = (color: string): string => `<span class="rules-swatch" style="background:${color}"></span>`;
 
 export const RULES: Record<GameSlug, GameRules> = {
   word: {
     steps: [
       { visual: tile("", "empty") + tile("", "empty") + tile("", "empty"), text: "Guess the six-letter word. Take as many tries as you need." },
-      { visual: tile("P", "correct") + tile("L", "present") + tile("A", "absent"), text: "Green is the right spot, yellow is in the word, grey is not in it." },
+      { visual: tile("P", "correct") + tile("L", "present") + tile("A", "absent"), text: "Green is the right spot, yellow is in the word, gray is not in it." },
     ],
     score: "Fewer guesses is better.",
   },
   sudoku: {
     steps: [
       { visual: emoji("🔢"), text: "Fill every row, column and box with 1 to 9." },
+      { visual: emoji("☝️"), text: "Each number appears only once in every row, column and 3×3 box." },
       { visual: emoji("👆"), text: "Tap a square, then a number." },
     ],
     score: "Faster is better.",
@@ -83,11 +84,11 @@ export const RULES: Record<GameSlug, GameRules> = {
   },
   color: {
     steps: [
-      { visual: swatch("#c94fd8"), text: "A colour shows for 5 seconds. Remember it." },
+      { visual: swatch("#c94fd8"), text: "A color shows for 5 seconds. Remember it." },
       { visual: swatch("linear-gradient(#e33,#fd3,#3d6,#3be,#a3e)") + swatch("linear-gradient(#999,#a3e)") + swatch("linear-gradient(#000,#a3e)"), text: "Rebuild it with hue, saturation and brightness." },
-      { visual: emoji("🎨"), text: "Five colours a day." },
+      { visual: emoji("🎨"), text: "Five colors a day." },
     ],
-    score: "Up to 10 points a colour. More is better.",
+    score: "Up to 10 points a color. More is better.",
   },
   sound: {
     steps: [
