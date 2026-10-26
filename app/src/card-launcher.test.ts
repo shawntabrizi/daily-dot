@@ -202,6 +202,9 @@ describe("card launcher", () => {
     const selected = rows(root).filter((row) => row.classList.contains("is-selected"));
     expect(selected.map((row) => row.dataset.launcherGame)).toEqual([PICKED[last].id]);
     expect(rows(root)[last].getAttribute("aria-pressed")).toBe("true");
+    // Why: the tap repaints the rows; a keyboard or switch user must not be
+    // thrown back to the top of the page.
+    expect(document.activeElement).toBe(rows(root)[last]);
     expect(rows(root)[0].getAttribute("aria-pressed")).toBe("false");
     expect(root.querySelector("[data-launcher-play]")?.textContent).toBe(
       `Play ${PICKED[last].name}`,

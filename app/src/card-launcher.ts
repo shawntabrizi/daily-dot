@@ -211,6 +211,10 @@ export function renderCardLauncher(root: HTMLElement): () => void {
       const nextIndex = states.findIndex((entry) => entry !== "done");
       selected = games[nextIndex === -1 ? 0 : nextIndex]!;
     }
+    // A repaint rebuilds the rows (a tap, a tick refresh): keep focus on the
+    // game that had it.
+    const focused = (document.activeElement as HTMLElement | null)?.closest<HTMLElement>("[data-launcher-game]");
+    const focusedId = focused && list.contains(focused) ? focused.dataset.launcherGame : undefined;
     // Done games go last: the list leads with what is left to play.
     const order = games.map((game, index) => ({ game, state: states[index]! }));
     order.sort((a, b) => Number(a.state === "done") - Number(b.state === "done"));
@@ -221,10 +225,14 @@ export function renderCardLauncher(root: HTMLElement): () => void {
           picked = true;
           selected = game;
           paint();
+          list.querySelector<HTMLButtonElement>(`[data-launcher-game="${game.id}"]`)?.focus();
         });
         return button;
       }),
     );
+    if (focusedId) {
+      list.querySelector<HTMLButtonElement>(`[data-launcher-game="${focusedId}"]`)?.focus();
+    }
     const current = selected!;
     play.textContent = `${PLAY_VERB[states[games.indexOf(current)]!]} ${current.name}`;
     // The Play button fills in the selected game's accent.

@@ -64,6 +64,16 @@ interface PromotionChoice {
 interface LastMove {
   from: Square;
   to: Square;
+  /** The piece already slid in (the other side's move): no arrival pop on top. */
+  slid?: boolean;
+}
+
+/** The rook's slide when a move castles: king side h→f, queen side a→d. */
+export function castlingRook(move: Move): { from: Square; to: Square } | null {
+  const rank = move.color === "w" ? "1" : "8";
+  if (move.flags.includes("k")) return { from: `h${rank}` as Square, to: `f${rank}` as Square };
+  if (move.flags.includes("q")) return { from: `a${rank}` as Square, to: `d${rank}` as Square };
+  return null;
 }
 
 function squareName(square: Square): string {
@@ -247,7 +257,7 @@ export function renderChess(
           const token = pieceElement(piece.color, piece.type, "chess-piece");
           token.classList.toggle(
             "chess-piece--arriving",
-            lastMove?.to === square,
+            lastMove?.to === square && !lastMove.slid,
           );
           button.append(token);
         }
@@ -395,35 +405,36 @@ export function renderChess(
   }
 
   /**
-   * Slides the piece now on `to` from `from`, so the other side's move is
-   * seen, not just inferred from the highlight. Skipped for reduced motion
-   * and where the Web Animations API is missing.
+   * Slides each piece now on `to` from `from` (a castling rook with its
+   * king), so the other side's move is seen, not just inferred from the
+   * highlight. Resolves when the slides end; at once for reduced motion or
+   * where the Web Animations API is missing.
    */
-  const slidePiece = (from: Square, to: Square): void => {
-    const piece = shell.querySelector<HTMLElement>(`[data-chess-square="${to}"] .chess-piece`);
-    const origin = shell.querySelector<HTMLElement>(`[data-chess-square="${from}"]`);
-    if (
-      !piece
-      || !origin
-      || typeof piece.animate !== "function"
-      || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return;
+  const slidePieces = (moves: readonly { from: Square; to: Square }[]): Promise<void> => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      return Promise.resolve();
     }
-    const start = origin.getBoundingClientRect();
-    const end = piece.parentElement!.getBoundingClientRect();
-    piece.classList.remove("chess-piece--arriving");
-    piece.classList.add("chess-piece--sliding");
-    piece
-      .animate(
-        [
-          { transform: `translate(${start.left - end.left}px, ${start.top - end.top}px)` },
-          { transform: "translate(0, 0)" },
-        ],
-        { duration: SLIDE_MS, easing: "ease-in-out" },
-      )
-      .finished.catch(() => undefined)
-      .finally(() => piece.classList.remove("chess-piece--sliding"));
+    const slides = moves.map(({ from, to }) => {
+      const piece = shell.querySelector<HTMLElement>(`[data-chess-square="${to}"] .chess-piece`);
+      const origin = shell.querySelector<HTMLElement>(`[data-chess-square="${from}"]`);
+      if (!piece || !origin || typeof piece.animate !== "function") {
+        return Promise.resolve();
+      }
+      const start = origin.getBoundingClientRect();
+      const end = piece.parentElement!.getBoundingClientRect();
+      piece.classList.add("chess-piece--sliding");
+      return piece
+        .animate(
+          [
+            { transform: `translate(${start.left - end.left}px, ${start.top - end.top}px)` },
+            { transform: "translate(0, 0)" },
+          ],
+          { duration: SLIDE_MS, easing: "ease-in-out" },
+        )
+        .finished.then(() => undefined, () => undefined)
+        .finally(() => piece.classList.remove("chess-piece--sliding"));
+    });
+    return Promise.all(slides).then(() => undefined);
   };
 
   const scheduleOpponentMove = (): void => {
@@ -458,11 +469,19 @@ export function renderChess(
       lastMove = {
         from: played.from,
         to: played.to,
+        slid: true,
       };
-      phase = "player";
+      // The board stays locked while the piece slides: no move on a half-drawn position.
       message = "Find the best move.";
       renderGame();
-      slidePiece(played.from, played.to);
+      const rook = castlingRook(played);
+      void slidePieces([{ from: played.from, to: played.to }, ...(rook ? [rook] : [])]).then(() => {
+        if (disposed || phase !== "opponent") {
+          return;
+        }
+        phase = "player";
+        renderGame();
+      });
     }, progress.nextMoveIndex === 0 ? OPENING_MOVE_DELAY_MS : AUTO_MOVE_DELAY_MS);
   };
 
