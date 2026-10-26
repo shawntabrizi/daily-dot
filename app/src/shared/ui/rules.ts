@@ -28,30 +28,29 @@ const swatch = (color: string): string => `<span class="rules-swatch" style="bac
 export const RULES: Record<GameSlug, GameRules> = {
   word: {
     steps: [
-      { visual: tile("", "empty") + tile("", "empty") + tile("", "empty"), text: "Guess the six-letter word. Take as many tries as you need." },
+      { visual: tile("", "empty") + tile("", "empty") + tile("", "empty"), text: "Guess the six-letter word. Use real words; take as many tries as you need." },
       { visual: tile("P", "correct") + tile("L", "present") + tile("A", "absent"), text: "Green is the right spot, yellow is in the word, gray is not in it." },
     ],
     score: "Fewer guesses is better.",
   },
   sudoku: {
     steps: [
-      { visual: emoji("🔢"), text: "Fill every row, column and box with 1 to 9." },
-      { visual: emoji("☝️"), text: "Each number appears only once in every row, column and 3×3 box." },
-      { visual: emoji("👆"), text: "Tap a square, then a number." },
+      { visual: emoji("🔢"), text: "Fill the grid so every row, column and 3×3 box has 1 to 9, each once." },
+      { visual: emoji("👆"), text: "Tap a square, then a number. Turn on Pencil for notes." },
     ],
-    score: "Faster is better.",
+    score: "Your time is the score. Faster is better.",
   },
   chess: {
     steps: [
-      { visual: emoji("♟️"), text: "Find the best move for your side." },
-      { visual: emoji("↩️"), text: "The other side replies. Keep going until the puzzle is solved." },
+      { visual: emoji("♟️"), text: "The other side moves first. Find the best reply." },
+      { visual: emoji("↩️"), text: "The other side answers each move. Keep going until the puzzle is solved." },
     ],
-    score: "Fewer attempts is better.",
+    score: "Every move you try counts. Fewer is better.",
   },
   globe: {
     steps: [
       { visual: emoji("🌍"), text: "Guess any country." },
-      { visual: emoji("🧭"), text: "Each guess shows how far away the answer is, and which way." },
+      { visual: emoji("🧭"), text: "Each guess shows the distance in km and the direction, and is colored by how close it is." },
     ],
     score: "Fewer guesses is better.",
   },
@@ -65,13 +64,13 @@ export const RULES: Record<GameSlug, GameRules> = {
   connections: {
     steps: [
       { visual: emoji("🧩"), text: "Find four groups of four words that belong together." },
-      { visual: emoji("✅"), text: "Pick four, then Submit. A wrong group counts as a mistake; you keep playing." },
+      { visual: emoji("✅"), text: "Pick four, then Submit. 'One away' means three are right. Wrong groups count as mistakes." },
     ],
     score: "Fewer mistakes is better.",
   },
   code: {
     steps: [
-      { visual: tile("4", "empty") + tile("0", "empty") + tile("7", "empty"), text: "Crack the four-digit code. Digits can repeat." },
+      { visual: tile("4", "empty") + tile("0", "empty") + tile("7", "empty"), text: "Crack the four-digit code (0–9). Digits can repeat." },
       { visual: peg("exact") + peg("near"), text: "● a right digit in the right place. ○ a right digit in the wrong place." },
     ],
     score: "Fewer guesses is better.",
@@ -93,7 +92,7 @@ export const RULES: Record<GameSlug, GameRules> = {
       { visual: swatch("linear-gradient(#e33,#fd3,#3d6,#3be,#a3e)") + swatch("linear-gradient(#999,#a3e)") + swatch("linear-gradient(#000,#a3e)"), text: "Rebuild it with hue, saturation and brightness." },
       { visual: emoji("🎨"), text: "Five colors a day." },
     ],
-    score: "Up to 10 points a color. More is better.",
+    score: "Up to 10 points a color: the closer, the more. More is better.",
   },
   sound: {
     steps: [
@@ -101,7 +100,7 @@ export const RULES: Record<GameSlug, GameRules> = {
       { visual: emoji("👆"), text: "Hold and drag up or down to find it again, then Submit." },
       { visual: emoji("🎵"), text: "Five tones a day. Sound on!" },
     ],
-    score: "Up to 10 points a tone. More is better.",
+    score: "Up to 10 points a tone: the closer the pitch, the more. More is better.",
   },
 };
 
