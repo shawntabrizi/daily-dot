@@ -26,7 +26,7 @@ import {
 import { InMemoryDataSource, type DataSource } from "./shared/data-source";
 import { dayComplete, loadDaySummary, loadHubStreaks } from "./shared/day-summary";
 import { followHostTheme } from "./shared/host-theme";
-import { followOpenIntent } from "./shared/open-intent";
+import { followOpenIntent, OPEN_INTENT_KEY } from "./shared/open-intent";
 import {
   PICKS_EVENT,
   detectPicksStore,
@@ -279,6 +279,15 @@ export function bootApp(root: HTMLElement): () => void {
   };
   document.addEventListener("visibilitychange", onVisible);
   window.addEventListener("pageshow", onVisible);
+  // The launcher's write can reach this instance after both reads above
+  // (Android, 2026-10-26: boot and visible read nothing, the intent showed up
+  // a moment later, and Play landed on the hub). Follow it when it arrives.
+  const onIntentWrite = (event: StorageEvent): void => {
+    if (event.key === OPEN_INTENT_KEY && event.newValue) {
+      followOpenIntent();
+    }
+  };
+  window.addEventListener("storage", onIntentWrite);
   // The home derives the day's percentile and the hub streaks (WP34) and
   // announces them; they ride on the Pocket card's record.
   const onSummary = (event: Event): void => {
@@ -309,6 +318,7 @@ export function bootApp(root: HTMLElement): () => void {
     window.removeEventListener(PICKS_EVENT, onPicks);
     document.removeEventListener("visibilitychange", onVisible);
     window.removeEventListener("pageshow", onVisible);
+    window.removeEventListener("storage", onIntentWrite);
     window.removeEventListener("daily-day-summary", onSummary);
   };
 

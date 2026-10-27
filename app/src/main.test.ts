@@ -116,6 +116,28 @@ it("follows an intent written while the app was hidden, when it becomes visible 
   dispose();
 });
 
+it("follows an intent that arrives after the boot and visible reads", () => {
+  const game = GAME_ROSTER[3];
+  window.location.hash = "#/";
+  vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
+  const root = document.createElement("div");
+  root.id = "app";
+  document.body.append(root);
+  const dispose = bootApp(root);
+  expect(window.location.hash).toBe("#/");
+
+  // The launcher's write lands late: without following it, Play opens the hub.
+  intent(game.route, Date.now() - 1_000);
+  window.dispatchEvent(new StorageEvent("storage", {
+    key: OPEN_INTENT_KEY,
+    newValue: window.localStorage.getItem(OPEN_INTENT_KEY),
+  }));
+
+  expect(window.location.hash).toBe(game.route);
+  expect(window.localStorage.getItem(OPEN_INTENT_KEY)).toBeNull();
+  dispose();
+});
+
 it("ignores a stale open intent and boots the hub", () => {
   window.location.hash = "#/";
   intent(GAME_ROSTER[1].route, Date.now() - 6 * 60_000);
