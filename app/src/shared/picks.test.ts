@@ -10,7 +10,7 @@ import {
   pickedGames,
   picksMask,
   savePicks,
-  serialisePicks,
+  serializePicks,
   syncPicksWithHost,
   unpickedGames,
   type PicksChange,
@@ -31,10 +31,10 @@ describe("picks", () => {
   });
 
   it("stores roster gameIds in roster order and never an empty pick", () => {
-    expect(serialisePicks([5, 0, 5])).toBe('{"version":1,"games":[0,5]}');
-    expect(() => serialisePicks([])).toThrow(RangeError);
+    expect(serializePicks([5, 0, 5])).toBe('{"version":1,"games":[0,5]}');
+    expect(() => serializePicks([])).toThrow(RangeError);
     // An id off the roster is not a pick.
-    expect(() => serialisePicks([42])).toThrow(RangeError);
+    expect(() => serializePicks([42])).toThrow(RangeError);
   });
 
   it("parses only a version-1 record that names a roster game", () => {
@@ -64,7 +64,7 @@ describe("picks", () => {
 describe("syncPicksWithHost", () => {
   it("adopts the host's picks, which the card draws, and announces them", async () => {
     const host = new MemoryStorage();
-    host.setItem(PICKS_KEY, serialisePicks([1]));
+    host.setItem(PICKS_KEY, serializePicks([1]));
     savePicks([0, 4]);
     const listen = vi.fn();
     window.addEventListener(PICKS_EVENT, listen);

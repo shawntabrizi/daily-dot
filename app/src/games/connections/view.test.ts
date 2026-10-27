@@ -126,7 +126,7 @@ describe("Connections view", () => {
     ]) {
       guess(view.element, set);
     }
-    // The dots cap at four; the label carries the count (colour is never the only signal).
+    // The dots cap at four; the label carries the count (color is never the only signal).
     expect(view.element.querySelector("[data-mistake-dots]")?.getAttribute("aria-label")).toBe("5 mistakes");
     expect(view.element.querySelector<HTMLElement>("[data-mistake-dots]")?.dataset.mistakeDots).toBe("4");
     expect(view.element.querySelectorAll("[data-mistake-dots] i.is-filled")).toHaveLength(4);

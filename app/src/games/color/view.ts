@@ -21,9 +21,9 @@ import {
 } from "./progress";
 
 const GAME = gameById("color")!;
-/** How long each colour is shown before it hides. */
+/** How long each color is shown before it hides. */
 export const LOOK_SECONDS = 5;
-/** Where every colour's sliders start: the middle of each, so the start says nothing. */
+/** Where every color's sliders start: the middle of each, so the start says nothing. */
 const START_PICK: Hsb = { hue: 180, saturation: 50, brightness: 50 };
 
 type Channel = keyof Hsb;
@@ -67,13 +67,13 @@ const CHANNELS: readonly ChannelSpec[] = [
   },
 ];
 
-function hsbText(colour: Hsb): string {
-  return `H ${colour.hue}° S ${colour.saturation}% B ${colour.brightness}%`;
+function hsbText(color: Hsb): string {
+  return `H ${color.hue}° S ${color.saturation}% B ${color.brightness}%`;
 }
 
-function paint(element: HTMLElement, colour: Hsb): void {
-  element.style.background = hsbCss(colour);
-  element.dataset.ink = inkFor(colour);
+function paint(element: HTMLElement, color: Hsb): void {
+  element.style.background = hsbCss(color);
+  element.dataset.ink = inkFor(color);
 }
 
 function statusFor(progress: ColorProgress): string {
@@ -194,7 +194,7 @@ function createPair(target: Hsb, guess: Hsb | null, index: number): HTMLElement 
   const shown = document.createElement("span");
   shown.className = "color-pair-swatch";
   paint(shown, target);
-  shown.setAttribute("aria-label", `Colour ${index + 1}: ${hsbText(target)}`);
+  shown.setAttribute("aria-label", `Color ${index + 1}: ${hsbText(target)}`);
   shown.setAttribute("role", "img");
   swatches.append(shown);
   if (guess) {
@@ -222,16 +222,16 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
   page.innerHTML = `
     <div class="game-heading">
       <div>
-        <h1>Remember the colour.</h1>
+        <h1>Remember the color.</h1>
       </div>
     </div>
     <div class="color-shell" data-color-shell>
-      <div class="game-loading">Loading today's colours…</div>
+      <div class="game-loading">Loading today's colors…</div>
     </div>
   `;
   document.documentElement.dataset.game = "color";
   const gameRule = createGameRule(
-    `Each colour shows for ${LOOK_SECONDS} seconds. Rebuild it from hue, saturation and brightness: up to 10 points a colour.`,
+    `Each color shows for ${LOOK_SECONDS} seconds. Rebuild it from hue, saturation and brightness: up to 10 points a color.`,
   );
   page.append(gameRule);
   const shell = page.querySelector<HTMLElement>("[data-color-shell]")!;
@@ -299,7 +299,7 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     row.className = "color-meta";
     const which = document.createElement("span");
     which.dataset.colorRound = String(round + 1);
-    which.textContent = `Colour ${round + 1} of ${ROUNDS}`;
+    which.textContent = `Color ${round + 1} of ${ROUNDS}`;
     const total = document.createElement("span");
     total.dataset.colorTotal = "";
     total.textContent = `${formatPoints(colorScore(progress!))} points`;
@@ -313,15 +313,15 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     board.dataset.colorPhase = "ready";
     const heading = document.createElement("strong");
     heading.className = "color-ready-title";
-    heading.textContent = round === 0 ? "Ready?" : `Colour ${round + 1} of ${ROUNDS}`;
+    heading.textContent = round === 0 ? "Ready?" : `Color ${round + 1} of ${ROUNDS}`;
     const note = document.createElement("span");
     note.className = "color-ready-note";
-    note.textContent = `Each colour shows for ${LOOK_SECONDS} seconds. Then rebuild it from memory.`;
+    note.textContent = `Each color shows for ${LOOK_SECONDS} seconds. Then rebuild it from memory.`;
     const start = document.createElement("button");
     start.type = "button";
     start.className = "color-next color-start";
     start.dataset.colorStart = "";
-    start.textContent = round === 0 ? "Start" : "Show the colour";
+    start.textContent = round === 0 ? "Start" : "Show the color";
     start.addEventListener("click", () => {
       startLook();
       renderGame();
@@ -335,7 +335,7 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     board.className = "color-board color-board--look";
     board.dataset.colorPhase = "look";
     board.setAttribute("role", "img");
-    board.setAttribute("aria-label", `Colour ${round + 1} of ${ROUNDS}. Remember it; it hides in ${LOOK_SECONDS} seconds.`);
+    board.setAttribute("aria-label", `Color ${round + 1} of ${ROUNDS}. Remember it; it hides in ${LOOK_SECONDS} seconds.`);
     paint(board, targets![round]!);
     const countdown = document.createElement("span");
     countdown.className = "color-countdown";
@@ -345,7 +345,7 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     const note = document.createElement("span");
     note.className = "color-board-note";
     note.setAttribute("aria-hidden", "true");
-    note.textContent = "Remember this colour";
+    note.textContent = "Remember this color";
     board.append(countdown, note);
     return board;
   };
@@ -397,14 +397,14 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     const board = document.createElement("div");
     board.className = "color-board color-board--reveal";
     board.dataset.colorPhase = "reveal";
-    const half = (colour: Hsb, label: string): HTMLElement => {
+    const half = (color: Hsb, label: string): HTMLElement => {
       const element = document.createElement("div");
       element.className = "color-half";
-      paint(element, colour);
+      paint(element, color);
       const name = document.createElement("strong");
       name.textContent = label;
       const values = document.createElement("span");
-      values.textContent = hsbText(colour);
+      values.textContent = hsbText(color);
       element.append(name, values);
       return element;
     };
@@ -415,14 +415,14 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     const value = document.createElement("strong");
     value.textContent = formatPoints(roundScore(target, guess));
     score.append(value, " / 10");
-    board.append(half(target, "Colour"), half(guess, "Yours"), score);
+    board.append(half(target, "Color"), half(guess, "Yours"), score);
 
     const next = document.createElement("button");
     next.type = "button";
     next.className = "color-next";
     next.dataset.colorNext = "";
     const last = round === ROUNDS - 1;
-    next.textContent = last ? "See your total" : "Next colour";
+    next.textContent = last ? "See your total" : "Next color";
     next.addEventListener("click", () => {
       if (!progress) {
         return;
@@ -445,7 +445,7 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     const total = document.createElement("p");
     total.className = "color-final";
     if (alreadyRecorded) {
-      total.textContent = "Today's colours";
+      total.textContent = "Today's colors";
     } else {
       const value = document.createElement("strong");
       value.dataset.colorFinal = String(colorScore(progress!));
@@ -454,7 +454,7 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
     }
     const list = document.createElement("ol");
     list.className = "color-pairs";
-    list.setAttribute("aria-label", alreadyRecorded ? "The day's colours" : "The colours and yours");
+    list.setAttribute("aria-label", alreadyRecorded ? "The day's colors" : "The colors and yours");
     targets!.forEach((target, index) => {
       list.append(createPair(target, alreadyRecorded ? null : (progress!.guesses[index] ?? null), index));
     });
@@ -554,7 +554,7 @@ export function renderColor(source: DataSource, requestedDay?: number): ViewHand
       if (progress.complete || alreadyRecorded) {
         phase = "done";
       } else {
-        // A reload mid-round shows that colour again from the start (D1), after Start.
+        // A reload mid-round shows that color again from the start (D1), after Start.
         phase = "ready";
       }
       renderGame();

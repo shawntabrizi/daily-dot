@@ -2,7 +2,8 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { headerTitle } from "../../shared/ui/header";
 
 import type { ChessPuzzle, DataSource } from "../../shared/data-source";
-import { renderChess } from "./view";
+import type { Move } from "chess.js";
+import { castlingRook, renderChess } from "./view";
 
 const LIVE_PUZZLE: ChessPuzzle = {
   fen: "5b1r/1Q3p2/p3pk1p/1p1p2p1/3q4/1P3PPP/P5P1/2RK1B1R w - - 0 22",
@@ -36,9 +37,10 @@ function clickMove(view: HTMLElement, from: string, to: string): void {
 }
 
 async function waitForPlayer(view: HTMLElement): Promise<void> {
+  // The opening move waits a second so the player sees the position first.
   await vi.waitFor(() => {
     expect(view.querySelector("[data-chess-phase='player']")).not.toBeNull();
-  });
+  }, { timeout: 3_000 });
 }
 
 afterEach(() => {
@@ -48,6 +50,59 @@ afterEach(() => {
 });
 
 describe("Chess view", () => {
+  it("slides the castling rook with its king", () => {
+    const castle = (color: "w" | "b", flags: string) => castlingRook({ color, flags } as Move);
+    expect(castle("w", "k")).toEqual({ from: "h1", to: "f1" });
+    expect(castle("w", "q")).toEqual({ from: "a1", to: "d1" });
+    expect(castle("b", "k")).toEqual({ from: "h8", to: "f8" });
+    expect(castle("b", "q")).toEqual({ from: "a8", to: "d8" });
+    expect(castle("w", "n")).toBeNull();
+  });
+
+  it("keeps the board locked until the other side's piece has slid in", async () => {
+    // Why: a move made mid-slide would land on a position the player has not seen.
+    let finish!: () => void;
+    const finished = new Promise<void>((resolve) => { finish = resolve; });
+    HTMLElement.prototype.animate = vi.fn(() => ({ finished }) as unknown as Animation);
+    const view = renderChess(sourceFor(), 208);
+    document.body.append(view.element);
+    await vi.waitFor(() => {
+      expect(view.element.querySelector(".chess-square--last")).not.toBeNull();
+    }, { timeout: 3_000 });
+    expect(view.element.querySelector("[data-chess-phase='opponent']")).not.toBeNull();
+    expect(view.element.querySelector<HTMLButtonElement>("[data-chess-square]")!.disabled).toBe(true);
+    finish();
+    await waitForPlayer(view.element);
+    // @ts-expect-error jsdom has no Web Animations API; remove the stub.
+    delete HTMLElement.prototype.animate;
+    view.dispose();
+  });
+
+  it("shows the position first, then slides in the other side's opening move", async () => {
+    // Why: the puzzle starts with the other side's move; a player who never
+    // sees it happen does not know what they are answering.
+    const animate = vi.fn(() => ({ finished: Promise.resolve() }) as unknown as Animation);
+    HTMLElement.prototype.animate = animate;
+    const view = renderChess(sourceFor(), 208);
+    document.body.append(view.element);
+    await vi.waitFor(() => {
+      expect(view.element.querySelector("[data-chess-phase='opponent']")).not.toBeNull();
+    });
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    expect(view.element.querySelector("[data-chess-phase='opponent']")).not.toBeNull();
+    expect(animate).not.toHaveBeenCalled();
+
+    await waitForPlayer(view.element);
+    expect(animate).toHaveBeenCalledTimes(1);
+    const [frames] = animate.mock.calls[0] as unknown as [Keyframe[]];
+    expect(frames[0]!.transform).toMatch(/^translate\(/);
+    expect(frames[1]!.transform).toBe("translate(0, 0)");
+    expect(view.element.querySelectorAll(".chess-square--last")).toHaveLength(2);
+    // @ts-expect-error jsdom has no Web Animations API; remove the stub.
+    delete HTMLElement.prototype.animate;
+    view.dispose();
+  });
+
   it("orients the player to move at the bottom", async () => {
     const view = renderChess(sourceFor(), 208);
     document.body.append(view.element);

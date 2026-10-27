@@ -86,7 +86,7 @@ describe("drawer", () => {
     drawer.element.remove();
   });
 
-  it("colours a day blue when every picked game is finished, on time or later", async () => {
+  it("colors a day blue when every picked game is finished, on time or later", async () => {
     // Picks: Word (0) and Mini (4).
     savePicks([0, 4]);
     const picks = (1n << 0n) | (1n << 4n);

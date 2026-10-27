@@ -75,7 +75,7 @@
   width: 100%;
 }
 
-/* Each row carries its game's colours; the states below pick them up. */
+/* Each row carries its game's colors; the states below pick them up. */
 .game-row[data-game-row="word"] { --accent: var(--accent-word); --accent-ink: var(--accent-word-ink); --accent-text: var(--accent-word-text); --surface-tint: var(--surface-word); }
 .game-row[data-game-row="sudoku"] { --accent: var(--accent-sudoku); --accent-ink: var(--accent-sudoku-ink); --accent-text: var(--accent-sudoku-text); --surface-tint: var(--surface-sudoku); }
 .game-row[data-game-row="chess"] { --accent: var(--accent-chess); --accent-ink: var(--accent-chess-ink); --accent-text: var(--accent-chess-text); --surface-tint: var(--surface-chess); }
@@ -315,7 +315,7 @@
   font-weight: 700;
 }
 
-/* "DONE TODAY": the board's #6c7275 fails 4.5:1 at 11 px, so the closest grey that passes. */
+/* "DONE TODAY": the board's #6c7275 fails 4.5:1 at 11 px, so the closest gray that passes. */
 .home-done-heading {
   margin: 0 0 10px;
   padding: 8px 4px 0;

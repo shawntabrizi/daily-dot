@@ -356,7 +356,7 @@
 }
 
 /* The Result board draws the guesses as plain squares: 40 px, radius 8, gap 5, no
-   letters, absent squares in the empty-tile grey, no glow on the winning row. */
+   letters, absent squares in the empty-tile gray, no glow on the winning row. */
 .word-page--result .guess-grid {
   --row-gap: 5px;
 }

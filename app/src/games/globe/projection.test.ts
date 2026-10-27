@@ -5,7 +5,7 @@ import {
   clampZoom,
   dragRotate,
   globeRadius,
-  normaliseLongitude,
+  normalizeLongitude,
   pinchZoom,
   project,
   rotateToward,
@@ -20,7 +20,7 @@ const london = { lat: 51.5, lng: -0.1 };
 const sydney = { lat: -33.9, lng: 151.2 };
 
 describe("orthographic projection", () => {
-  it("puts the view centre in the middle of the disc, facing the viewer", () => {
+  it("puts the view center in the middle of the disc, facing the viewer", () => {
     const projected = project(london, london);
     expect(projected.x).toBeCloseTo(0, 9);
     expect(projected.y).toBeCloseTo(0, 9);
@@ -45,7 +45,7 @@ describe("orthographic projection", () => {
 });
 
 describe("rotateToward", () => {
-  it("ends exactly on the target so a guess is centred after the turn", () => {
+  it("ends exactly on the target so a guess is centered after the turn", () => {
     expect(rotateToward(london, sydney, 1)).toEqual(sydney);
     expect(rotateToward(london, sydney, 0)).toEqual(london);
   });
@@ -59,10 +59,10 @@ describe("rotateToward", () => {
   });
 
   it.each(GLOBE_COUNTRIES.filter((_, index) => index % 11 === 0))(
-    "centres every sampled country ($name) within rounding",
+    "centers every sampled country ($name) within rounding",
     (country) => {
-      const centred = rotateToward({ lat: 20, lng: 0 }, country, 1);
-      const projected = project(country, centred);
+      const centered = rotateToward({ lat: 20, lng: 0 }, country, 1);
+      const projected = project(country, centered);
       expect(projected.x).toBeCloseTo(0, 9);
       expect(projected.y).toBeCloseTo(0, 9);
     },
@@ -77,10 +77,10 @@ describe("dragRotate", () => {
     expect(dragRotate({ lat: 0, lng: 179 }, -10, 0, 100).lng).toBeCloseTo(-172, 9);
   });
 
-  it("normalises longitudes into -180..180", () => {
-    expect(normaliseLongitude(190)).toBe(-170);
-    expect(normaliseLongitude(-190)).toBe(170);
-    expect(normaliseLongitude(180)).toBe(-180);
+  it("normalizes longitudes into -180..180", () => {
+    expect(normalizeLongitude(190)).toBe(-170);
+    expect(normalizeLongitude(-190)).toBe(170);
+    expect(normalizeLongitude(180)).toBe(-180);
   });
 });
 

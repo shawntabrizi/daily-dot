@@ -28,12 +28,12 @@ function sourceWith(record: DataSource["record"]): DataSource {
   };
 }
 
-function nudge(colour: Hsb, by: number): Hsb {
-  return { ...colour, hue: (colour.hue + by) % 360 };
+function nudge(color: Hsb, by: number): Hsb {
+  return { ...color, hue: (color.hue + by) % 360 };
 }
 
 describe("Color progress", () => {
-  it("takes one guess per colour and completes on the fifth, with no loss state", () => {
+  it("takes one guess per color and completes on the fifth, with no loss state", () => {
     let progress = createColorProgress(DAY, TARGETS);
     for (let round = 0; round < 4; round += 1) {
       progress = applyColorGuess(progress, nudge(TARGETS[round]!, 20));
@@ -47,7 +47,7 @@ describe("Color progress", () => {
     expect(() => applyColorGuess(createColorProgress(DAY, TARGETS), { hue: 360, saturation: 0, brightness: 0 })).toThrow(RangeError);
   });
 
-  it("scores the day as the sum of each colour's rounded score, in tenths", () => {
+  it("scores the day as the sum of each color's rounded score, in tenths", () => {
     let progress = createColorProgress(DAY, TARGETS);
     const guesses = TARGETS.map((target, index) => nudge(target, index * 7));
     for (const guess of guesses) progress = applyColorGuess(progress, guess);
@@ -64,7 +64,7 @@ describe("Color progress", () => {
     saveColorProgress(progress, storage);
     expect(loadColorProgress(DAY, TARGETS, storage)).toEqual(progress);
     expect(hasStartedColor(DAY, storage)).toBe(true);
-    // Another day's colours, a bad guess, or a "complete" with four guesses: start fresh.
+    // Another day's colors, a bad guess, or a "complete" with four guesses: start fresh.
     expect(loadColorProgress(DAY, colorAnswer(DAY + 1, "v1"), storage).guesses).toEqual([]);
     const stored = JSON.parse(storage.getItem(KEY)!) as Record<string, unknown>;
     storage.setItem(KEY, JSON.stringify({ ...stored, guesses: [{ hue: 400, saturation: 1, brightness: 1 }] }));

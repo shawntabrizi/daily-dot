@@ -78,10 +78,10 @@ describe("stripState", () => {
     expect(stripState(EMPTY_BITS, 1, 1, GAME_ROSTER)).toBe("red");
   });
 
-  it("stays grey at 0/6 at exactly four hours or with no streak", () => {
-    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS, GAME_ROSTER)).toBe("grey");
-    expect(stripState(EMPTY_BITS, 0, HOUR, GAME_ROSTER)).toBe("grey");
-    expect(stripState(EMPTY_BITS, 0, 10 * HOUR, GAME_ROSTER)).toBe("grey");
+  it("stays gray at 0/6 at exactly four hours or with no streak", () => {
+    expect(stripState(EMPTY_BITS, 1, RED_WINDOW_MS, GAME_ROSTER)).toBe("gray");
+    expect(stripState(EMPTY_BITS, 0, HOUR, GAME_ROSTER)).toBe("gray");
+    expect(stripState(EMPTY_BITS, 0, 10 * HOUR, GAME_ROSTER)).toBe("gray");
   });
 });
 
@@ -134,8 +134,9 @@ describe("dailyFace layout", () => {
       }
     }
     expect(rows.flatMap((r) => r.value!.children!.map(imagePath))).toEqual(
-      // Unfinished first (D21): Globe, Mini, Connections, then the three done.
-      ["globe", "mini", "connections"].map((id) => `tiles/tile-${id}-idle.png`)
+      // Unfinished first (D21): Globe (next up), Mini, Connections, then the three done.
+      ["tiles/tile-globe-next.png"]
+        .concat(["mini", "connections"].map((id) => `tiles/tile-${id}-idle.png`))
         .concat(["word", "sudoku", "chess"].map((id) => `tiles/tile-${id}-done.png`)),
     );
   });
@@ -152,15 +153,20 @@ describe("dailyFace layout", () => {
 });
 
 describe("dailyFace", () => {
-  it("draws one tile per pick, lit when played", () => {
+  it("draws one tile per pick: color on the games left to play, done ones muted", () => {
+    // Why: the card is an action list. The games still to play carry the
+    // color, one of them solid as next up; a done game has nothing to tap for.
     const paths = imagePathsIn(dailyFace(three, {}, {}, noon, SIX));
-    const tiles = paths.filter((path) => /^tiles\/tile-[a-z]+-(done|idle)\.png$/.test(path));
+    const tiles = paths.filter((path) => /^tiles\/tile-[a-z]+-(next|idle|done)\.png$/.test(path));
     expect(tiles).toHaveLength(SIX.length);
+    expect(tiles.filter((path) => path.endsWith("-next.png"))).toHaveLength(1);
     for (const game of SIX) {
       const played = (three.played & (1n << BigInt(game.gameId))) !== 0n;
-      expect(paths).toContain(`tiles/tile-${game.id}-${played ? "done" : "idle"}.png`);
-      expect(paths).not.toContain(`tiles/tile-${game.id}-${played ? "idle" : "done"}.png`);
+      const own = tiles.find((path) => path.startsWith(`tiles/tile-${game.id}-`));
+      expect(own?.endsWith("-done.png")).toBe(played);
     }
+    // Every pick done: nothing is next.
+    expect(imagePathsIn(dailyFace(full, {}, {}, noon, SIX)).some((path) => path.endsWith("-next.png"))).toBe(false);
   });
 
   it("heads with the baked n/k count of picks done", () => {
@@ -175,7 +181,7 @@ describe("dailyFace", () => {
     const face = dailyFace(three, {}, {}, noon, STARTER_GAMES);
     const tiles = imagePathsIn(face).filter((path) => path.startsWith("tiles/tile-"));
     expect(tiles).toEqual([
-      "tiles/tile-mini-idle.png",
+      "tiles/tile-mini-next.png",
       "tiles/tile-connections-idle.png",
       "tiles/tile-code-idle.png",
       "tiles/tile-word-done.png",
@@ -228,11 +234,11 @@ describe("dailyFace", () => {
     const some = dailyFace(three, {}, { streakAny: 14 }, noon);
     expect(imagePathsIn(some)).toContain("tiles/flame.png");
     const texts = nodesIn(some).filter((n) => n.tag === "Text" && !/^(NEW SET IN|\d\d:\d\d:\d\d)$/.test(textsIn(n)[0] ?? ""));
-    const colours = texts.map((n) => [textsIn(n)[0], n.value?.props?.color, n.value?.props?.style]);
-    expect(colours).toEqual([["14", "FgWarning", "BodyLargeRegular"]]);
+    const colors = texts.map((n) => [textsIn(n)[0], n.value?.props?.color, n.value?.props?.style]);
+    expect(colors).toEqual([["14", "FgWarning", "BodyLargeRegular"]]);
   });
 
-  it("draws the strip that stripState names: grey, green, gold, red", () => {
+  it("draws the strip that stripState names: gray, green, gold, red", () => {
     expect(strip(dailyFace(EMPTY_BITS, {}, {}, noon))).toBe("FgTertiary");
     expect(strip(dailyFace(three, {}, {}, noon))).toBe("FgSuccess");
     expect(strip(dailyFace({ played: 1n, solved: 0n }, {}, {}, noon))).toBe("FgSuccess");

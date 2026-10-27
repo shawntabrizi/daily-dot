@@ -333,7 +333,7 @@
                             "props": {
                               "source": {
                                 "tag": "Archive",
-                                "value": "tiles/tile-connections-idle.png"
+                                "value": "tiles/tile-connections-next.png"
                               },
                               "fit": "Contain"
                             }

@@ -10,9 +10,9 @@ export type ColorSubmissionState =
   "idle" | "pending" | "submitting" | "submitted" | "deferred" | "failed";
 
 /**
- * One day of Daily Color: the guesses for the colours done so far, in order.
+ * One day of Daily Color: the guesses for the colors done so far, in order.
  * The round in hand (its 5-second look, its sliders) is not stored: a reload
- * starts that colour's look again (D1, casual trust).
+ * starts that color's look again (D1, casual trust).
  */
 export interface ColorProgress {
   version: 1;
@@ -38,7 +38,7 @@ function isSubmissionState(value: unknown): value is ColorSubmissionState {
   );
 }
 
-function sameColour(a: Hsb, b: Hsb): boolean {
+function sameColor(a: Hsb, b: Hsb): boolean {
   return a.hue === b.hue && a.saturation === b.saturation && a.brightness === b.brightness;
 }
 
@@ -52,7 +52,7 @@ function isProgress(value: unknown, day: number, targets: readonly Hsb[]): value
     || candidate.day !== day
     || !Array.isArray(candidate.targets)
     || candidate.targets.length !== targets.length
-    || !candidate.targets.every((target, index) => isHsb(target) && sameColour(target, targets[index]!))
+    || !candidate.targets.every((target, index) => isHsb(target) && sameColor(target, targets[index]!))
     || !Array.isArray(candidate.guesses)
     || candidate.guesses.length > ROUNDS
     || !candidate.guesses.every(isHsb)
@@ -73,7 +73,7 @@ export function createColorProgress(day: number, targets: readonly Hsb[]): Color
     throw new RangeError("Day must be a non-negative safe integer");
   }
   if (targets.length !== ROUNDS || !targets.every(isHsb)) {
-    throw new RangeError(`A day is ${ROUNDS} colours`);
+    throw new RangeError(`A day is ${ROUNDS} colors`);
   }
   return {
     version: 1,
@@ -134,10 +134,10 @@ export function hasStartedColor(day: number, storage: StorageLike = window.local
   }
 }
 
-/** The next colour's guess; the fifth completes the day and queues its one write. */
+/** The next color's guess; the fifth completes the day and queues its one write. */
 export function applyColorGuess(progress: ColorProgress, guess: Hsb): ColorProgress {
   if (progress.complete) {
-    throw new Error("Today's colours are all done");
+    throw new Error("Today's colors are all done");
   }
   if (!isHsb(guess)) {
     throw new RangeError("A guess is whole hue 0–359, saturation and brightness 0–100");

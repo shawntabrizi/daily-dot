@@ -1,6 +1,6 @@
 // Chess piece artwork: the "Cburnett" set by Colin M.L. Burnett, from Wikimedia Commons
 // (https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces), licensed CC BY-SA 3.0.
-// Normalised: XML prolog removed, viewBox added, width/height removed so CSS sizes them.
+// Normalized: XML prolog removed, viewBox added, width/height removed so CSS sizes them.
 
 export type PieceColor = "w" | "b";
 export type PieceType = "k" | "q" | "r" | "b" | "n" | "p";

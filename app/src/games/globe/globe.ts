@@ -13,8 +13,8 @@ import {
 } from "./projection";
 
 /**
- * Why a shape is coloured: the guess ramp the list uses, the answer, or a
- * non-guessable place whose owner is marked (D26: neutral, never a guess colour).
+ * Why a shape is colored: the guess ramp the list uses, the answer, or a
+ * non-guessable place whose owner is marked (D26: neutral, never a guess color).
  */
 export type CountryFill =
   | { kind: "guess"; segment: ProximityRamp["segment"]; mix: number }
@@ -80,7 +80,7 @@ const LAND = "rgb(112 112 112 / 38%)";
 const OUTLINE = "rgb(112 112 112 / 55%)";
 const GRATICULE = "rgb(236 236 236 / 7%)";
 const RIM = "rgb(236 236 236 / 18%)";
-const INITIAL_CENTRE: GeoPoint = { lat: 20, lng: 0 };
+const INITIAL_CENTER: GeoPoint = { lat: 20, lng: 0 };
 const FOCUS_DURATION_MS = 700;
 const GRATICULE_STEP_DEGREES = 30;
 const GRATICULE_SAMPLE_DEGREES = 3;
@@ -97,7 +97,7 @@ const DOUBLE_TAP_MS = 350;
 const DOUBLE_TAP_SLOP_PIXELS = 30;
 
 /**
- * Which countries the globe colours. Guesses reuse the list's proximity
+ * Which countries the globe colors. Guesses reuse the list's proximity
  * ramp so both views agree; the answer is drawn only when it is revealed
  * (solved, or a recorded day opened read-only).
  */
@@ -123,7 +123,7 @@ export function countryFills(
 /**
  * A guessable place is drawn by its own mark. A place that is not guessable
  * takes its owner's mark as neutral land (Greenland with Denmark), and is
- * never a guess or answer colour.
+ * never a guess or answer color.
  */
 export function shapeFill(
   place: Pick<Place, "id" | "owner">,
@@ -141,7 +141,7 @@ export function shapeFill(
 /**
  * The angular size, in radians, of a shape's largest ring: its bounding
  * box's longer side, with longitude shrunk by latitude. On a globe of
- * `radius` pixels the ring spans about `extent × radius` pixels at the centre.
+ * `radius` pixels the ring spans about `extent × radius` pixels at the center.
  */
 export function shapeExtent(rings: readonly (readonly number[])[]): number {
   let largest = 0;
@@ -185,8 +185,8 @@ export function countriesNeedingDots(
   });
 }
 
-function parseHex(colour: string): [number, number, number] | null {
-  const match = /^#([0-9a-f]{6})$/i.exec(colour.trim());
+function parseHex(color: string): [number, number, number] | null {
+  const match = /^#([0-9a-f]{6})$/i.exec(color.trim());
   if (!match) {
     return null;
   }
@@ -195,7 +195,7 @@ function parseHex(colour: string): [number, number, number] | null {
 }
 
 /** `color-mix(in srgb, top mix%, base)`, matching the list rows' CSS. */
-function mixColours(base: string, top: string, mixPercent: number): string {
+function mixColors(base: string, top: string, mixPercent: number): string {
   const from = parseHex(base);
   const to = parseHex(top);
   if (!from || !to) {
@@ -207,7 +207,7 @@ function mixColours(base: string, top: string, mixPercent: number): string {
   return `rgb(${channel(0)} ${channel(1)} ${channel(2)})`;
 }
 
-export function fillColour(fill: CountryFill, palette: GlobePalette): string {
+export function fillColor(fill: CountryFill, palette: GlobePalette): string {
   if (fill.kind === "answer") {
     return palette.accent ?? palette.correct;
   }
@@ -215,8 +215,8 @@ export function fillColour(fill: CountryFill, palette: GlobePalette): string {
     return palette.neutral ?? NEUTRAL;
   }
   return fill.segment === "near"
-    ? mixColours(palette.present, palette.correct, fill.mix)
-    : mixColours(palette.wrong, palette.present, fill.mix);
+    ? mixColors(palette.present, palette.correct, fill.mix)
+    : mixColors(palette.wrong, palette.present, fill.mix);
 }
 
 function readPalette(element: Element): GlobePalette {
@@ -288,7 +288,7 @@ function distanceBetween(pointers: ReadonlyMap<number, PointerPosition>): number
  * else is touched: the view decides fills and focus, this module only draws.
  * There is no animation loop while idle; frames run on drag or focus only.
  * Zoom lives here, in memory only: one finger drags, two pinch, the wheel
- * zooms about the centre, a double tap resets to 1×.
+ * zooms about the center, a double tap resets to 1×.
  */
 export function createGlobe(
   canvas: HTMLCanvasElement,
@@ -311,7 +311,7 @@ export function createGlobe(
   );
   let palette: GlobePalette | null = null;
   let fills: ReadonlyMap<string, CountryFill> = new Map();
-  let centre: GeoPoint = INITIAL_CENTRE;
+  let center: GeoPoint = INITIAL_CENTER;
   let frame = 0;
   let animation: { from: GeoPoint; to: GeoPoint; startedAt: number } | null =
     null;
@@ -354,10 +354,10 @@ export function createGlobe(
     palette ??= readPalette(canvas);
     const radius = radiusFor(size);
     const middle = size / 2;
-    const centreLatitude = (centre.lat * Math.PI) / 180;
-    const centreLongitude = (centre.lng * Math.PI) / 180;
-    const sinCentre = Math.sin(centreLatitude);
-    const cosCentre = Math.cos(centreLatitude);
+    const centerLatitude = (center.lat * Math.PI) / 180;
+    const centerLongitude = (center.lng * Math.PI) / 180;
+    const sinCenter = Math.sin(centerLatitude);
+    const cosCenter = Math.cos(centerLatitude);
 
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
     context.clearRect(0, 0, size, size);
@@ -400,11 +400,11 @@ export function createGlobe(
         const count = ring.lng.length;
         const points = new Float64Array(count * 2);
         for (let index = 0; index < count; index += 1) {
-          const delta = ring.lng[index]! - centreLongitude;
+          const delta = ring.lng[index]! - centerLongitude;
           const cosDelta = Math.cos(delta);
           let x = ring.cosLat[index]! * Math.sin(delta);
-          let y = cosCentre * ring.sinLat[index]! - sinCentre * ring.cosLat[index]! * cosDelta;
-          const z = sinCentre * ring.sinLat[index]! + cosCentre * ring.cosLat[index]! * cosDelta;
+          let y = cosCenter * ring.sinLat[index]! - sinCenter * ring.cosLat[index]! * cosDelta;
+          const z = sinCenter * ring.sinLat[index]! + cosCenter * ring.cosLat[index]! * cosDelta;
           if (z < 0) {
             // Far-side points hug the rim so a ring crossing the horizon
             // still closes along the edge instead of across the disc.
@@ -430,7 +430,7 @@ export function createGlobe(
       if (!drewAny) {
         continue;
       }
-      context.fillStyle = fill ? fillColour(fill, palette) : LAND;
+      context.fillStyle = fill ? fillColor(fill, palette) : LAND;
       context.fill("evenodd");
       context.lineWidth = fill ? 1.2 : 0.8;
       context.strokeStyle = fill ? "rgb(22 24 25 / 70%)" : OUTLINE;
@@ -444,7 +444,7 @@ export function createGlobe(
       ...centroidOnly.filter((candidate) => !fills.has(candidate.id)),
       ...dotted,
     ]) {
-      const point = project(country, centre);
+      const point = project(country, center);
       if (point.z < 0) {
         continue;
       }
@@ -457,7 +457,7 @@ export function createGlobe(
         0,
         Math.PI * 2,
       );
-      context.fillStyle = fill ? fillColour(fill, palette) : OUTLINE;
+      context.fillStyle = fill ? fillColor(fill, palette) : OUTLINE;
       context.fill();
       if (fill) {
         context.lineWidth = 1;
@@ -480,7 +480,7 @@ export function createGlobe(
       }
       let pen = false;
       for (let step = 0; step <= steps; step += 1) {
-        const point = project(at(step), centre);
+        const point = project(at(step), center);
         if (point.z < 0) {
           pen = false;
           continue;
@@ -508,7 +508,7 @@ export function createGlobe(
           1,
           (performance.now() - animation.startedAt) / FOCUS_DURATION_MS,
         );
-        centre = rotateToward(animation.from, animation.to, easeInOut(t));
+        center = rotateToward(animation.from, animation.to, easeInOut(t));
         if (t >= 1) {
           animation = null;
         } else {
@@ -554,8 +554,8 @@ export function createGlobe(
     ) {
       tap.moved = true;
     }
-    centre = dragRotate(
-      centre,
+    center = dragRotate(
+      center,
       event.clientX - drag.x,
       event.clientY - drag.y,
       radiusFor(canvas.clientWidth),
@@ -634,9 +634,9 @@ export function createGlobe(
       pointers.clear();
       if (!animate || reducedMotion()) {
         animation = null;
-        centre = { lat: point.lat, lng: point.lng };
+        center = { lat: point.lat, lng: point.lng };
       } else {
-        animation = { from: centre, to: point, startedAt: performance.now() };
+        animation = { from: center, to: point, startedAt: performance.now() };
       }
       schedule();
     },

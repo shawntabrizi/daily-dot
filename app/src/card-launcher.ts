@@ -15,7 +15,6 @@ import { hasStarted } from "./shared/progress";
 import type { Game } from "./shared/roster";
 import { hasGameBit } from "./shared/streaks";
 import { gameGlyph } from "./shared/ui/game-glyphs";
-import { FLAME_SVG } from "./shared/ui/streak-badges";
 
 /**
  * The launcher: what the product shows when the host opens it beneath the
@@ -25,9 +24,10 @@ import { FLAME_SVG } from "./shared/ui/streak-badges";
  * the selected game to the full app. No chain client, no signer: nothing here
  * may raise a permission sheet in the half screen.
  *
- * Today's ticks, the streak and the picks come from the same KV store the
- * card worker reads; a record for another day is yesterday's and shows as all
- * unplayed with no streak. "Resume" comes from the game's own progress
+ * Today's ticks and the picks come from the same KV store the card worker
+ * reads; a record for another day is yesterday's and shows as all unplayed.
+ * The count and the streak are on the card right above: the sheet does not
+ * repeat them. "Resume" comes from the game's own progress
  * in localStorage (`hasStarted`), as on the hub.
  */
 export function fromCard(search = window.location.search): boolean {
@@ -40,12 +40,10 @@ interface TodayState {
   /** The picked gameIds, as the card draws them. */
   picks: number[];
   bits: CardBits;
-  /** The hub streak the app last wrote (WP34); null on a record without it. */
-  streak: number | null;
 }
 
 function emptyState(picks: number[]): TodayState {
-  return { picks, bits: EMPTY_BITS, streak: null };
+  return { picks, bits: EMPTY_BITS };
 }
 
 function today(): number {
@@ -62,7 +60,6 @@ async function readTodayState(): Promise<TodayState> {
   return {
     picks,
     bits: cardStateBits(state),
-    streak: state.streakAny ?? null,
   };
 }
 
@@ -130,8 +127,8 @@ function row(game: Game, state: RowState, selected: boolean): HTMLButtonElement 
   if (selected) {
     button.classList.add("is-selected");
   }
-  // The icon tile: neutral with the game's glyph until the game is done,
-  // then lit in the game's accent (decision 1).
+  // The icon tile: the games left to play carry the accent (solid on the
+  // selected one, tinted on the rest); a done game is muted.
   const icon = document.createElement("span");
   icon.className = "launcher-row__icon";
   icon.setAttribute("aria-hidden", "true");
@@ -152,24 +149,9 @@ function row(game: Game, state: RowState, selected: boolean): HTMLButtonElement 
   return button;
 }
 
-function streakBadge(count: number): HTMLElement {
-  const badge = document.createElement("span");
-  badge.className = "launcher__streak";
-  badge.dataset.launcherStreak = String(count);
-  badge.setAttribute("aria-label", `${count}-day streak`);
-  badge.innerHTML = `${FLAME_SVG}<strong>${count}</strong>`;
-  return badge;
-}
-
 export function renderCardLauncher(root: HTMLElement): () => void {
   root.innerHTML = `
     <section class="launcher" data-launcher>
-      <header class="launcher__head">
-        <div class="launcher__title">
-          <strong>Daily on Dot</strong>
-          <span class="launcher__count" data-launcher-count></span>
-        </div>
-      </header>
       <div class="launcher__list" data-launcher-list role="group" aria-label="Pick a game"></div>
       <footer class="launcher__foot">
         <button type="button" class="launcher__play" data-launcher-play>Play</button>
@@ -178,12 +160,10 @@ export function renderCardLauncher(root: HTMLElement): () => void {
     </section>
   `;
   const section = root.querySelector<HTMLElement>("[data-launcher]");
-  const head = root.querySelector<HTMLElement>(".launcher__head");
-  const count = root.querySelector<HTMLElement>("[data-launcher-count]");
   const list = root.querySelector<HTMLElement>("[data-launcher-list]");
   const play = root.querySelector<HTMLButtonElement>("[data-launcher-play]");
   const open = root.querySelector<HTMLButtonElement>("[data-launcher-open]");
-  if (!section || !head || !count || !list || !play || !open) {
+  if (!section || !list || !play || !open) {
     throw new Error("Card launcher failed to render");
   }
 
@@ -226,28 +206,33 @@ export function renderCardLauncher(root: HTMLElement): () => void {
           ? "started"
           : "fresh",
     );
-    const done = states.filter((entry) => entry === "done").length;
-    count.textContent = `${done}/${games.length} done`;
-    head.querySelector("[data-launcher-streak]")?.remove();
-    if (state.streak !== null && state.streak > 0) {
-      head.append(streakBadge(state.streak));
-    }
     if (!picked || !selected || !games.includes(selected)) {
       // The first game not yet done, a started one included.
       const nextIndex = states.findIndex((entry) => entry !== "done");
       selected = games[nextIndex === -1 ? 0 : nextIndex]!;
     }
+    // A repaint rebuilds the rows (a tap, a tick refresh): keep focus on the
+    // game that had it.
+    const focused = (document.activeElement as HTMLElement | null)?.closest<HTMLElement>("[data-launcher-game]");
+    const focusedId = focused && list.contains(focused) ? focused.dataset.launcherGame : undefined;
+    // Done games go last: the list leads with what is left to play.
+    const order = games.map((game, index) => ({ game, state: states[index]! }));
+    order.sort((a, b) => Number(a.state === "done") - Number(b.state === "done"));
     list.replaceChildren(
-      ...games.map((game, index) => {
-        const button = row(game, states[index]!, game === selected);
+      ...order.map(({ game, state: rowState }) => {
+        const button = row(game, rowState, game === selected);
         button.addEventListener("click", () => {
           picked = true;
           selected = game;
           paint();
+          list.querySelector<HTMLButtonElement>(`[data-launcher-game="${game.id}"]`)?.focus();
         });
         return button;
       }),
     );
+    if (focusedId) {
+      list.querySelector<HTMLButtonElement>(`[data-launcher-game="${focusedId}"]`)?.focus();
+    }
     const current = selected!;
     play.textContent = `${PLAY_VERB[states[games.indexOf(current)]!]} ${current.name}`;
     // The Play button fills in the selected game's accent.

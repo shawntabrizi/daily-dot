@@ -120,7 +120,7 @@ describe("streaks page", () => {
     view.element.remove();
   });
 
-  it("colours cells by state: every pick blue, any gold, a backfilled day gold with a tick", async () => {
+  it("colors cells by state: every pick blue, any gold, a backfilled day gold with a tick", async () => {
     const view = await mount();
     expect(cell(view.element, 50)?.className).toContain("calendar-day--complete");
     expect(cell(view.element, 40)?.className).toContain("calendar-day--any");

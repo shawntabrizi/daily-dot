@@ -1,9 +1,9 @@
 import type { GameSlug } from "../roster";
 
 export interface GlyphOptions {
-  /** Line colour; `currentColor` by default so the tile's text colour drives it. */
+  /** Line color; `currentColor` by default so the tile's text color drives it. */
   stroke?: string;
-  /** Colour of the solid parts (dots, pawn); follows `stroke` by default. */
+  /** Color of the solid parts (dots, pawn); follows `stroke` by default. */
   fill?: string;
 }
 

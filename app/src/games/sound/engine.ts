@@ -110,7 +110,7 @@ export function verdictFor(hundredths: number): string {
   if (hundredths >= 950) return "Perfect pitch.";
   if (hundredths >= 800) return "So close.";
   if (hundredths >= 600) return "Close.";
-  if (hundredths >= 300) return "In the neighbourhood.";
+  if (hundredths >= 300) return "In the neighborhood.";
   if (hundredths > 0) return "A way off.";
   return "Not this time.";
 }

@@ -2,7 +2,7 @@
 export const MIN_ANGLE = 1;
 export const MAX_ANGLE = 359;
 
-export type Heat = "exact" | "close" | "hot" | "warm" | "cold";
+export type Heat = "exact" | "burning" | "hot" | "warm" | "cold";
 
 export interface AngleHint {
   heat: Heat;
@@ -10,10 +10,10 @@ export interface AngleHint {
   direction: "up" | "down" | null;
 }
 
-/** The hint words, as Angledle reads them. */
+/** The hint words: one heat scale, so a nearer hint always reads hotter. */
 export const HEAT_WORDS: Record<Heat, string> = {
   exact: "Got it!",
-  close: "So close!",
+  burning: "Burning!",
   hot: "Hot",
   warm: "Warm",
   cold: "Cold",
@@ -21,18 +21,22 @@ export const HEAT_WORDS: Record<Heat, string> = {
 
 export const HEAT_MARKS: Record<Heat, string> = {
   exact: "🎯",
-  close: "🤏",
-  hot: "🔥",
+  burning: "🔥",
+  hot: "🌶️",
   warm: "🌡️",
   cold: "☃️",
 };
+
+/** The widest miss, in degrees, each hint covers; beyond Warm is Cold. */
+export const HEAT_BANDS = { burning: 3, hot: 10, warm: 25 } as const;
 
 export function isAngle(value: number): boolean {
   return Number.isInteger(value) && value >= MIN_ANGLE && value <= MAX_ANGLE;
 }
 
 /**
- * Within 5° is So close, 15° Hot, 30° Warm, beyond Cold. The distance is
+ * Within 3° is Burning, 10° Hot, 25° Warm, beyond Cold: tighter than
+ * Angledle's 5/15/30, where 14° off still read Hot. The distance is
  * along the 1–359 scale, not around the circle: 2° and 358° are 356 apart,
  * as the arrow (up or down) says.
  */
@@ -42,6 +46,12 @@ export function hintFor(guess: number, answer: number): AngleHint {
   }
   const off = Math.abs(answer - guess);
   const direction = off === 0 ? null : answer > guess ? "up" : "down";
-  const heat: Heat = off === 0 ? "exact" : off <= 5 ? "close" : off <= 15 ? "hot" : off <= 30 ? "warm" : "cold";
+  const heat: Heat = off === 0 ? "exact" : off <= HEAT_BANDS.burning
+      ? "burning"
+      : off <= HEAT_BANDS.hot
+        ? "hot"
+        : off <= HEAT_BANDS.warm
+          ? "warm"
+          : "cold";
   return { heat, direction };
 }

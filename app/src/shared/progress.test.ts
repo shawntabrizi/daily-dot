@@ -44,7 +44,7 @@ describe("Word progress", () => {
     expect(hasStarted(0, 42, storage)).toBe(true);
   });
 
-  it("starts fresh from a stored shape it does not recognise: no migration", () => {
+  it("starts fresh from a stored shape it does not recognize: no migration", () => {
     // The pre-launch version 1 blob (a ladder of tiers) under the same key.
     const storage = new MemoryStorage();
     storage.setItem(
@@ -190,7 +190,7 @@ describe("progressLine", () => {
     const pick = { hue: 10, saturation: 50, brightness: 50 };
     const color = applyColorGuess(applyColorGuess(createColorProgress(42, colorAnswer(42, "v1")), pick), pick);
     saveColorProgress(color, storage);
-    expect(progressLine(game("color"), 42, storage)).toBe("2 of 5 colours");
+    expect(progressLine(game("color"), 42, storage)).toBe("2 of 5 colors");
     expect(hasStarted(8, 42, storage)).toBe(true);
 
     const sound = applySoundGuess(applySoundGuess(createSoundProgress(42, soundAnswer(42, "v1")), 220), 330);

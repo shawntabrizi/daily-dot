@@ -190,9 +190,9 @@ function gameOf(gameId: number): Pick<Game, "kind" | "buckets"> {
 
 /** The stub's typical score and spread per kind: four guesses, four minutes, 32 points. */
 const TYPICAL = {
-  count: { centre: 4, spread: 2, floor: 1 },
-  seconds: { centre: 240, spread: 120, floor: 0 },
-  points: { centre: 320, spread: 80, floor: 0 },
+  count: { center: 4, spread: 2, floor: 1 },
+  seconds: { center: 240, spread: 120, floor: 0 },
+  points: { center: 320, spread: 80, floor: 0 },
 } as const;
 
 /** A small deterministic generator so the stub's "other finishers" are stable per day. */
@@ -212,14 +212,14 @@ function* pseudoRandom(seed: number): Generator<number> {
  */
 function seededHistogram(gameId: number, day: number): Map<number, number> {
   const game = gameOf(gameId);
-  const { centre, spread, floor } = TYPICAL[game.kind];
+  const { center, spread, floor } = TYPICAL[game.kind];
   const random = pseudoRandom(day * 64 + gameId + 1);
   const total = 15 + Math.floor(random.next().value * 26);
   const buckets = new Map<number, number>();
   for (let finisher = 0; finisher < total; finisher += 1) {
     const offset =
       (random.next().value + random.next().value - 1) * spread * 1.5;
-    const score = Math.max(floor, Math.round(centre + offset));
+    const score = Math.max(floor, Math.round(center + offset));
     const bucket = scoreBucket(game.buckets, score);
     buckets.set(bucket, (buckets.get(bucket) ?? 0) + 1);
   }

@@ -1,8 +1,9 @@
 /* Launcher: the half-height sheet beneath the Pocket card (WP29; the hub board's rows, WP37 R1).
-   Head and foot stay put; the picks fill two columns (six fit the half sheet) and the
-   list scrolls when there are more, or on a shorter sheet. A row's icon tile lights
-   in the game's accent once the game is done; the Play button fills in the selected
-   game's accent. */
+   No head: the card right above shows the count and the streak. The foot stays put;
+   the picks fill two columns (six fit the half sheet) and the list scrolls when there
+   are more, or on a shorter sheet. The games left to play carry the color: the
+   selected one's icon is solid accent, the rest tinted; done games are muted and go
+   last. The Play button fills in the selected game's accent. */
 
 .launcher {
   position: fixed;
@@ -14,52 +15,6 @@
   background: var(--bg);
 }
 
-.launcher__head {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px 16px 8px;
-}
-
-.launcher__title {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.launcher__title strong {
-  font-family: var(--display);
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.launcher__count {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.launcher__streak {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--streak-gold);
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.launcher__streak svg {
-  width: 15px;
-  height: 15px;
-}
-
 .launcher__list {
   /* Two columns: six picks fit a half-height sheet; more scroll here, not the sheet. */
   display: grid;
@@ -68,7 +23,7 @@
   gap: 6px;
   align-content: start;
   min-height: 0;
-  padding: 0 12px 8px;
+  padding: 12px 12px 8px;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -89,11 +44,6 @@
   color: var(--text);
   cursor: pointer;
   text-align: left;
-}
-
-/* The selected row carries a text-colour ring: the accent means done, not picked. */
-.launcher-row.is-selected {
-  box-shadow: inset 0 0 0 2px var(--text);
 }
 
 .launcher-row[data-launcher-game="word"],
@@ -163,16 +113,30 @@
   height: 44px;
   place-items: center;
   border-radius: 14px;
-  background: var(--surface-raised);
-  color: var(--muted);
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-raised));
+  /* Pulled toward the text color: at least 3.3:1 for every accent in both themes. */
+  color: color-mix(in srgb, var(--accent) 60%, var(--text));
 }
+
 
 .launcher-row__icon svg {
   width: 22px;
   height: 22px;
 }
 
+/* Done: nothing left to do there, so the row steps back. */
 .launcher-row.is-played .launcher-row__icon {
+  background: var(--surface-raised);
+  color: var(--muted);
+}
+
+.launcher-row.is-played .launcher-row__name {
+  color: var(--muted);
+}
+
+/* Selected: the tile is solid accent, a done row included (after the done
+   rule, so a re-opened done game still shows as picked). */
+.launcher-row.is-selected .launcher-row__icon {
   background: var(--accent);
   color: var(--accent-ink);
 }
@@ -197,7 +161,7 @@
   white-space: nowrap;
 }
 
-/* The state pill, as the hub's: Play and Done neutral, Resume in the game's accent. */
+/* The state pill: Play in the game's accent on a tint, Resume solid accent, Done muted with a check. */
 .launcher-row__state {
   display: inline-flex;
   align-self: flex-start;
@@ -218,8 +182,20 @@
   color: var(--accent-ink);
 }
 
+.launcher-row[data-launcher-state="fresh"] .launcher-row__state {
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+  /* Pulled toward the text color, so the word reads on the tint in both themes. */
+  color: color-mix(in srgb, var(--accent) 50%, var(--text));
+}
+
 .launcher-row[data-launcher-state="done"] .launcher-row__state {
+  background: transparent;
+  padding-left: 0;
   color: var(--muted);
+}
+
+.launcher-row[data-launcher-state="done"] .launcher-row__state::before {
+  content: "\2713\00a0";
 }
 
 .launcher__foot {

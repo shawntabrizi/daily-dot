@@ -211,6 +211,15 @@ any single context window. `PLAN.md` is the design; this is where things actuall
   the live drag tone follows it as the pitch moves. The tone gains soft 2nd and 3rd
   harmonics so phone speakers, which barely play 110 Hz, still carry the pitch; scoring
   is unchanged. Not yet heard on a device: tune `COMPENSATION` / `PEAK_LEVEL` by ear.
+- **Card and launcher lead with what is left (2026-10-26, Shawn):** on the Pocket card
+  and the half sheet beneath it, colour now goes to the games still to play, not the
+  done ones (WP36 decision 1 stays on the hub only). Card tiles have three looks
+  (`tile-<id>-next|idle|done.png`): next up solid accent, the rest accent glyph and
+  label on a tint with an accent ring, done muted with a check. The sheet drops its
+  head (the card above shows n/k and the streak), lists done games last, tints each
+  unplayed row's icon and Play pill in its accent, fills the selected row's icon solid
+  (no more white ring), and mutes done rows with a check. Checked in Chromium, both
+  themes; not checked on a device.
 - **Chess knight, one Listen (2026-10-26, Shawn):** the Chess glyph is a knight, not a
   pawn, in the hub rows, the card launcher and the two baked Pocket tiles
   (`tile-chess-*.png`; only those two re-baked). Daily Sound asks for Listen once: the

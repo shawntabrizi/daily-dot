@@ -1,4 +1,4 @@
-/* Tokens: colours, type and the self-hosted fonts, in a dark block and a light block (WP37 R1: the approved boards). */
+/* Tokens: colors, type and the self-hosted fonts, in a dark block and a light block (WP37 R1: the approved boards). */
 
 @font-face {
   font-family: "Fredoka";
@@ -36,9 +36,9 @@
   --surface: #1b1e20;
   --surface-raised: #1f2224;
   --tile-empty: #2a2e31;
-  /* The boards' dim grey, 3.8:1 on the page: section labels at 14 px bold or larger only. */
+  /* The boards' dim gray, 3.8:1 on the page: section labels at 14 px bold or larger only. */
   --neutral: #6c7275;
-  /* The darkest grey that clears 4.5:1 on the page: the small labels the boards draw in the dim grey. */
+  /* The darkest gray that clears 4.5:1 on the page: the small labels the boards draw in the dim gray. */
   --dim: #7a8083;
   --muted: #9aa0a3;
   --correct: #55b725;
@@ -57,7 +57,7 @@
   --streak-ink: #121415;
   --display: "Fredoka", "Arial Rounded MT Bold", system-ui, sans-serif;
   --body: "Nunito", system-ui, sans-serif;
-  /* One accent per game, with the ink colour for text on it. */
+  /* One accent per game, with the ink color for text on it. */
   --accent-word: #55b725;
   --accent-word-ink: #0d1a07;
   --accent-sudoku: #22b8a0;

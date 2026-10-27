@@ -1,4 +1,4 @@
-import { PICKS_KEY, serialisePicks } from "../shared/picks";
+import { PICKS_KEY, serializePicks } from "../shared/picks";
 
 /**
  * A player who picked the six original games (Word to Connections): for
@@ -6,5 +6,5 @@ import { PICKS_KEY, serialisePicks } from "../shared/picks";
  * day. Daily Code and Daily Angle sit under More games.
  */
 export function pickSixGames(storage: Pick<Storage, "setItem"> = window.localStorage): void {
-  storage.setItem(PICKS_KEY, serialisePicks([0, 1, 2, 3, 4, 5]));
+  storage.setItem(PICKS_KEY, serializePicks([0, 1, 2, 3, 4, 5]));
 }

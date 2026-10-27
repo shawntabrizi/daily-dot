@@ -139,7 +139,7 @@ function plural(count: number, one: string, many: string): string {
 /**
  * The hub's progress phrase for a game in progress, read from the game's
  * stored day without its puzzle: "2 guesses in", "41 cells left", "3:10 in",
- * "2 attempts", "3 guesses", "9 of 21 squares", "2 of 4 found", "2 of 5 colours",
+ * "2 attempts", "3 guesses", "9 of 21 squares", "2 of 4 found", "2 of 5 colors",
  * "2 of 5 tones". "started"
  * when the stored shape says nothing more.
  */
@@ -210,7 +210,7 @@ export function progressLine(
     }
     case "color": {
       const done = count(stored.guesses);
-      return done === null ? "started" : `${done} of 5 colours`;
+      return done === null ? "started" : `${done} of 5 colors`;
     }
     case "sound": {
       const done = count(stored.guesses);

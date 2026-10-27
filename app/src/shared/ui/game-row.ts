@@ -31,11 +31,11 @@ export const HOOKS: Record<GameSlug, string> = {
   connections: "Four groups of four",
   code: "Crack the four-digit code",
   angle: "Name the angle",
-  color: "Five colours from memory",
+  color: "Five colors from memory",
   sound: "Five tones by ear",
 };
 
-/** Simple geometric glyphs on a 24-unit grid; the tile colours them. */
+/** Simple geometric glyphs on a 24-unit grid; the tile colors them. */
 const GLYPHS: Record<GameSlug, string> = {
   word:
     '<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2" opacity="0.55"/>'

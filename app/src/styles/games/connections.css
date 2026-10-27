@@ -95,7 +95,7 @@
   display: none;
 }
 
-/* A found group: label, then the words joined with " · ", in the tier colour with its ink. */
+/* A found group: label, then the words joined with " · ", in the tier color with its ink. */
 .connections-bar {
   display: flex;
   padding: 12px 14px;

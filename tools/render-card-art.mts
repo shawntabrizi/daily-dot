@@ -1,14 +1,14 @@
 // Bakes the Pocket card's art into pocket/public/tiles/ as PNG.
 //
 // The card is the approved board (plans/wp-36-boards/Main.dc.html, "Proposed:
-// scoreboard"). The renderer has nine theme colours, five text styles and no
-// Fredoka or Nunito, so every coloured or typeset mark on the card is an image
+// scoreboard"). The renderer has nine theme colors, five text styles and no
+// Fredoka or Nunito, so every colored or typeset mark on the card is an image
 // from the worker archive: the "n/k" count (every n of every k picked games),
 // the "DONE TODAY" label,
-// the flame of the streak, and the six game tiles whole
-// (accent fill with ink glyph and label when done, dark with a ring when
-// not). The state strip is a plain Box in a theme colour, so it needs no art.
-// Each asset is the board's own HTML and CSS, rasterised at 3x by headless
+// the flame of the streak, and the six game tiles whole, in three looks
+// (next up: accent fill with ink glyph and label; still to play: accent glyph
+// and label on a tint with an accent ring; done: muted with a check). The state strip is a plain Box in a theme color, so it needs no art.
+// Each asset is the board's own HTML and CSS, rasterized at 3x by headless
 // Chromium (the app's Playwright) so it is crisp on a phone. Commit the PNGs:
 // Vite copies pocket/public into the worker archive.
 //
@@ -52,8 +52,10 @@ const ACCENT: Record<GameSlug, { fill: string; ink: string }> = {
   color: { fill: "#2fb1e4", ink: "#06202b" },
   sound: { fill: "#7f6df2", ink: "#120d33" },
 };
-/** The idle tile and the ring around it. */
+/** The idle tile and the ring around it (the "+" tile). */
 const IDLE = { fill: "#202427", ink: "#8d9396", ring: "#2e3336" };
+/** A done tile: nothing left to do there, so it steps back. */
+const DONE = { fill: "#191c1f", ink: "#5c6266", check: "#7c8386" };
 /** The tile labels: each game's own name. A long name gets smaller type, never another name. */
 const LABEL: Record<GameSlug, string> = {
   word: "WORD",
@@ -115,14 +117,30 @@ function svg(width: number, height: number, body: string): string {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">${body}</svg>`;
 }
 
-/** One whole tile: glyph over label, centred, on the accent or the idle dark. */
-function tile(id: GameSlug, done: boolean): string {
-  const fill = done ? ACCENT[id].fill : IDLE.fill;
-  const ink = done ? ACCENT[id].ink : IDLE.ink;
-  const ring = done ? "" : `box-shadow:inset 0 0 0 1.5px ${IDLE.ring};`;
+/**
+ * One whole tile: glyph over label, centered. The games left to play carry
+ * the color: "next" is solid accent, "idle" (still to play) is the accent on
+ * a tinted dark with an accent ring, "done" is muted with a check.
+ */
+function tile(id: GameSlug, state: "next" | "idle" | "done"): string {
+  const accent = ACCENT[id];
+  const look = {
+    next: { fill: accent.fill, ink: accent.ink, ring: "" },
+    idle: {
+      fill: `color-mix(in srgb, ${accent.fill} 16%, ${IDLE.fill})`,
+      ink: accent.fill,
+      ring: `box-shadow:inset 0 0 0 1.5px color-mix(in srgb, ${accent.fill} 55%, ${IDLE.fill});`,
+    },
+    done: { fill: DONE.fill, ink: DONE.ink, ring: "" },
+  }[state];
+  const check =
+    state === "done"
+      ? `<svg style="position:absolute;top:8px;right:8px" width="16" height="16" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="${DONE.check}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      : "";
   return (
-    `<div style="width:${TILE_WIDTH}px;height:${TILE_HEIGHT}px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:${TILE_RADIUS}px;background:${fill};color:${ink};${ring}">` +
-    svg(26, 26, GLYPH[id](ink)) +
+    `<div style="position:relative;width:${TILE_WIDTH}px;height:${TILE_HEIGHT}px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:${TILE_RADIUS}px;background:${look.fill};color:${look.ink};${look.ring}">` +
+    check +
+    svg(26, 26, GLYPH[id](look.ink)) +
     `<span style="font-family:'Nunito';font-size:${LABEL[id].length > 8 ? "8.5px" : "11px"};font-weight:800;letter-spacing:${LABEL[id].length > 8 ? "0.01em" : "0.06em"};white-space:nowrap">${LABEL[id]}</span></div>`
   );
 }
@@ -179,8 +197,9 @@ const assets: Asset[] = [
   { name: "flame", width: FLAME_WIDTH, height: FLAME_HEIGHT, html: flame() },
   { name: "tile-more", width: TILE_WIDTH, height: TILE_HEIGHT, html: moreTile() },
   ...GAME_ROSTER.flatMap((game) => [
-    { name: `tile-${game.id}-done`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, true) },
-    { name: `tile-${game.id}-idle`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, false) },
+    { name: `tile-${game.id}-next`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, "next") },
+    { name: `tile-${game.id}-idle`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, "idle") },
+    { name: `tile-${game.id}-done`, width: TILE_WIDTH, height: TILE_HEIGHT, html: tile(game.id, "done") },
   ]),
 ];
 

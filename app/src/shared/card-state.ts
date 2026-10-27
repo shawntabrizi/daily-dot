@@ -181,7 +181,7 @@ export function detectCardStore(fallback?: StorageLike): Promise<CardStore> {
 }
 
 /**
- * Serialises read-modify-write so a `record` landing during the home's hydrate
+ * Serializes read-modify-write so a `record` landing during the home's hydrate
  * cannot lose either update.
  */
 export class CardStateWriter {

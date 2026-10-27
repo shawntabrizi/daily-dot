@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
+import { hintFor, HEAT_BANDS } from "../../games/angle/engine";
 import { GAME_ROSTER, gameById } from "../roster";
 import { createHeader, setHeaderGame } from "./header";
 import { openRules, RULES } from "./rules";
@@ -25,6 +26,16 @@ describe("rules", () => {
     // The direction matches the game (D13).
     expect(RULES.color.score).toMatch(/More is better/);
     expect(RULES.word.score).toMatch(/Fewer/);
+  });
+
+  it("states Angle's heat bands as the game applies them", () => {
+    // Why: the rules quote the degrees; they must move when the hint logic does.
+    const bands = RULES.angle.steps.map((step) => step.text).join(" ");
+    for (const [heat, limit] of Object.entries(HEAT_BANDS)) {
+      expect(bands).toContain(`within ${limit}°`);
+      expect(hintFor(100 + limit, 100).heat).toBe(heat);
+      expect(hintFor(101 + limit, 100).heat).not.toBe(heat);
+    }
   });
 
   it("opens from the (?) in a game's header and closes back to it", () => {

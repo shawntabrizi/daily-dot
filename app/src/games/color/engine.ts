@@ -1,6 +1,6 @@
 /**
- * Daily Color (D24): five colours from memory, each scored by how close the
- * rebuilt colour is to the shown one in CIEDE2000.
+ * Daily Color (D24): five colors from memory, each scored by how close the
+ * rebuilt color is to the shown one in CIEDE2000.
  */
 export const ROUNDS = 5;
 /** A round's best score, in tenths of a point (10.0 points). */
@@ -34,7 +34,7 @@ export function isHsb(value: unknown): value is Hsb {
   return whole(hue, HUE_MAX) && whole(saturation, PERCENT_MAX) && whole(brightness, PERCENT_MAX);
 }
 
-/** HSB to sRGB channels 0–255, unrounded: the score measures the colour itself, not its 8-bit display. */
+/** HSB to sRGB channels 0–255, unrounded: the score measures the color itself, not its 8-bit display. */
 export function hsbToRgb({ hue, saturation, brightness }: Hsb): [number, number, number] {
   const value = (brightness / 100) * 255;
   const chroma = value * (saturation / 100);
@@ -51,9 +51,9 @@ export function hsbToRgb({ hue, saturation, brightness }: Hsb): [number, number,
   return [r + low, g + low, b + low];
 }
 
-/** The colour as CSS, rounded to 8 bits a channel. */
-export function hsbCss(colour: Hsb): string {
-  const [r, g, b] = hsbToRgb(colour).map((channel) => Math.round(channel));
+/** The color as CSS, rounded to 8 bits a channel. */
+export function hsbCss(color: Hsb): string {
+  const [r, g, b] = hsbToRgb(color).map((channel) => Math.round(channel));
   return `rgb(${r}, ${g}, ${b})`;
 }
 
@@ -96,9 +96,9 @@ function hueAngle(b: number, a: number): number {
 }
 
 /**
- * CIEDE2000 colour difference (kL = kC = kH = 1), after Sharma, Wu and Dalal
+ * CIEDE2000 color difference (kL = kC = kH = 1), after Sharma, Wu and Dalal
  * (2005), with their rules for the hue mean and difference across 0°/360°
- * and for a neutral (zero-chroma) colour.
+ * and for a neutral (zero-chroma) color.
  */
 export function ciede2000(first: Lab, second: Lab): number {
   const c1 = Math.hypot(first.a, first.b);
@@ -151,7 +151,7 @@ export function ciede2000(first: Lab, second: Lab): number {
   );
 }
 
-/** A colour's score in tenths of a point: 10 × max(0, 1 − ΔE00 / 40), to the nearest tenth. */
+/** A color's score in tenths of a point: 10 × max(0, 1 − ΔE00 / 40), to the nearest tenth. */
 export function scoreForDelta(deltaE: number): number {
   if (!Number.isFinite(deltaE) || deltaE < 0) {
     throw new RangeError("ΔE00 is a non-negative distance");
@@ -159,25 +159,25 @@ export function scoreForDelta(deltaE: number): number {
   return Math.round(ROUND_MAX_TENTHS * Math.max(0, 1 - deltaE / ZERO_AT_DELTA_E));
 }
 
-/** ΔE00 between two HSB colours, through sRGB and CIELAB D65. */
-export function colourDelta(target: Hsb, guess: Hsb): number {
+/** ΔE00 between two HSB colors, through sRGB and CIELAB D65. */
+export function colorDelta(target: Hsb, guess: Hsb): number {
   return ciede2000(srgbToLab(hsbToRgb(target)), srgbToLab(hsbToRgb(guess)));
 }
 
-/** One colour's score in tenths (0–100). */
+/** One color's score in tenths (0–100). */
 export function roundScore(target: Hsb, guess: Hsb): number {
   if (!isHsb(target) || !isHsb(guess)) {
-    throw new RangeError("Colours are whole hue 0–359, saturation and brightness 0–100");
+    throw new RangeError("Colors are whole hue 0–359, saturation and brightness 0–100");
   }
-  return scoreForDelta(colourDelta(target, guess));
+  return scoreForDelta(colorDelta(target, guess));
 }
 
-/** The day's score in tenths (0–500): the sum of the colours' rounded scores. */
+/** The day's score in tenths (0–500): the sum of the colors' rounded scores. */
 export function totalScore(targets: readonly Hsb[], guesses: readonly Hsb[]): number {
   return guesses.reduce((sum, guess, index) => sum + roundScore(targets[index]!, guess), 0);
 }
 
-/** Dark or light type on the colour, whichever reads: by CIELAB lightness. */
-export function inkFor(colour: Hsb): "dark" | "light" {
-  return srgbToLab(hsbToRgb(colour)).L > 62 ? "dark" : "light";
+/** Dark or light type on the color, whichever reads: by CIELAB lightness. */
+export function inkFor(color: Hsb): "dark" | "light" {
+  return srgbToLab(hsbToRgb(color)).L > 62 ? "dark" : "light";
 }

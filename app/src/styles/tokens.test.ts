@@ -7,12 +7,12 @@ import { describe, expect, it } from "vitest";
 import { GAME_ROSTER } from "../shared/roster";
 
 /**
- * The token sheet is the one place colour lives (WP37 R1: the boards' values).
+ * The token sheet is the one place color lives (WP37 R1: the boards' values).
  * These tests read it as text: a game whose accent token is missing would
- * render with no colour, and a text/surface pair under 4.5:1 would ship below
+ * render with no color, and a text/surface pair under 4.5:1 would ship below
  * the accessibility floor the boards are held to. The boards' `#6c7275`
  * (`--neutral`) is 3.8:1 on `--bg`: labels of 14 px bold or larger only;
- * `--dim` is the small-label grey that passes.
+ * `--dim` is the small-label gray that passes.
  */
 const css = readFileSync(
   join(dirname(fileURLToPath(import.meta.url)), "tokens.css"),
@@ -37,9 +37,9 @@ const THEMES: Record<string, Block> = {
   light: block(':root[data-theme="light"]'),
 };
 
-/** WCAG 2.x relative luminance of a six-digit hex colour. */
+/** WCAG 2.x relative luminance of a six-digit hex color. */
 function luminance(hex: string): number {
-  if (!/^#[0-9a-f]{6}$/i.test(hex)) throw new Error(`not a hex colour: ${hex}`);
+  if (!/^#[0-9a-f]{6}$/i.test(hex)) throw new Error(`not a hex color: ${hex}`);
   const [r, g, b] = [1, 3, 5].map((i) => {
     const c = parseInt(hex.slice(i, i + 2), 16) / 255;
     return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;

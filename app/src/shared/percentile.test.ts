@@ -146,7 +146,7 @@ describe("percentileFor", () => {
     expect(percentileFor(day, flipped, 450, true)).toBe(90);
   });
 
-  it("ranks a late higher-better finisher as if inserted, ties in their favour", () => {
+  it("ranks a late higher-better finisher as if inserted, ties in their favor", () => {
     const day = histogram([[90, 1], [60, 1]]);
     expect(percentileFor(day, POINTS, 499, false)).toBe(33);
     expect(percentileFor(day, POINTS, 300, false)).toBe(67);

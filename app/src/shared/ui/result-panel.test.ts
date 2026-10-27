@@ -193,7 +193,7 @@ describe("renderResultPanel", () => {
     expect(text(renderResultPanel(WORD, 1, TOP_10, { streaks: streaks(7) }), "[data-result-milestone]")).toBe("7 days. Keep it.");
   });
 
-  it("names the next game on the main button in that game's colour, with the day count, then Share and Today", () => {
+  it("names the next game on the main button in that game's color, with the day count, then Share and Today", () => {
     const panel = renderResultPanel(WORD, 1, TOP_10, {
       next: nextGame(WORD, 0n),
       onShare: () => undefined,
@@ -381,7 +381,7 @@ describe("createResultPanel", () => {
     handle.element.remove();
   });
 
-  it("shares the colour-free day text through the clipboard when there is no share sheet", async () => {
+  it("shares the color-free day text through the clipboard when there is no share sheet", async () => {
     const writeText = vi.fn<(value: string) => Promise<void>>(async () => undefined);
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     const toasts: string[] = [];
