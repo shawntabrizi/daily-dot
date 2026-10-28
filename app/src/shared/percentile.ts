@@ -118,7 +118,7 @@ export function dayPercentile(percentiles: readonly (number | null)[]): number |
   );
 }
 
-export type ScoreUnit = "guess" | "attempt" | "mistake";
+export type ScoreUnit = "guess" | "move" | "mistake";
 
 /** A points score is kept in tenths (D24): 426 is "42.6", 420 is "42". */
 export function formatPoints(tenths: number): string {
@@ -140,7 +140,7 @@ export function scoreValue(kind: ScoreKind, score: number): string {
   return kind === "points" ? formatPoints(score) : String(score);
 }
 
-/** "4 guesses", "1 attempt", "3:05", "42.6 points". */
+/** "4 guesses", "1 move", "3:05", "42.6 points". */
 export function formatScore(kind: ScoreKind, score: number, unit: ScoreUnit = "guess"): string {
   if (kind === "seconds") {
     return formatSeconds(score);

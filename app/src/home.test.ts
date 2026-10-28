@@ -105,7 +105,7 @@ describe("home", () => {
     // A done row: the score in the accent after the name, the percentile sentence below, never Play.
     expect(view.element.querySelector('[data-game-row="word"] [data-row-score]')?.textContent).toBe("· 4 guesses");
     expect(view.element.querySelector('[data-game-row="word"] [data-row-line]')?.textContent).toBe("Top 80% of 5 today");
-    // Chess in one attempt is "first try" (the board).
+    // Chess in one move is "first try" (the board).
     expect(view.element.querySelector('[data-game-row="chess"] [data-row-score]')?.textContent).toBe("· first try");
     expect(view.element.querySelector('[data-game-row="chess"] [data-row-line]')?.textContent).toBe("Top 17% of 5 today");
     expect(view.element.querySelector("[data-done-games] [data-row-action]")).toBeNull();

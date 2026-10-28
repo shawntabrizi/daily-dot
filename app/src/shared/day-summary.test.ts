@@ -154,7 +154,7 @@ describe("renderDaySummary", () => {
       `Across your ${GAME_ROSTER.length} games.`,
     );
     expect(panel.querySelector('[data-summary-game="word"]')?.textContent).toBe("Word2 guessesTop 10%");
-    expect(panel.querySelector('[data-summary-game="chess"]')?.textContent).toBe("Chess2 attemptsTop 10%");
+    expect(panel.querySelector('[data-summary-game="chess"]')?.textContent).toBe("Chess2 movesTop 10%");
     expect(panel.querySelector('[data-summary-game="sudoku"]')?.textContent).toBe("Sudoku0:45Top 100%");
     // The streak lives in the header pill, not here; the counts are tiles,
     // each a number over its label.

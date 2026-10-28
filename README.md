@@ -43,7 +43,7 @@ one source of ids, slugs and score kinds.
 |---|---|---|---|
 | 0 | Daily Word | guesses | WordRegistry (sealed list of 1,022 six-letter answers, `shared/wordlists`) |
 | 1 | Daily Sudoku | seconds | procedural, frozen `v1` generator |
-| 2 | Daily Chess | attempts | ChessRegistry (400 Lichess-derived puzzles, `shared/chess`) |
+| 2 | Daily Chess | moves tried | ChessRegistry (400 Lichess-derived puzzles, `shared/chess`) |
 | 3 | Daily Globe | guesses | bundled reference data (`shared/countries`) |
 | 4 | Daily Mini | seconds | MiniRegistry (400 authored 5×5 crosswords, `shared/mini`) |
 | 5 | Daily Connections | mistakes | ConnectionsRegistry (370 authored 4×4 group puzzles, `shared/connections`) |

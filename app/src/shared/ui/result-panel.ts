@@ -91,7 +91,7 @@ export function headlineFor({ percentile, finishers, late }: HeadlineInput): str
 }
 
 export interface ResultPanelOptions {
-  /** The score's noun for count games ("guess", "attempt", "mistake"). */
+  /** The score's noun for count games ("guess", "move", "mistake"). */
   unit?: ScoreUnit;
   /**
    * The day was recorded after it ended. The distribution is of on-time

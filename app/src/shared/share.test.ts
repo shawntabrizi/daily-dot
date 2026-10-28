@@ -156,7 +156,7 @@ describe("shareText", () => {
     expect(six.split("\n").at(-1)).toBe("✦ 2 · Top 18% today");
     expect(six).toContain("Connections 0 mistakes · Top 12%\n🟨🟨🟨🟨\n🟩🟩🟩🟩");
     expect(six).toContain("Sudoku 3:05 · Top 20%");
-    expect(six).toContain("Chess 1 attempt · Top 5%");
+    expect(six).toContain("Chess 1 move · Top 5%");
   });
 
   it("omits a zero streak and the footer when there is nothing to say", () => {

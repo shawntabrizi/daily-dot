@@ -199,7 +199,7 @@ describe("formatScore", () => {
   it("writes counts with their unit, seconds as m:ss and points in tenths", () => {
     expect(formatScore("count", 1)).toBe("1 guess");
     expect(formatScore("count", 4)).toBe("4 guesses");
-    expect(formatScore("count", 2, "attempt")).toBe("2 attempts");
+    expect(formatScore("count", 2, "move")).toBe("2 moves");
     expect(formatScore("count", 1, "mistake")).toBe("1 mistake");
     expect(formatScore("seconds", 185)).toBe("3:05");
     expect(formatScore("seconds", 0)).toBe("0:00");

@@ -15,7 +15,7 @@ const PAGE = 64;
 
 /** The score noun per game for the summary rows and the hub's done rows. */
 export const UNITS: Partial<Record<Game["id"], ScoreUnit>> = {
-  chess: "attempt",
+  chess: "move",
   connections: "mistake",
 };
 
