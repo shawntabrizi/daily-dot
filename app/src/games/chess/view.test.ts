@@ -125,7 +125,7 @@ describe("Chess view", () => {
 
     expect(view.element.textContent).toContain("Not the move. Try again.");
     expect(view.element.querySelector("[data-chess-attempts]")?.textContent).toBe(
-      "1 ATTEMPT",
+      "1 MOVE",
     );
     expect(view.element.querySelector("[data-chess-phase='player']")).not.toBeNull();
     expect(view.element.textContent).not.toContain("SOLVED");
@@ -150,7 +150,7 @@ describe("Chess view", () => {
       ?.click();
     expect(record).toHaveBeenCalledOnce();
     expect(record).toHaveBeenCalledWith(2, 208, 2, true);
-    // Two attempts, tied with one other finisher for best: top 25% of four.
+    // Two moves, tied with one other finisher for best: top 25% of four.
     await vi.waitFor(() => {
       expect(view.element.querySelector("[data-result-rank-tile] .result-tile-value")?.textContent).toBe("25%");
     });
@@ -159,7 +159,7 @@ describe("Chess view", () => {
       expect(view.element.querySelector(".game-heading")?.hasAttribute("hidden")).toBe(true);
     });
     expect(view.element.querySelector("[data-result-subline]")?.textContent).toBe(
-      "2 attempts · the moves were Qb2+ Qxc1",
+      "2 moves · the answer was Qb2+ Qxc1",
     );
     view.dispose();
   });
@@ -174,7 +174,7 @@ describe("Chess view", () => {
       clickMove(view.element, "d4", "c5");
       await waitForPlayer(view.element);
     }
-    expect(view.element.querySelector("[data-chess-attempts]")?.textContent).toBe("12 ATTEMPTS");
+    expect(view.element.querySelector("[data-chess-attempts]")?.textContent).toBe("12 MOVES");
     expect(record).not.toHaveBeenCalled();
 
     clickMove(view.element, "d4", "b2");
@@ -203,7 +203,7 @@ describe("Chess view", () => {
 
     expect(
       reloaded.element.querySelector("[data-chess-attempts]")?.textContent,
-    ).toBe("1 ATTEMPT");
+    ).toBe("1 MOVE");
     expect(
       reloaded.element.querySelector('[data-chess-square="d4"] [data-piece]')?.getAttribute("data-piece"),
     ).toBe("bq");

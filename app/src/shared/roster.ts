@@ -17,7 +17,7 @@ export type GameSlug =
  */
 /**
  * `kind` says what a game's `score` counts and how it is written (D13,
- * amended 2026-10-23): a `count` of guesses/attempts/mistakes, elapsed
+ * amended 2026-10-23): a `count` of guesses/moves/mistakes, elapsed
  * `seconds`, or `points` in tenths of a point (426 is 42.6 points).
  */
 export type ScoreKind = "count" | "seconds" | "points";

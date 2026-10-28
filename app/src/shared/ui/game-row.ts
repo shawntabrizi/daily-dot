@@ -75,7 +75,7 @@ export function gameGlyph(game: Game): string {
   return `<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">${GLYPHS[game.id]}</svg>`;
 }
 
-/** "4 guesses", "1:42"; a Chess puzzle solved in one attempt is "first try" (the board). */
+/** "4 guesses", "1:42"; a Chess puzzle solved in one move is "first try" (the board). */
 export function scoreText(game: Game, score: number): string {
   if (game.id === "chess" && score === 1) {
     return "first try";

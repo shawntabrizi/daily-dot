@@ -5,7 +5,7 @@ import { GAME_ROSTER, type Game, type GameSlug, type ScoreKind } from "./roster"
 
 /** The score noun per game; "guess" for the rest. */
 const SCORE_UNITS: Partial<Record<GameSlug, ScoreUnit>> = {
-  chess: "attempt",
+  chess: "move",
   connections: "mistake",
 };
 

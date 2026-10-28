@@ -174,9 +174,9 @@ describe("progressLine", () => {
     expect(progressLine(game("sudoku"), 42, storage)).toBe("3:10 in");
 
     stored(storage, "chess", { started: true, attempts: 2 });
-    expect(progressLine(game("chess"), 42, storage)).toBe("2 attempts");
+    expect(progressLine(game("chess"), 42, storage)).toBe("2 moves");
     stored(storage, "chess", { started: true, attempts: 1 });
-    expect(progressLine(game("chess"), 42, storage)).toBe("1 attempt");
+    expect(progressLine(game("chess"), 42, storage)).toBe("1 move");
 
     stored(storage, "globe", { guesses: ["FRA", "ESP", "PRT"] });
     expect(progressLine(game("globe"), 42, storage)).toBe("3 guesses");

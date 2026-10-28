@@ -90,7 +90,7 @@ function displayRanks(playerColor: Color): number[] {
   return playerColor === "w" ? ranks : ranks.reverse();
 }
 
-/** The puzzle's player moves in SAN, for the result subline ("the move was Nf3"). */
+/** The puzzle's player moves in SAN, for the result subline ("the answer was Nf3"). */
 function playerMovesSan(puzzle: ChessPuzzle): string[] {
   const chess = new Chess(puzzle.fen);
   return puzzle.moves
@@ -143,7 +143,7 @@ export function renderChess(
   let wrongSquare: Square | null = null;
   let alreadyRecorded = false;
   let today = 0;
-  const resultPanel = createResultPanel(source, gameById("chess")!, { unit: "attempt" });
+  const resultPanel = createResultPanel(source, gameById("chess")!, { unit: "move" });
 
   const clearTimers = (): void => {
     window.clearTimeout(autoMoveTimer);
@@ -293,7 +293,7 @@ export function renderChess(
     attempts.dataset.chessAttempts = "";
     attempts.textContent = alreadyRecorded
       ? "DONE"
-      : `${progress.attempts} ATTEMPT${progress.attempts === 1 ? "" : "S"}`;
+      : `${progress.attempts} MOVE${progress.attempts === 1 ? "" : "S"}`;
     const text = document.createElement("span");
     if (alreadyRecorded) {
       text.replaceChildren(createPlayedNotice(gameById("chess")!, progress.day, today));
@@ -347,7 +347,7 @@ export function renderChess(
       recorded: shown && progress.submission === "submitted",
       pendingSave: shown ? pendingSave(progress.submission) : undefined,
       late: progress.day < today,
-      detail: moves.length === 1 ? `the move was ${moves[0]}` : `the moves were ${moves.join(" ")}`,
+      detail: `the answer was ${moves.join(" ")}`,
       onSave,
     });
     syncResultChrome(page, gameById("chess")!, progress.day, shown);
